@@ -40,7 +40,7 @@ const Login = () => {
     }
   };
 
-  if (userLoggedIn) return <Navigate to={"/"} replace={true} />;
+  if (userLoggedIn) return <Navigate to={"/Questify"} replace={true} />;
 
   return (
     <div className={`min-h-screen w-full flex items-center justify-center ${isDarkMode ? 'dark-mode-bg' : 'bg-[#fafaff]'}`}>
