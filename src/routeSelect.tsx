@@ -41,12 +41,12 @@ const Route = ({ to, selected, Icon, title, handleSelect }: RouteProps) => {
       to={to}
       className={`flex items-center md:justify-start justify-center gap-2 w-full rounded px-2 py-2 md:py-1.5 md:text-sm text-1xl transition-all duration-300 ${
         isSelected
-          ? "bg-[#ddfad7] text-green-600 shadow"
-          : "hover:bg-[#ddfad7] text-[#696969] shadow-none"
+          ? "bg-[#e2e6fd] text-indigo-600 shadow"
+          : "hover:bg-[#e2e6fd] text-[#696969] shadow-none"
       }`}
       onClick={() => handleSelect(to)}
     >
-      <Icon className={`${isSelected ? "text-green-600" : ""}`} />
+      <Icon className={`${isSelected ? "text-indigo-600" : ""}`} />
       <p className="text-md font-semibold hidden md:block">{title}</p>
     </Link>
   );
