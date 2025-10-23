@@ -3,6 +3,9 @@ import { Link } from "react-router-dom";
 import { useTheme } from "./components/theme";
 
 import * as mdIcons from "react-icons/md";
+import * as FaIcons from "react-icons/fa";
+import * as GiIcons from "react-icons/gi";
+import * as RxIcons from "react-icons/rx";
 
 const RouteSelect = () => {
   const [selected, setSelected] = useState(window.location.pathname);
@@ -23,7 +26,31 @@ const RouteSelect = () => {
         to="/"
         selected={selected}
         Icon={mdIcons.MdOutlineDashboard}
-        title="Dashboard"
+        title="Hub"
+        handleSelect={handleSelect}
+        isDarkMode={isDarkMode}
+      />
+      <Route
+        to="/quest"
+        selected={selected}
+        Icon={GiIcons.GiCrossedSwords}
+        title="Quest"
+        handleSelect={handleSelect}
+        isDarkMode={isDarkMode}
+      />
+      <Route
+        to="/shop"
+        selected={selected}
+        Icon={FaIcons.FaShoppingCart}
+        title="Shop"
+        handleSelect={handleSelect}
+        isDarkMode={isDarkMode}
+      />
+      <Route
+        to="/avatar"
+        selected={selected}
+        Icon={RxIcons.RxAvatar}
+        title="Avatar"
         handleSelect={handleSelect}
         isDarkMode={isDarkMode}
       />
