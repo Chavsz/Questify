@@ -3,11 +3,13 @@ import { Navigate, Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/authContexts/auth";
 import { doCreateUserWithEmailAndPassword } from "../auth";
 import { type AuthContextType } from "../contexts/authContexts/auth";
+import { createUser } from "../services/users";
 import toast from "react-hot-toast";
 
 const Register = () => {
   const navigate = useNavigate();
   const { userLoggedIn } = useAuth() as AuthContextType;
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -23,10 +25,28 @@ const Register = () => {
     }
     setIsRegistering(true);
     try {
-      await doCreateUserWithEmailAndPassword(email, password);
-      toast.success("Account created");
+      // Create user with Firebase Auth
+      const userCredential = await doCreateUserWithEmailAndPassword(email, password);
+      const user = userCredential.user;
+      
+      // Save user data to Firestore collection
+      await createUser({
+        uid: user.uid,
+        email: user.email || email,
+        displayName: name || null,
+        photoURL: user.photoURL || null,
+        isActive: true,
+        role: 'user', // Default role
+        preferences: {
+          theme: 'light',
+          notifications: true
+        }
+      });
+      
+      toast.success("Account created successfully");
       navigate("/", { replace: true });
     } catch (err: unknown) {
+      console.error("Registration error:", err);
       toast.error("Registration failed");
     } finally {
       setIsRegistering(false);
@@ -42,6 +62,19 @@ const Register = () => {
           Create account
         </h2>
         <form onSubmit={onSubmit} className="space-y-4">
+          <div className="space-y-1">
+            <label className="block text-sm font-medium text-[#4b5563]">
+              Full Name
+            </label>
+            <input
+              type="text"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              placeholder="John Doe"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </div>
           <div className="space-y-1">
             <label className="block text-sm font-medium text-[#4b5563]">
               Email
