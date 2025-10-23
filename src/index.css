@@ -1,1 +1,73 @@
 @import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Dark Mode Color Palette */
+:root {
+  /* Light mode colors */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f9fafb;
+  --bg-card: #ffffff;
+  --bg-input: #ffffff;
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+  --border-color: #e5e7eb;
+  --accent-primary: #4f46e5;
+  --accent-hover: #4338ca;
+}
+
+.dark {
+  /* Dark mode colors */
+  --bg-primary: #111827; /* Gray-900 */
+  --bg-secondary: #1f2937; /* Gray-800 */
+  --bg-card: #1f2937; /* Gray-800 */
+  --bg-input: #374151; /* Gray-700 */
+  --text-primary: #f3f4f6; /* Gray-100 */
+  --text-secondary: #9ca3af; /* Gray-400 */
+  --border-color: #374151; /* Gray-700 */
+  --accent-primary: #4f46e5; /* Indigo-600 */
+  --accent-hover: #4338ca; /* Indigo-700 */
+}
+
+/* Base styles with CSS variables */
+* {
+  @apply transition-colors duration-300;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Dark mode utility classes */
+.dark-mode-bg {
+  background-color: var(--bg-primary);
+}
+
+.dark-mode-card {
+  background-color: var(--bg-card);
+}
+
+.dark-mode-input {
+  background-color: var(--bg-input);
+}
+
+.dark-mode-text {
+  color: var(--text-primary);
+}
+
+.dark-mode-text-secondary {
+  color: var(--text-secondary);
+}
+
+.dark-mode-border {
+  border-color: var(--border-color);
+}
+
+.dark-mode-accent {
+  background-color: var(--accent-primary);
+}
+
+.dark-mode-accent:hover {
+  background-color: var(--accent-hover);
+}
