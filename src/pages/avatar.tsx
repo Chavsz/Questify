@@ -305,7 +305,7 @@ const Avatar = () => {
 
         {/* Bottom Navigation */}
         <nav className="flex justify-between gap-6">
-          <Link to="/"
+          <Link to="/Questify"
             className={`px-10 py-5 rounded-xl font-bold text-lg cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex-1 max-w-sm text-center shadow-lg ${
               isDarkMode 
                 ? 'bg-gray-800 hover:bg-gray-700 text-white border border-gray-600' 
