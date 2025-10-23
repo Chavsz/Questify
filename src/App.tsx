@@ -1,9 +1,9 @@
 import { Routes, Route } from "react-router-dom";
 import Sidebar from "./sidebar";
-import Hub from "./pages/Hub";
+import Hub from "./pages/hub";
 import Shop from "./pages/shop";
 import Avatar from "./pages/avatar";
-import Quest from "./pages/Quest";
+import Quest from "./pages/quest";
 import Login from "./auth/login";
 import Register from "./auth/register";
 import { useAuth } from "./contexts/authContexts/auth";
