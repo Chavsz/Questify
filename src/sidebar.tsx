@@ -11,7 +11,7 @@ const Sidebar = () => {
   const logout = async () => {
     try {
       await doSignOut();
-      navigate("/login", { replace: true });
+      navigate("/", { replace: true });
     } catch (e) {
       // no-op: Toaster in pages will show any errors triggered there if needed
     }
