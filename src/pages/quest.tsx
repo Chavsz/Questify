@@ -1,13 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTheme } from "../components/theme";
 import { IoSunnyOutline } from "react-icons/io5";
 import { FaRegMoon } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { 
   FaLaptop, 
   FaRuler, 
   FaGlobe, 
-  FaFlask, 
   FaHome, 
   FaUpload, 
   FaCube, 
@@ -15,6 +14,11 @@ import {
   FaFire,
   FaCheckCircle
 } from "react-icons/fa";
+import { generateQuizFromFile } from "../api/generate-quiz/generate_quiz";
+import type { GeneratedQuiz } from "../api/generate-quiz/generate_quiz";
+import { db } from "../firebase";
+import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
+import { useAuth } from "../contexts/authContexts/auth";
 
 interface QuestItem {
   id: string;
@@ -25,52 +29,79 @@ interface QuestItem {
   progressText: string;
   icon: React.ReactNode;
   coins?: string;
+  quizId?: string;
 }
 
 const Quest = () => {
   const { isDarkMode, toggleDarkMode } = useTheme();
+  const authContext = useAuth();
+  const user = authContext?.currentUser;
+  const navigate = useNavigate();
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [quests, setQuests] = useState<QuestItem[]>([]);
 
-  const quests: QuestItem[] = [
-    {
-      id: 'quest1',
-      name: 'Introduction to Programming',
-      details: 'Based on: Python_Basics.pdf • 20 questions',
-      status: 'completed',
-      progress: '100%',
-      progressText: '20/20 completed',
-      icon: <FaLaptop className="text-blue-500 text-2xl" />,
-      coins: '+500 coins earned'
-    },
-    {
-      id: 'quest2',
-      name: 'Algebra Fundamentals',
-      details: 'Based on: Math_Chapter3.pptx • 15 questions',
-      status: 'in-progress',
-      progress: '60%',
-      progressText: '9/15 completed',
-      icon: <FaRuler className="text-gray-500 text-2xl" />
-    },
-    {
-      id: 'quest3',
-      name: 'World History 1900s',
-      details: 'Based on: History_Notes.docx • 25 questions',
-      status: 'not-started',
-      progress: '0%',
-      progressText: '0/25 completed',
-      icon: <FaGlobe className="text-blue-500 text-2xl" />
-    },
-    {
-      id: 'quest4',
-      name: 'Chemistry Basics',
-      details: 'Based on: Chemistry_101.pdf • 18 questions',
-      status: 'not-started',
-      progress: '0%',
-      progressText: '0/18 completed',
-      icon: <FaFlask className="text-green-500 text-2xl" />
-    }
-  ];
+  // Load quests from Firebase
+  useEffect(() => {
+    const loadQuests = async () => {
+      if (!user) return;
+      
+      try {
+        const questsRef = collection(db, 'quests');
+        const q = query(questsRef, where('userId', '==', user.uid));
+        const querySnapshot = await getDocs(q);
+        
+        const loadedQuests: QuestItem[] = [];
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          const quizData = data.quiz as GeneratedQuiz;
+          
+          // Determine status based on progress
+          let status: 'completed' | 'in-progress' | 'not-started' = 'not-started';
+          const totalQuestions = quizData.questions.length;
+          const completedQuestions = data.completedQuestions || 0;
+          
+          if (completedQuestions === 0) {
+            status = 'not-started';
+          } else if (completedQuestions === totalQuestions) {
+            status = 'completed';
+          } else {
+            status = 'in-progress';
+          }
+          
+          const progress = totalQuestions > 0 ? Math.round((completedQuestions / totalQuestions) * 100) : 0;
+          
+          // Choose icon based on file type
+          let icon = <FaLaptop className="text-blue-500 text-2xl" />;
+          if (quizData.sourceFile.includes('.pdf')) {
+            icon = <FaLaptop className="text-blue-500 text-2xl" />;
+          } else if (quizData.sourceFile.includes('.pptx')) {
+            icon = <FaRuler className="text-gray-500 text-2xl" />;
+          } else if (quizData.sourceFile.includes('.docx')) {
+            icon = <FaGlobe className="text-blue-500 text-2xl" />;
+          }
+          
+          loadedQuests.push({
+            id: doc.id,
+            name: quizData.title,
+            details: `Based on: ${quizData.sourceFile} • ${totalQuestions} questions`,
+            status,
+            progress: `${progress}%`,
+            progressText: `${completedQuestions}/${totalQuestions} completed`,
+            icon,
+            quizId: quizData.id
+          });
+        });
+        
+        setQuests(loadedQuests);
+      } catch (error) {
+        console.error('Error loading quests:', error);
+      }
+    };
+    
+    loadQuests();
+  }, [user]);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -120,15 +151,44 @@ const Quest = () => {
     }
   };
 
-  const handleUpload = () => {
+  const handleUpload = async () => {
     if (!selectedFile) {
       alert('Please select a file first');
       return;
     }
     
-    alert(`Generating quest from "${selectedFile.name}"...\n\nThis will use AI to analyze your content and create interactive questions!`);
-    setIsUploadModalOpen(false);
-    setSelectedFile(null);
+    if (!user) {
+      alert('Please log in to generate quizzes');
+      return;
+    }
+    
+    setIsGenerating(true);
+    
+    try {
+      // Generate quiz from file
+      const generatedQuiz = await generateQuizFromFile(selectedFile);
+      
+      // Save to Firebase
+      const questsRef = collection(db, 'quests');
+      await addDoc(questsRef, {
+        userId: user.uid,
+        quiz: generatedQuiz,
+        completedQuestions: 0,
+        createdAt: new Date()
+      });
+      
+      alert(`Successfully generated quiz "${generatedQuiz.title}" with ${generatedQuiz.questions.length} questions!`);
+      setIsUploadModalOpen(false);
+      setSelectedFile(null);
+      
+      // Reload quests
+      window.location.reload();
+    } catch (error: any) {
+      console.error('Error generating quiz:', error);
+      alert(`Error generating quiz: ${error.message || 'Unknown error'}`);
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const navigateToHub = () => {
@@ -149,7 +209,12 @@ const Quest = () => {
   };
 
   const viewQuest = (questId: string) => {
-    alert(`Opening quest details for: ${questId}\n\nThis will show:\n• Quest overview\n• Number of questions\n• Rewards\n• Your progress`);
+    const quest = quests.find(q => q.id === questId);
+    if (quest && quest.quizId) {
+      navigate(`/quiz/${quest.quizId}`);
+    } else {
+      alert('Quiz not found');
+    }
   };
 
   return (
@@ -297,7 +362,7 @@ const Quest = () => {
               onClick={() => document.getElementById('fileInput')?.click()}
             >
               <FaUpload className="text-6xl text-purple-500 mb-4 mx-auto" />
-              <p className="text-lg font-semibold mb-2">Click to upload or drag and drop</p>
+              <p className="text-lg font-semibold mb-2">Click to upload</p>
               <p className="text-gray-500 text-sm">PDF, PPTX, DOCX (Max 50MB)</p>
             </div>
             <input 
@@ -321,9 +386,10 @@ const Quest = () => {
               </button>
               <button 
                 onClick={handleUpload}
-                className="flex-1 p-4 border-none rounded-xl font-bold cursor-pointer transition-all duration-300 hover:-translate-y-1 bg-linear-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700"
+                disabled={isGenerating}
+                className="flex-1 p-4 border-none rounded-xl font-bold cursor-pointer transition-all duration-300 hover:-translate-y-1 bg-linear-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Generate Quest
+                {isGenerating ? 'Generating...' : 'Generate Quest'}
               </button>
             </div>
           </div>

@@ -11,8 +11,13 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.15",
+    "@types/pdf-parse": "^1.1.5",
     "firebase": "^12.4.0",
+    "jszip": "^3.10.1",
+    "mammoth": "^1.11.0",
     "openai": "^6.8.1",
+    "pdf-parse": "^2.4.5",
+    "pdfjs-dist": "^5.4.394",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-firebase-hooks": "^5.1.1",

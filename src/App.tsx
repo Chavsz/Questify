@@ -4,6 +4,7 @@ import Hub from "./pages/hub";
 import Shop from "./pages/shop";
 import Avatar from "./pages/avatar";
 import Quest from "./pages/quest";
+import Quiz from "./pages/quiz";
 import Login from "./auth/login";
 import Register from "./auth/register";
 import { useAuth } from "./contexts/authContexts/auth";
@@ -25,6 +26,7 @@ const App = () => {
         <Routes>
           <Route path="/Questify" element={userLoggedIn ? <Hub /> : <Login />} />
           <Route path="/quest" element={userLoggedIn ? <Quest /> : <Login />} />
+          <Route path="/quiz/:quizId" element={userLoggedIn ? <Quiz /> : <Login />} />
           <Route path="/shop" element={userLoggedIn ? <Shop /> : <Login />} />
           <Route path="/avatar" element={userLoggedIn ? <Avatar /> : <Login />} />
           <Route path="/" element={<Login />} />
