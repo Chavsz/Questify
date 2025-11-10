@@ -289,7 +289,7 @@ const Quest = () => {
 
       {/* Upload Modal */}
       {isUploadModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
+        <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-50">
           <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} text-purple-900 rounded-2xl p-8 max-w-lg w-11/12 shadow-2xl`}>
             <h2 className="text-3xl font-bold mb-6 text-center text-purple-600">Upload Study Material</h2>
             <div 
