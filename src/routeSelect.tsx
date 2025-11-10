@@ -23,7 +23,7 @@ const RouteSelect = () => {
         MENU
       </p>
       <Route
-        to="/Questify"
+        to="/"
         selected={selected}
         Icon={mdIcons.MdOutlineDashboard}
         title="Hub"

@@ -24,12 +24,12 @@ const App = () => {
       {userLoggedIn && <Sidebar />}
       <div className="p-4">
         <Routes>
-          <Route path="/Questify" element={userLoggedIn ? <Hub /> : <Login />} />
+          <Route path="/" element={userLoggedIn ? <Hub /> : <Login />} />
           <Route path="/quest" element={userLoggedIn ? <Quest /> : <Login />} />
           <Route path="/quiz/:quizId" element={userLoggedIn ? <Quiz /> : <Login />} />
           <Route path="/shop" element={userLoggedIn ? <Shop /> : <Login />} />
           <Route path="/avatar" element={userLoggedIn ? <Avatar /> : <Login />} />
-          <Route path="/" element={<Login />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
         </Routes>
       </div>
