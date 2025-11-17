@@ -60,6 +60,7 @@ const Quest = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [quests, setQuests] = useState<QuestItem[]>([]);
   const [modal, setModal] = useState<{ open: boolean; title: string; message: string; type: 'success' | 'error' | 'info' | 'confirm'; onConfirm?: () => void }>({ open: false, title: '', message: '', type: 'info' });
+  const [generatedQuizInfo, setGeneratedQuizInfo] = useState<{ title: string; questionCount: number } | null>(null);
 
   // Load quests from Firebase
   useEffect(() => {
@@ -90,13 +91,25 @@ const Quest = () => {
               const expToNext = 100 + (level - 1) * 50;
               exp += 100; // Award 100 exp per quest
               coins += 100; // Award 100 coins per quest
+              let leveledUp = false;
+              let newLevel = level;
               if (exp >= expToNext) {
                 exp -= expToNext;
-                level += 1;
+                newLevel = level + 1;
+                leveledUp = true;
               }
-              await updateUser(user.uid, { exp, level, coins });
+              await updateUser(user.uid, { exp, level: newLevel, coins });
               await updateDoc(doc(db, 'quests', docSnap.id), { rewarded: true });
               awarded = true;
+              if (leveledUp) {
+                setModal({
+                  open: true,
+                  title: 'Level Up!',
+                  message: `Congratulations!\nYou reached Level ${newLevel}!`,
+                  type: 'success',
+                  onConfirm: () => setModal((prev) => ({ ...prev, open: false }))
+                });
+              }
             }
           } else {
             status = 'in-progress';
@@ -205,13 +218,25 @@ const Quest = () => {
         completedQuestions: 0,
         createdAt: new Date()
       });
-      
-      alert(`Successfully generated quiz "${generatedQuiz.title}" with ${generatedQuiz.questions.length} questions!`);
-      setIsUploadModalOpen(false);
-      setSelectedFile(null);
-      
-      // Reload quests
-      window.location.reload();
+          
+          setIsUploadModalOpen(false);
+          setSelectedFile(null);
+          
+          setModal({
+            open: true,
+            title: '',
+            message: '',
+            type: 'success',
+            onConfirm: () => {
+              setModal((prev) => ({ ...prev, open: false }));
+              window.location.reload();
+            }
+          });
+          // Store quiz info for modal rendering
+          setGeneratedQuizInfo({
+            title: generatedQuiz.title,
+            questionCount: generatedQuiz.questions.length
+          });
     } catch (error: any) {
       console.error('Error generating quiz:', error);
       alert(`Error generating quiz: ${error.message || 'Unknown error'}`);
@@ -306,31 +331,56 @@ const Quest = () => {
           >
             ×
           </button>
-          <div className="flex items-center gap-3 mb-4">
-            <span className="text-3xl">
-              {modal.type === 'success' && '✅'}
-              {modal.type === 'error' && '❌'}
-              {modal.type === 'info' && 'ℹ️'}
-              {modal.type === 'confirm' && '⚠️'}
-            </span>
-            <span className={`text-2xl font-bold ${modal.type === 'success' ? 'text-green-600' : modal.type === 'error' ? 'text-red-600' : modal.type === 'confirm' ? 'text-yellow-600' : 'text-blue-600'}`}>{modal.title}</span>
-          </div>
-          <div className="text-gray-700 text-center whitespace-pre-line mb-2 text-lg">{modal.message}</div>
-          {modal.type === 'confirm' && (
-            <div className="flex gap-4 mt-4">
+          {modal.type === 'success' && generatedQuizInfo ? (
+            <>
+              <div className="flex flex-col items-center mb-4">
+                <div className="text-green-500 text-6xl mb-2">✅</div>
+                <div className="text-2xl font-bold text-green-700 mb-1">Quiz Generated!</div>
+                <div className="text-lg text-gray-700 mb-2 text-center">
+                  <span className="font-semibold">{generatedQuizInfo.title}</span><br />
+                  <span>Questions: {generatedQuizInfo.questionCount}</span>
+                </div>
+              </div>
               <button
-                onClick={() => { setModal({ ...modal, open: false }); }}
-                className="px-6 py-2 bg-gray-300 text-gray-800 rounded font-bold shadow hover:bg-gray-400"
+                onClick={() => {
+                  setModal((prev) => ({ ...prev, open: false }));
+                  setGeneratedQuizInfo(null);
+                  window.location.reload();
+                }}
+                className="mt-2 px-8 py-3 bg-green-500 hover:bg-green-600 text-white rounded-xl font-bold text-lg shadow"
               >
-                Cancel
+                Go to Quests
               </button>
-              <button
-                onClick={() => { if (modal.onConfirm) modal.onConfirm(); setModal({ ...modal, open: false }); }}
-                className="px-6 py-2 bg-red-500 text-white rounded font-bold shadow hover:bg-red-600"
-              >
-                Confirm
-              </button>
-            </div>
+            </>
+          ) : (
+            <>
+              <div className="flex items-center gap-3 mb-4">
+                <span className="text-3xl">
+                  {modal.type === 'success' && '✅'}
+                  {modal.type === 'error' && '❌'}
+                  {modal.type === 'info' && 'ℹ️'}
+                  {modal.type === 'confirm' && '⚠️'}
+                </span>
+                <span className={`text-2xl font-bold ${modal.type === 'success' ? 'text-green-600' : modal.type === 'error' ? 'text-red-600' : modal.type === 'confirm' ? 'text-yellow-600' : 'text-blue-600'}`}>{modal.title}</span>
+              </div>
+              <div className="text-gray-700 text-center whitespace-pre-line mb-2 text-lg">{modal.message}</div>
+              {modal.type === 'confirm' && (
+                <div className="flex gap-4 mt-4">
+                  <button
+                    onClick={() => { setModal({ ...modal, open: false }); }}
+                    className="px-6 py-2 bg-gray-300 text-gray-800 rounded font-bold shadow hover:bg-gray-400"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => { if (modal.onConfirm) modal.onConfirm(); setModal({ ...modal, open: false }); }}
+                    className="px-6 py-2 bg-red-500 text-white rounded font-bold shadow hover:bg-red-600"
+                  >
+                    Confirm
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
