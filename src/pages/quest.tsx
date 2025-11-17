@@ -2,12 +2,11 @@ import { useState, useEffect } from "react";
 import { useTheme } from "../components/theme";
 import { IoSunnyOutline } from "react-icons/io5";
 import { FaRegMoon } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { 
   FaLaptop, 
   FaRuler, 
-  FaGlobe, 
-  FaHome, 
+  FaGlobe,  
   FaUpload, 
   FaCube, 
   FaStar,
@@ -222,12 +221,7 @@ const Quest = () => {
     }
   };
 
-  const navigateToHub = () => {
-    console.log('Navigate to Hub');
-  };
-
   const [isInventoryModalOpen, setIsInventoryModalOpen] = useState(false);
-  const openInventoryModal = () => setIsInventoryModalOpen(true);
   const closeInventoryModal = () => setIsInventoryModalOpen(false);
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const fetchInventory = async () => {
@@ -299,7 +293,7 @@ const Quest = () => {
   };
 
   return (
-    <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
+    <div className="min-h-screen" >
       <div className="max-w-7xl mx-auto p-5 min-h-screen flex flex-col">
         {/* Header */}
         <header className={`flex justify-between items-center mb-8 p-6 rounded-2xl shadow-lg ${
@@ -335,7 +329,6 @@ const Quest = () => {
               {isDarkMode ? <IoSunnyOutline /> : <FaRegMoon />}
               <span>{isDarkMode ? 'Light' : 'Dark'}</span>
             </button>
-           
           </div>
         </header>
 
@@ -425,34 +418,24 @@ const Quest = () => {
         </div>
 
         {/* Bottom Navigation */}
-        <nav className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Link to="/"
-            onClick={navigateToHub}
-            className={`${isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-white' : 'bg-white hover:bg-gray-50 text-purple-600'}  p-6 rounded-xl font-bold text-base cursor-pointer hover:-translate-y-1 hover:shadow-xl flex flex-col items-center gap-3 shadow-lg`}
-          >
-            <FaHome className="text-3xl text-gray-700" />
-            <span>Back to Hub</span>
-          </Link>
+        <nav className="flex justify-end gap-4">
           <button 
             onClick={() => setIsUploadModalOpen(true)}
-            className="bg-linear-to-r from-purple-600 to-indigo-600 text-white border-none p-6 rounded-xl font-bold text-base cursor-pointer hover:from-purple-700 hover:to-indigo-700 hover:-translate-y-1 hover:shadow-xl flex flex-col items-center gap-3 shadow-lg"
+            className="bg-indigo-600 text-white border-none p-6 rounded-xl font-bold text-base cursor-pointer hover:bg-indigo-700 hover:-translate-y-1"
           >
-            <FaUpload className="text-3xl text-white" />
             <span>Upload Resource</span>
           </button>
           <button 
             onClick={checkInventory}
-            className={`${isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-white' : 'bg-white hover:bg-gray-50 text-purple-600'} p-6 rounded-xl font-bold text-base cursor-pointer hover:-translate-y-1 hover:shadow-xl flex flex-col items-center gap-3 shadow-lg`}
+            className={`${isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-white' : 'bg-white hover:bg-gray-50 text-black'} p-6 rounded-xl font-bold text-base cursor-pointer hover:-translate-y-1 border border-gray-600`}
           >
-            <FaCube className="text-3xl text-purple" />
             <span>Check Inventory</span>
           </button>
           {isInventoryModalOpen && renderInventoryModal()}
           <button 
             onClick={embarkOnQuest}
-            className="bg-linear-to-r from-green-500 to-emerald-600 text-white border-none p-6 rounded-xl font-bold text-base cursor-pointer hover:from-green-600 hover:to-emerald-700 hover:-translate-y-1 hover:shadow-xl flex flex-col items-center gap-3 shadow-lg"
+            className="bg-red-600 hover:bg-red-700  text-white border-none p-6 rounded-xl font-bold text-base cursor-pointer hover:-translate-y-1"
           >
-            <FaStar className="text-3xl text-white" />
             <span>Embark on Quest</span>
           </button>
         </nav>

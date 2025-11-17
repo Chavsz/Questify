@@ -18,7 +18,7 @@ const Sidebar = () => {
   };
   return (
     <div className={`p-4 sticky top-0 h-screen ${
-      isDarkMode ? 'dark-mode-card' : 'bg-[#fafaff]'
+      isDarkMode ? 'dark-mode-card' : 'bg-white'
     }`}>
       <div className="top-4 h-[calc(100vh-32px-50px)]">
         <h1 className={`text-xl md:text-2xl font-bold text-center mb-9 hidden md:block ${

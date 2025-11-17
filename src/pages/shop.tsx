@@ -170,7 +170,7 @@ const Shop = () => {
   );
 
   return (
-    <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
+    <div className="min-h-screen ">
       <div className="max-w-7xl mx-auto p-5">
         {/* Header */}
         <header className={`flex justify-between items-center mb-10 p-6 rounded-2xl shadow-lg ${

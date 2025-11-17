@@ -174,7 +174,7 @@ const Avatar = () => {
   };
 
   return (
-    <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
+    <div>
       <div className="max-w-7xl mx-auto p-5">
         {/* Header */}
         <header className={`flex justify-between items-center mb-10 p-6 rounded-2xl shadow-lg ${
@@ -350,21 +350,12 @@ const Avatar = () => {
         </div>
 
         {/* Bottom Navigation */}
-        <nav className="flex justify-between gap-6">
-          <Link to="/"
-            className={`px-10 py-5 rounded-xl font-bold text-lg cursor-pointer hover:-translate-y-1 hover:shadow-xl flex-1 max-w-sm text-center shadow-lg ${
-              isDarkMode 
-                ? 'bg-gray-800 hover:bg-gray-700 text-white border border-gray-600' 
-                : 'bg-white hover:bg-gray-50 text-purple-900 border border-purple-300'
-            }`}
-          >
-            🏠 Back to Hub
-          </Link>
+        <nav className="flex justify-end">
           <button 
             onClick={handleSaveEquipment}
-            className="bg-gradient-to-r from-green-500 to-green-600 text-white border-none px-10 py-5 rounded-xl font-bold text-lg cursor-pointer  hover:from-green-600 hover:to-green-700 hover:-translate-y-1 hover:shadow-xl flex-1 max-w-sm shadow-lg"
+            className="bg-green-600 text-white border-none px-7 py-4 rounded-xl font-bold text-lg cursor-pointer hover:bg-green-700 hover:shadow-xl"
           >
-            💾 Save Equipment
+            Save Equipment
           </button>
         </nav>
       </div>

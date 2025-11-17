@@ -1,4 +1,3 @@
-
 import { useTheme } from "../components/theme";
 import { IoSunnyOutline } from "react-icons/io5";
 import { FaRegMoon } from "react-icons/fa";
@@ -9,7 +8,6 @@ import { useEffect, useState } from "react";
 import { getUser, type User } from "../services/users";
 import { getUserQuestStats } from "../services/questStats";
 import type { QuestStats } from "../services/questStats";
-
 
 function Hub() {
   const { isDarkMode, toggleDarkMode } = useTheme();
@@ -34,7 +32,7 @@ function Hub() {
       try {
         const uData = await getUser(user.uid);
         setUserData(uData);
-        setStreak(uData && typeof uData.streak === 'number' ? uData.streak : 0);
+        setStreak(uData && typeof uData.streak === "number" ? uData.streak : 0);
       } catch (e) {
         setStreak(0);
         setUserData(null);
@@ -66,28 +64,37 @@ function Hub() {
   const questsCompleted = Object.values(questStats).reduce((a, b) => a + b, 0);
 
   return (
-    <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
+    <div className="min-h-screen" >
       <div className="max-w-7xl mx-auto p-5">
         {/* Header */}
-        <header className={`flex justify-between items-center mb-10 p-6 rounded-2xl shadow-lg ${
-          isDarkMode 
-            ? 'bg-gray-800 border border-gray-700' 
-            : 'bg-white border border-purple-200'
-        }`}>
+        <header
+          className={`flex justify-between items-center mb-10 p-6 rounded-2xl shadow-lg ${
+            isDarkMode
+              ? "bg-gray-800 border border-gray-700"
+              : "bg-white border border-purple-200"
+          }`}
+        >
           <div className="flex items-center gap-8">
-            <div className={`px-6 py-4 rounded-xl font-bold text-lg shadow-md ${
-              isDarkMode 
-                ? 'bg-purple-600 text-white' 
-                : 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white'
-            }`}>
+            <div
+              className={`px-6 py-4 rounded-xl font-bold text-lg shadow-md ${
+                isDarkMode
+                  ? "bg-purple-600 text-white"
+                  : "bg-gradient-to-r from-purple-600 to-indigo-600 text-white"
+              }`}
+            >
               🎮 Questify
             </div>
-            <div className={`px-6 py-4 rounded-xl font-bold text-lg shadow-md ${
-              isDarkMode 
-                ? 'bg-orange-600 text-white' 
-                : 'bg-gradient-to-r from-orange-500 to-red-500 text-white'
-            }`}>
-              🔥 Streak: {loadingStreak ? '...' : `${streak ?? 0} day${streak === 1 ? '' : 's'}`}
+            <div
+              className={`px-6 py-4 rounded-xl font-bold text-lg shadow-md ${
+                isDarkMode
+                  ? "bg-orange-600 text-white"
+                  : "bg-gradient-to-r from-orange-500 to-red-500 text-white"
+              }`}
+            >
+              🔥 Streak:{" "}
+              {loadingStreak
+                ? "..."
+                : `${streak ?? 0} day${streak === 1 ? "" : "s"}`}
             </div>
           </div>
           <div className="flex items-center gap-4">
@@ -100,7 +107,7 @@ function Hub() {
               }`}
             >
               {isDarkMode ? <IoSunnyOutline /> : <FaRegMoon />}
-              <span>{isDarkMode ? 'Light' : 'Dark'}</span>
+              <span>{isDarkMode ? "Light" : "Dark"}</span>
             </button>
           </div>
         </header>
@@ -111,30 +118,66 @@ function Hub() {
           <aside className="flex flex-col gap-6">
             {/* Important Info Cards */}
             <div className="flex flex-col gap-4">
-              <div className={`p-4 rounded-xl font-bold text-lg shadow-md text-center ${isDarkMode ? 'bg-gray-800 text-yellow-400 border border-gray-700' : 'bg-linear-to-r from-yellow-400 to-orange-500 text-white'}`}>💰 Coins: {coins}</div>
-              <div className={`p-4 rounded-xl font-bold text-lg shadow-md text-center ${isDarkMode ? 'bg-gray-800 text-blue-300 border border-gray-700' : 'bg-gradient-to-r from-blue-400 to-blue-600 text-white'}`}>⭐ Level: {level}</div>
-              <div className={`p-4 rounded-xl font-bold text-lg shadow-md text-center ${isDarkMode ? 'bg-gray-800 text-green-300 border border-gray-700' : 'bg-gradient-to-r from-green-400 to-green-600 text-white'}`}>
+              <div
+                className={`p-4 rounded-xl font-bold text-lg shadow-md text-center ${
+                  isDarkMode
+                    ? "bg-gray-800 text-yellow-400 border border-gray-700"
+                    : "bg-linear-to-r from-yellow-400 to-orange-500 text-white"
+                }`}
+              >
+                💰 Coins: {coins}
+              </div>
+              <div
+                className={`p-4 rounded-xl font-bold text-lg shadow-md text-center ${
+                  isDarkMode
+                    ? "bg-gray-800 text-blue-300 border border-gray-700"
+                    : "bg-gradient-to-r from-blue-400 to-blue-600 text-white"
+                }`}
+              >
+                ⭐ Level: {level}
+              </div>
+              <div
+                className={`p-4 rounded-xl font-bold text-lg shadow-md text-center ${
+                  isDarkMode
+                    ? "bg-gray-800 text-green-300 border border-gray-700"
+                    : "bg-gradient-to-r from-green-400 to-green-600 text-white"
+                }`}
+              >
                 📈 EXP: {exp} / {expToNext}
                 <div className="w-full h-3 bg-gray-200 rounded-full mt-2">
-                  <div className="h-3 rounded-full bg-green-500" style={{ width: `${expProgress}%` }}></div>
+                  <div
+                    className="h-3 rounded-full bg-green-500"
+                    style={{ width: `${expProgress}%` }}
+                  ></div>
                 </div>
               </div>
-              <div className={`p-4 rounded-xl font-bold text-lg shadow-md text-center ${isDarkMode ? 'bg-gray-800 text-pink-300 border border-gray-700' : 'bg-gradient-to-r from-pink-400 to-pink-600 text-white'}`}>🏆 Quests: {questsCompleted}</div>
+              <div
+                className={`p-4 rounded-xl font-bold text-lg shadow-md text-center ${
+                  isDarkMode
+                    ? "bg-gray-800 text-pink-300 border border-gray-700"
+                    : "bg-gradient-to-r from-pink-400 to-pink-600 text-white"
+                }`}
+              >
+                🏆 Quests: {questsCompleted}
+              </div>
             </div>
             <div className="flex flex-col items-center gap-6">
-              <div className={`w-36 h-36 rounded-full flex items-center justify-center text-6xl shadow-2xl ${
-                isDarkMode 
-                  ? 'bg-gradient-to-br from-purple-600 to-indigo-700' 
-                  : 'bg-gradient-to-br from-indigo-400 to-purple-600'
-              }`}>
+              <div
+                className={`w-36 h-36 rounded-full flex items-center justify-center text-6xl shadow-2xl ${
+                  isDarkMode
+                    ? "bg-gradient-to-br from-purple-600 to-indigo-700"
+                    : "bg-gradient-to-br from-indigo-400 to-purple-600"
+                }`}
+              >
                 ⚔️
               </div>
-              <Link to="/avatar"
+              <Link
+                to="/avatar"
                 onClick={handleEditAvatar}
                 className={`px-6 py-4 rounded-xl font-bold cursor-pointer hover:-translate-y-1 hover:shadow-xl text-center w-full shadow-lg ${
-                  isDarkMode 
-                    ? 'bg-gray-800 hover:bg-gray-700 text-white border border-gray-600' 
-                    : 'bg-white hover:bg-gray-50 text-purple-900 border border-purple-300'
+                  isDarkMode
+                    ? "bg-gray-800 hover:bg-gray-700 text-white border border-gray-600"
+                    : "bg-white hover:bg-gray-50 text-purple-900 border border-purple-300"
                 }`}
               >
                 Edit Avatar
@@ -142,54 +185,68 @@ function Hub() {
             </div>
           </aside>
 
-          {/* Center and Right Area */}
           <main className="flex flex-col gap-8">
-            <div className={`rounded-2xl p-10 flex justify-center items-center min-h-[400px] relative shadow-lg ${
-              isDarkMode 
-                ? 'bg-gray-800 border border-gray-700' 
-                : 'bg-gradient-to-br from-purple-100 to-indigo-100 border border-purple-200'
-            }`}>
-              <div className={`w-64 h-80 rounded-2xl flex items-center justify-center text-8xl shadow-2xl ${
-                isDarkMode 
-                  ? 'bg-gradient-to-br from-purple-600 to-indigo-700' 
-                  : 'bg-gradient-to-br from-indigo-400 to-purple-600'
-              }`}>
+            <div
+              className={`rounded-2xl p-10 flex justify-center items-center min-h-[400px] relative shadow-lg ${
+                isDarkMode
+                  ? "bg-gray-800 border border-gray-700"
+                  : "bg-white border border-purple-200"
+              }`}
+            >
+              <div className="w-64 h-80 rounded-2xl flex items-center justify-center text-8xl shadow-2xl bg-linear-to-br from-purple-600 to-indigo-700">
                 🛡️
               </div>
             </div>
-            <div className={`rounded-2xl p-8 min-h-[300px] shadow-lg ${
-              isDarkMode 
-                ? 'bg-gray-800 text-white border border-gray-700' 
-                : 'bg-white text-purple-900 border border-purple-200'
-            }`}>
-              <h3 className={`mb-6 text-2xl font-bold ${
-                isDarkMode ? 'text-white' : 'text-purple-900'
-              }`}>📊 Quests Completed</h3>
-              <div className={`h-64 rounded-xl flex flex-col items-center justify-center gap-4 shadow-inner ${
-                isDarkMode 
-                  ? 'bg-gray-700 text-gray-300' 
-                  : 'bg-gray-100 text-gray-600'
-              }`}>
+
+            {/* Weekly quest completion activity */}
+            <div
+              className={`rounded-2xl p-8 min-h-[300px] shadow-lg ${
+                isDarkMode
+                  ? "bg-gray-800 text-white border border-gray-700"
+                  : "bg-white text-purple-900 border border-purple-200"
+              }`}
+            >
+              <h3
+                className={`mb-6 text-xl font-bold ${
+                  isDarkMode ? "text-white" : "text-indigo-600"
+                }`}
+              >
+                Weekly quest completion activity
+              </h3>
+              <div
+                className={`h-64 rounded-xl flex flex-col items-center justify-center gap-4 shadow-inner ${
+                  isDarkMode
+                    ? "bg-gray-700 text-gray-300"
+                    : "bg-gray-100 text-gray-600"
+                }`}
+              >
                 {/* Dynamic Bar Graph */}
                 <div className="flex items-end gap-4 h-40">
-                  {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(day => {
-                    const val = questStats[day] || 0;
-                    // Max bar height 140px, scale by max value in week
-                    const max = Math.max(1, ...Object.values(questStats));
-                    const height = 40 + (max ? (100 * val / max) : 0); // min 40px
-                    return (
-                      <div key={day}
-                        className="w-10 bg-gradient-to-t from-indigo-400 to-purple-600 rounded-t-lg relative flex flex-col items-center"
-                        style={{ height: `${height}px` }}
-                      >
-                        <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs text-gray-600">{day}</span>
-                        <span className="absolute top-2 left-1/2 transform -translate-x-1/2 text-xs font-bold text-white">{loadingStats ? '...' : val}</span>
-                      </div>
-                    );
-                  })}
+                  {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(
+                    (day) => {
+                      const val = questStats[day] || 0;
+                      // Max bar height 140px, scale by max value in week
+                      const max = Math.max(1, ...Object.values(questStats));
+                      const height = 40 + (max ? (100 * val) / max : 0); // min 40px
+                      return (
+                        <div
+                          key={day}
+                          className="w-10 bg-indigo-600 rounded-t relative flex flex-col items-center"
+                          style={{ height: `${height}px` }}
+                        >
+                          <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs text-gray-600">
+                            {day}
+                          </span>
+                          <span className="absolute top-2 left-1/2 transform -translate-x-1/2 text-xs font-bold text-white">
+                            {loadingStats ? "..." : val}
+                          </span>
+                        </div>
+                      );
+                    }
+                  )}
                 </div>
                 <p className="mt-10 text-sm">
-                  {loadingStats ? 'Loading...' : 'Weekly quest completion activity'}
+                  {loadingStats ? "Loading..." : ""}
                 </p>
               </div>
             </div>
@@ -197,20 +254,10 @@ function Hub() {
         </div>
 
         {/* Bottom Navigation */}
-        <nav className="flex justify-between gap-6">
-          <Link
-            to="/shop"
-            className={`px-10 py-5 rounded-xl font-bold text-lg cursor-pointer hover:-translate-y-1 hover:shadow-xl flex-1 max-w-sm text-center shadow-lg ${
-              isDarkMode 
-                ? 'bg-gray-800 hover:bg-gray-700 text-white border border-gray-600' 
-                : 'bg-white hover:bg-gray-50 text-purple-900 border border-purple-300'
-            }`}
-          >
-            🛒 Shop
-          </Link>
+        <nav className="flex justify-end">
           <Link
             to="/quest"
-            className="bg-gradient-to-r from-red-500 to-red-600 text-white border-none px-10 py-5 rounded-xl font-bold text-lg cursor-pointer  hover:from-red-600 hover:to-red-700 hover:-translate-y-1 hover:shadow-xl flex-1 max-w-sm text-center shadow-lg"
+            className="bg-red-600  text-white border-none px-7 py-4 rounded-xl font-bold text-lg cursor-pointer hover:bg-red-700 hover:shadow-xl text-center shadow-lg"
           >
             ⚔️ Go on A Quest!
           </Link>
