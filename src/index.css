@@ -31,7 +31,7 @@
 
 /* Base styles with CSS variables */
 * {
-  @apply transition-colors duration-300;
+  @apply transition-colors duration-250;
 }
 
 body {

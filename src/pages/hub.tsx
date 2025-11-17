@@ -56,7 +56,6 @@ function Hub() {
   };
 
   // EXP/Level logic
-  const coins = userData?.coins ?? 0;
   const exp = userData?.exp ?? 0;
   const level = userData?.level ?? 1;
   const expToNext = 100 + (level - 1) * 50; // Example: 100, 150, 200, ...
@@ -65,33 +64,24 @@ function Hub() {
 
   return (
     <div className="min-h-screen" >
-      <div className="max-w-7xl mx-auto p-5">
+      <div className="">
         {/* Header */}
         <header
-          className={`flex justify-between items-center mb-10 p-6 rounded-2xl shadow-lg ${
+          className={`flex justify-between items-center mb-10 p-6 rounded-2xl ${
             isDarkMode
               ? "bg-gray-800 border border-gray-700"
-              : "bg-white border border-purple-200"
+              : "bg-white border border-gray-300"
           }`}
         >
-          <div className="flex items-center gap-8">
+          <div className="flex items-center">
             <div
-              className={`px-6 py-4 rounded-xl font-bold text-lg shadow-md ${
-                isDarkMode
-                  ? "bg-purple-600 text-white"
-                  : "bg-gradient-to-r from-purple-600 to-indigo-600 text-white"
-              }`}
-            >
-              🎮 Questify
-            </div>
-            <div
-              className={`px-6 py-4 rounded-xl font-bold text-lg shadow-md ${
+              className={`px-6 py-4 rounded-xl font-bold text-lg ${
                 isDarkMode
                   ? "bg-orange-600 text-white"
                   : "bg-gradient-to-r from-orange-500 to-red-500 text-white"
               }`}
             >
-              🔥 Streak:{" "}
+              Streak:{" "}
               {loadingStreak
                 ? "..."
                 : `${streak ?? 0} day${streak === 1 ? "" : "s"}`}
@@ -103,7 +93,7 @@ function Hub() {
               className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium hover:scale-105 shadow-md ${
                 isDarkMode
                   ? "bg-gray-700 hover:bg-gray-600 text-white border border-gray-600"
-                  : "bg-white hover:bg-gray-50 text-purple-900 border border-purple-300"
+                  : "bg-white hover:bg-gray-50 text-gray-600 border border-gray-300"
               }`}
             >
               {isDarkMode ? <IoSunnyOutline /> : <FaRegMoon />}
@@ -119,46 +109,37 @@ function Hub() {
             {/* Important Info Cards */}
             <div className="flex flex-col gap-4">
               <div
-                className={`p-4 rounded-xl font-bold text-lg shadow-md text-center ${
+                className={`p-4 rounded-xl font-bold text-lg text-center ${
                   isDarkMode
-                    ? "bg-gray-800 text-yellow-400 border border-gray-700"
-                    : "bg-linear-to-r from-yellow-400 to-orange-500 text-white"
+                    ? "bg-gray-800 text-white border border-gray-700"
+                    : "bg-white text-gray-600 border border-gray-300"
                 }`}
               >
-                💰 Coins: {coins}
+                Level: {level}
               </div>
               <div
-                className={`p-4 rounded-xl font-bold text-lg shadow-md text-center ${
+                className={`p-4 rounded-xl font-bold text-lg text-center ${
                   isDarkMode
-                    ? "bg-gray-800 text-blue-300 border border-gray-700"
-                    : "bg-gradient-to-r from-blue-400 to-blue-600 text-white"
+                    ? "bg-gray-800 text-white border border-gray-700"
+                    : "bg-white text-gray-600 border border-gray-300"
                 }`}
               >
-                ⭐ Level: {level}
-              </div>
-              <div
-                className={`p-4 rounded-xl font-bold text-lg shadow-md text-center ${
-                  isDarkMode
-                    ? "bg-gray-800 text-green-300 border border-gray-700"
-                    : "bg-gradient-to-r from-green-400 to-green-600 text-white"
-                }`}
-              >
-                📈 EXP: {exp} / {expToNext}
-                <div className="w-full h-3 bg-gray-200 rounded-full mt-2">
+                EXP: {exp} / {expToNext}
+                <div className="w-full h-2 bg-gray-200 rounded-full mt-2">
                   <div
-                    className="h-3 rounded-full bg-green-500"
+                    className="h-2 rounded-full bg-indigo-600"
                     style={{ width: `${expProgress}%` }}
                   ></div>
                 </div>
               </div>
               <div
-                className={`p-4 rounded-xl font-bold text-lg shadow-md text-center ${
+                className={`p-4 rounded-xl font-bold text-lg text-center ${
                   isDarkMode
-                    ? "bg-gray-800 text-pink-300 border border-gray-700"
-                    : "bg-gradient-to-r from-pink-400 to-pink-600 text-white"
+                    ? "bg-gray-800 text-white border border-gray-700"
+                    : "bg-white text-gray-600 border border-gray-300"
                 }`}
               >
-                🏆 Quests: {questsCompleted}
+                Quests: {questsCompleted}
               </div>
             </div>
             <div className="flex flex-col items-center gap-6">
@@ -176,8 +157,8 @@ function Hub() {
                 onClick={handleEditAvatar}
                 className={`px-6 py-4 rounded-xl font-bold cursor-pointer hover:-translate-y-1 hover:shadow-xl text-center w-full shadow-lg ${
                   isDarkMode
-                    ? "bg-gray-800 hover:bg-gray-700 text-white border border-gray-600"
-                    : "bg-white hover:bg-gray-50 text-purple-900 border border-purple-300"
+                    ? "bg-gray-800 hover:bg-gray-700 text-white border border-gray-700"
+                    : "bg-white hover:bg-gray-50 text-gray-600 border border-gray-300"
                 }`}
               >
                 Edit Avatar
@@ -190,7 +171,7 @@ function Hub() {
               className={`rounded-2xl p-10 flex justify-center items-center min-h-[400px] relative shadow-lg ${
                 isDarkMode
                   ? "bg-gray-800 border border-gray-700"
-                  : "bg-white border border-purple-200"
+                  : "bg-white border border-gray-300"
               }`}
             >
               <div className="w-64 h-80 rounded-2xl flex items-center justify-center text-8xl shadow-2xl bg-linear-to-br from-purple-600 to-indigo-700">
@@ -203,12 +184,12 @@ function Hub() {
               className={`rounded-2xl p-8 min-h-[300px] shadow-lg ${
                 isDarkMode
                   ? "bg-gray-800 text-white border border-gray-700"
-                  : "bg-white text-purple-900 border border-purple-200"
+                  : "bg-white border border-gray-300"
               }`}
             >
               <h3
                 className={`mb-6 text-xl font-bold ${
-                  isDarkMode ? "text-white" : "text-indigo-600"
+                  isDarkMode ? "text-white" : "text-gray-600"
                 }`}
               >
                 Weekly quest completion activity

@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useTheme } from "../components/theme";
 import { IoSunnyOutline } from "react-icons/io5";
 import { FaRegMoon } from "react-icons/fa";
-import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/authContexts/auth";
 import { getUser, addItemToInventory, updateUser, type InventoryItem } from "../services/users";
 
@@ -114,12 +113,12 @@ const Shop = () => {
       return (
         <div
           key={item.id}
-          className={`rounded-lg p-5 text-center cursor-pointer border-3 border-transparent hover:-translate-y-1 hover:shadow-lg hover:border-green-500 ${
+          className={`rounded-lg p-5 text-center cursor-pointer hover:-translate-y-1 hover:shadow-lg ${
             isSelected 
-              ? 'border-green-500 bg-green-50' 
+              ?  'border-indigo-600 border-3'
               : isDarkMode 
-                ? 'bg-gray-700 hover:bg-gray-600 border-gray-600' 
-                : 'bg-white hover:bg-gray-50 border-gray-200'
+                ? 'bg-gray-700 hover:bg-gray-600 border-gray-700 border' 
+                : ' border-gray-300 hover:bg-gray-50 border'
           }`}
           onClick={() => selectItem(item as ShopItem)}
         >
@@ -171,27 +170,20 @@ const Shop = () => {
 
   return (
     <div className="min-h-screen ">
-      <div className="max-w-7xl mx-auto p-5">
+      <div className="">
         {/* Header */}
-        <header className={`flex justify-between items-center mb-10 p-6 rounded-2xl shadow-lg ${
+        <header className={`flex justify-between items-center mb-10 p-6 rounded-2xl ${
           isDarkMode 
             ? 'bg-gray-800 border border-gray-700' 
-            : 'bg-white border border-purple-200'
+            : 'bg-white border border-gray-300'
         }`}>
           <div className="flex items-center gap-8">
-            <div className={`px-6 py-4 rounded-xl font-bold text-lg shadow-md ${
-              isDarkMode 
-                ? 'bg-purple-600 text-white' 
-                : 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white'
-            }`}>
-              🎮 Questify
-            </div>
             <div className={`px-6 py-4 rounded-xl font-bold text-lg shadow-md ${
               isDarkMode 
                 ? 'bg-orange-600 text-white' 
                 : 'bg-gradient-to-r from-orange-500 to-red-500 text-white'
             }`}>
-              🔥 Streak: {loadingStreak ? '...' : `${streak ?? 0} day${streak === 1 ? '' : 's'}`}
+              Streak: {loadingStreak ? '...' : `${streak ?? 0} day${streak === 1 ? '' : 's'}`}
             </div>
           </div>
           <div className="flex items-center gap-4">
@@ -200,7 +192,7 @@ const Shop = () => {
               className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium hover:scale-105 shadow-md ${
                 isDarkMode 
                   ? 'bg-gray-700 hover:bg-gray-600 text-white border border-gray-600' 
-                  : 'bg-white hover:bg-gray-50 text-purple-900 border border-purple-300'
+                  : 'bg-white hover:bg-gray-50 text-gray-600 border border-gray-300'
               }`}
             >
               {isDarkMode ? <IoSunnyOutline /> : <FaRegMoon />}
@@ -216,16 +208,16 @@ const Shop = () => {
             <div className={`p-4 rounded-lg text-center font-bold text-lg ${
               isDarkMode 
                 ? 'bg-gray-800 text-white border border-gray-700' 
-                : 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white border border-orange-300'
+                : 'bg-white text-gray-600 border border-gray-300'
             }`}>
-              💰 {userCoins} Coins
+              🟡 {userCoins} Coins
             </div>
             <div className={`p-5 rounded-lg text-center font-bold w-full ${
               isDarkMode 
                 ? 'bg-gray-800 text-white border border-gray-700' 
                 : 'bg-white text-gray-800 border border-gray-200'
             }`}>
-              <div className={isDarkMode ? 'text-white' : 'text-gray-800'}>🏪 Shop Owner</div>
+              <div className={isDarkMode ? 'text-white' : 'text-gray-800'}>Shop Owner</div>
               <div className="w-full h-52 bg-gradient-to-br from-red-400 to-orange-500 rounded-lg mt-4 flex items-center justify-center text-6xl">
                 🧙‍♂️
               </div>
@@ -239,9 +231,9 @@ const Shop = () => {
               : 'bg-white text-gray-800 border border-gray-200'
           }`}>
             <h2 className={`text-2xl font-bold mb-8 text-center ${
-              isDarkMode ? 'text-white' : 'text-gray-800'
+              isDarkMode ? 'text-white' : 'text-gray-600'
             }`}>
-              🛒 Items for Purchase
+              Items for Purchase
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
               {renderItems()}
@@ -250,37 +242,27 @@ const Shop = () => {
         </div>
 
         {/* Bottom Navigation */}
-        <nav className="flex justify-between gap-5">
-          <Link 
-            to="/"
-            className={`px-10 py-5 rounded-lg font-bold text-lg cursor-pointer hover:-translate-y-0.5 hover:shadow-lg flex-1 max-w-sm text-center ${
-              isDarkMode 
-                ? 'bg-gray-800 text-white border border-gray-700 hover:bg-gray-700' 
-                : 'bg-white text-gray-800 border border-gray-300 hover:bg-gray-50'
-            }`}
-          >
-          Back to Hub
-          </Link>
+        <nav className="flex justify-end gap-5">
           <button 
             onClick={openInventoryModal}
-            className={`px-10 py-5 rounded-lg font-bold text-lg cursor-pointer hover:-translate-y-0.5 hover:shadow-lg flex-1 max-w-sm ${
+            className={`px-7 py-4 rounded-lg font-bold text-lg cursor-pointer hover:shadow-lg ${
               isDarkMode 
-                ? 'bg-gray-800 text-white border border-gray-700 hover:bg-gray-700' 
-                : 'bg-white text-gray-800 border border-gray-300 hover:bg-gray-50'
+                ? 'bg-gray-600 text-white border border-gray-700 hover:bg-gray-700' 
+                : 'bg-white text-gray-600 border border-gray-300 hover:bg-gray-50'
             }`}
           >
-            🎒 Inventory
+            Inventory
           </button>
           <button 
             onClick={handlePurchase}
             disabled={!selectedItem}
-            className={`border-none px-10 py-5 rounded-lg font-bold text-lg cursor-pointer hover:-translate-y-0.5 flex-1 max-w-sm ${
+            className={`border-none px-7 py-4 rounded-lg font-bold text-lg cursor-pointer hover:shadow-lg ${
               selectedItem 
                 ? 'bg-green-500 text-white hover:bg-green-600' 
                 : 'bg-green-500 text-white hover:bg-green-600'
             }`}
           >
-            {selectedItem ? `💳 Buy ${selectedItem.name} (${selectedItem.price} coins)` : '💳 Purchase'}
+            {selectedItem ? `💳 Buy ${selectedItem.name} (${selectedItem.price} coins)` : 'Purchase'}
           </button>
         </nav>
       </div>

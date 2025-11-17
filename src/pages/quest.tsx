@@ -161,14 +161,14 @@ const Quest = () => {
   };
 
   const getQuestItemClasses = (status: string) => {
-    const baseClasses = "bg-white rounded-xl p-6 mb-4 flex items-center cursor-pointer border-l-4 hover:shadow-xl hover:scale-[1.02] shadow-md";
+    const baseClasses = "bg-white rounded-xl p-6 mb-4 flex items-center cursor-pointer border-l-4 hover:bg-gray-100 shadow-md";
     switch (status) {
       case 'completed':
-        return `${baseClasses} border-l-green-500 bg-green-50/30`;
+        return `${baseClasses} border-green-500 bg-green-50/30`;
       case 'in-progress':
-        return `${baseClasses} border-l-orange-500 bg-orange-50/30`;
+        return `${baseClasses} border-orange-500 bg-orange-50/30`;
       case 'not-started':
-        return `${baseClasses} border-l-gray-400 bg-gray-50/30`;
+        return `${baseClasses} border-gray-400 bg-gray-50/30`;
       default:
         return baseClasses;
     }
@@ -294,27 +294,20 @@ const Quest = () => {
 
   return (
     <div className="min-h-screen" >
-      <div className="max-w-7xl mx-auto p-5 min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col">
         {/* Header */}
-        <header className={`flex justify-between items-center mb-8 p-6 rounded-2xl shadow-lg ${
+        <header className={`flex justify-between items-center mb-8 p-6 rounded-2xl ${
           isDarkMode 
             ? 'bg-gray-800 border border-gray-700' 
-            : 'bg-white border border-purple-200'
+            : 'bg-white border border-gray-300'
         }`}>
           <div className="flex items-center gap-8">
-            <div className={`px-6 py-4 rounded-xl font-bold text-lg shadow-md ${
-              isDarkMode 
-                ? 'bg-purple-600 text-white' 
-                : 'bg-linear-to-r from-purple-600 to-indigo-600 text-white'
-            }`}>
-              🎮 Questify
-            </div>
-            <div className={`px-6 py-4 rounded-xl font-bold text-lg shadow-md ${
+            <div className={`px-6 py-4 rounded-xl font-bold text-lg ${
               isDarkMode 
                 ? 'bg-orange-600 text-white' 
                 : 'bg-linear-to-r from-orange-500 to-red-500 text-white'
             }`}>
-              🔥 Streak: {loadingStreak ? '...' : `${streak ?? 0} day${streak === 1 ? '' : 's'}`}
+              Streak: {loadingStreak ? '...' : `${streak ?? 0} day${streak === 1 ? '' : 's'}`}
             </div>
           </div>
           <div className="flex items-center gap-4">
@@ -323,7 +316,7 @@ const Quest = () => {
               className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium hover:scale-105 shadow-md ${
                 isDarkMode 
                   ? 'bg-gray-700 hover:bg-gray-600 text-white border border-gray-600' 
-                  : 'bg-white hover:bg-gray-50 text-purple-900 border border-purple-300'
+                  : 'bg-white hover:bg-gray-50 text-gray-600 border border-gray-300'
               }`}
             >
               {isDarkMode ? <IoSunnyOutline /> : <FaRegMoon />}
@@ -336,22 +329,19 @@ const Quest = () => {
         <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8 flex-1 mb-8">
           {/* Left Sidebar - Avatar */}
           <aside className="flex flex-col">
-            <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} text-white  p-6 rounded-2xl text-center font-bold shadow-lg`}>
-              <h3 className="text-xl font-bold mb-6">Avatar Character</h3>
+            <div className={`${isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-300'} p-5 rounded-2xl text-center font-bold`}>
+              <h3 className="text-xl font-bold mb-4">Avatar Character</h3>
               <div className="relative">
-                <div className="w-64 h-64 bg-linear-to-br from-indigo-400 to-purple-600 rounded-2xl flex items-center justify-center text-8xl shadow-lg">
+                <div className="w-64 h-64 bg-indigo-600 rounded-2xl flex items-center justify-center text-8xl shadow-lg">
                   ⚔️
-                </div>
-                <div className="absolute -bottom-2 -right-2 w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center shadow-lg">
-                  <FaStar className="text-white text-lg" />
                 </div>
               </div>
             </div>
           </aside>
 
           {/* Quest List Container */}
-          <main className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} text-white  rounded-2xl p-8 flex flex-col shadow-lg`}>
-            <h2 className="text-3xl font-bold mb-8 text-center text-white">Your Study Quests</h2>
+          <main className={`${isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-300'} rounded-2xl p-8 flex flex-col`}>
+            <h2 className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} text-2xl text-center mb-4 font-bold`}>Your Study Quests</h2>
             <div className="flex-1 overflow-y-auto max-h-[600px] space-y-4">
               {quests.map(quest => (
                 <div
@@ -362,7 +352,7 @@ const Quest = () => {
                   <div className="flex items-center gap-4 flex-1">
                     <div className="shrink-0">{quest.icon}</div>
                     <div className="flex-1">
-                      <div className="font-bold text-xl mb-2">{quest.name}</div>
+                      <div className="font-bold text-xl text-gray-600 mb-2">{quest.name}</div>
                       <div className="text-sm text-gray-600 mb-3">{quest.details}</div>
                       <div className="flex items-center gap-3 mb-3">
                         {getStatusBadge(quest.status)}
@@ -381,8 +371,9 @@ const Quest = () => {
                       </div>
                     </div>
                   </div>
+                  
                   <div className="flex flex-col gap-2 items-end text-sm text-gray-600 shrink-0 ml-4 mt-2">
-                    <div className="text-2xl font-bold text-purple-600">{quest.progress}</div>
+                    <div className="text-2xl font-bold text-gray-600">{quest.progress}</div>
                     <div className="text-sm">{quest.progressText}</div>
                     <div className="flex gap-2 mt-2">
                       <button
@@ -427,7 +418,7 @@ const Quest = () => {
           </button>
           <button 
             onClick={checkInventory}
-            className={`${isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-white' : 'bg-white hover:bg-gray-50 text-black'} p-6 rounded-xl font-bold text-base cursor-pointer hover:-translate-y-1 border border-gray-600`}
+            className={`${isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-white border border-gray-700' : 'bg-white hover:bg-gray-50 text-gray-600 border border-gray-300'} p-6 rounded-xl font-bold text-base cursor-pointer hover:-translate-y-1`}
           >
             <span>Check Inventory</span>
           </button>
