@@ -8,8 +8,6 @@ import {
   FaRuler, 
   FaGlobe,  
   FaUpload, 
-  FaCube, 
-  FaStar,
   FaFire,
   FaCheckCircle
 } from "react-icons/fa";
