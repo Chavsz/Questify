@@ -19,7 +19,7 @@ import type { GeneratedQuiz } from "../api/generate-quiz/generate_quiz";
 import { db } from "../firebase";
 import { collection, addDoc, getDocs, query, where, updateDoc, doc, deleteDoc } from "firebase/firestore";
 import { useAuth } from "../contexts/authContexts/auth";
-import { getUser, type InventoryItem } from "../services/users";
+import { getUser, updateUser, type InventoryItem } from "../services/users";
 
 interface QuestItem {
   id: string;
@@ -67,33 +67,43 @@ const Quest = () => {
   useEffect(() => {
     const loadQuests = async () => {
       if (!user) return;
-      
       try {
         const questsRef = collection(db, 'quests');
         const q = query(questsRef, where('userId', '==', user.uid));
         const querySnapshot = await getDocs(q);
-        
         const loadedQuests: QuestItem[] = [];
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
+        let awarded = false;
+        for (const docSnap of querySnapshot.docs) {
+          const data = docSnap.data();
           const quizData = data.quiz as GeneratedQuiz;
-          
-          // Determine status based on progress
           let status: 'completed' | 'in-progress' | 'not-started' = 'not-started';
           const totalQuestions = quizData.questions.length;
           const completedQuestions = data.completedQuestions || 0;
-          
           if (completedQuestions === 0) {
             status = 'not-started';
           } else if (completedQuestions === totalQuestions) {
             status = 'completed';
+            // Award exp and coins if not already awarded (add a field to mark awarded)
+            if (!data.rewarded) {
+              const userData = await getUser(user.uid);
+              let exp = userData?.exp ?? 0;
+              let level = userData?.level ?? 1;
+              let coins = userData?.coins ?? 1250;
+              const expToNext = 100 + (level - 1) * 50;
+              exp += 100; // Award 100 exp per quest
+              coins += 100; // Award 100 coins per quest
+              if (exp >= expToNext) {
+                exp -= expToNext;
+                level += 1;
+              }
+              await updateUser(user.uid, { exp, level, coins });
+              await updateDoc(doc(db, 'quests', docSnap.id), { rewarded: true });
+              awarded = true;
+            }
           } else {
             status = 'in-progress';
           }
-          
           const progress = totalQuestions > 0 ? Math.round((completedQuestions / totalQuestions) * 100) : 0;
-          
-          // Choose icon based on file type
           let icon = <FaLaptop className="text-blue-500 text-2xl" />;
           if (quizData.sourceFile.includes('.pdf')) {
             icon = <FaLaptop className="text-blue-500 text-2xl" />;
@@ -102,9 +112,8 @@ const Quest = () => {
           } else if (quizData.sourceFile.includes('.docx')) {
             icon = <FaGlobe className="text-blue-500 text-2xl" />;
           }
-          
           loadedQuests.push({
-            id: doc.id,
+            id: docSnap.id,
             name: quizData.title,
             details: `Based on: ${quizData.sourceFile} • ${totalQuestions} questions`,
             status,
@@ -113,14 +122,15 @@ const Quest = () => {
             icon,
             quizId: quizData.id
           });
-        });
-        
+        }
         setQuests(loadedQuests);
+        if (awarded) {
+          // Optionally, show a notification or reload to reflect new exp/coins
+        }
       } catch (error) {
         console.error('Error loading quests:', error);
       }
     };
-    
     loadQuests();
   }, [user]);
 
