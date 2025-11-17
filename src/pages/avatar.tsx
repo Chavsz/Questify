@@ -100,7 +100,7 @@ const Avatar = () => {
       return (
         <div
           key={item.id}
-          className={`rounded-xl p-6 text-center transition-all duration-300 cursor-pointer border-2 border-transparent hover:-translate-y-2 hover:shadow-xl hover:scale-105 ${
+          className={`rounded-xl p-6 text-center cursor-pointer border-2 border-transparent hover:-translate-y-2 hover:shadow-xl hover:scale-105 ${
             isEquipped 
               ? 'border-red-500 bg-red-50 shadow-lg' 
               : isDarkMode 
@@ -174,7 +174,7 @@ const Avatar = () => {
   };
 
   return (
-    <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-purple-50 to-indigo-100'} transition-colors duration-300`}>
+    <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
       <div className="max-w-7xl mx-auto p-5">
         {/* Header */}
         <header className={`flex justify-between items-center mb-10 p-6 rounded-2xl shadow-lg ${
@@ -201,7 +201,7 @@ const Avatar = () => {
           <div className="flex items-center gap-4">
             <button
               onClick={toggleDarkMode}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-300 hover:scale-105 shadow-md ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium hover:scale-105 shadow-md ${
                 isDarkMode 
                   ? 'bg-gray-700 hover:bg-gray-600 text-white border border-gray-600' 
                   : 'bg-white hover:bg-gray-50 text-purple-900 border border-purple-300'
@@ -221,7 +221,7 @@ const Avatar = () => {
             {/* Gender Selection */}
             <div className="flex justify-center gap-4 mb-2">
               <button
-                className={`px-5 py-2 rounded-lg font-bold transition-all duration-300 shadow-md hover:scale-105 flex items-center gap-2 text-base ${
+                className={`px-5 py-2 rounded-lg font-bold shadow-md hover:scale-105 flex items-center gap-2 text-base ${
                   gender === 'male'
                     ? 'bg-blue-500 text-white shadow-lg'
                     : isDarkMode
@@ -233,7 +233,7 @@ const Avatar = () => {
                 🧑‍🦱 Male
               </button>
               <button
-                className={`px-5 py-2 rounded-lg font-bold transition-all duration-300 shadow-md hover:scale-105 flex items-center gap-2 text-base ${
+                className={`px-5 py-2 rounded-lg font-bold shadow-md hover:scale-105 flex items-center gap-2 text-base ${
                   gender === 'female'
                     ? 'bg-pink-500 text-white shadow-lg'
                     : isDarkMode
@@ -283,7 +283,7 @@ const Avatar = () => {
             {/* Category Tabs */}
             <div className="flex gap-2 mb-6 flex-wrap justify-center">
               <button 
-                className={`px-5 py-2 rounded-lg font-bold transition-all duration-300 shadow-md hover:scale-105 ${
+                className={`px-5 py-2 rounded-lg font-bold shadow-md hover:scale-105 ${
                   currentCategory === 'all' 
                     ? 'bg-green-500 text-white shadow-lg' 
                     : isDarkMode 
@@ -295,7 +295,7 @@ const Avatar = () => {
                 All Items
               </button>
               <button 
-                className={`px-5 py-2 rounded-lg font-bold transition-all duration-300 shadow-md hover:scale-105 ${
+                className={`px-5 py-2 rounded-lg font-bold shadow-md hover:scale-105 ${
                   currentCategory === 'Headwear' 
                     ? 'bg-green-500 text-white shadow-lg' 
                     : isDarkMode 
@@ -307,7 +307,7 @@ const Avatar = () => {
                 👑 Headwear
               </button>
               <button 
-                className={`px-5 py-2 rounded-lg font-bold transition-all duration-300 shadow-md hover:scale-105 ${
+                className={`px-5 py-2 rounded-lg font-bold shadow-md hover:scale-105 ${
                   currentCategory === 'Body' 
                     ? 'bg-green-500 text-white shadow-lg' 
                     : isDarkMode 
@@ -319,7 +319,7 @@ const Avatar = () => {
                 🦺 Body
               </button>
               <button 
-                className={`px-5 py-2 rounded-lg font-bold transition-all duration-300 shadow-md hover:scale-105 ${
+                className={`px-5 py-2 rounded-lg font-bold shadow-md hover:scale-105 ${
                   currentCategory === 'Weapon' 
                     ? 'bg-green-500 text-white shadow-lg' 
                     : isDarkMode 
@@ -331,7 +331,7 @@ const Avatar = () => {
                 ⚔️ Weapon
               </button>
               <button 
-                className={`px-5 py-2 rounded-lg font-bold transition-all duration-300 shadow-md hover:scale-105 ${
+                className={`px-5 py-2 rounded-lg font-bold shadow-md hover:scale-105 ${
                   currentCategory === 'Accessory' 
                     ? 'bg-green-500 text-white shadow-lg' 
                     : isDarkMode 
@@ -352,7 +352,7 @@ const Avatar = () => {
         {/* Bottom Navigation */}
         <nav className="flex justify-between gap-6">
           <Link to="/"
-            className={`px-10 py-5 rounded-xl font-bold text-lg cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex-1 max-w-sm text-center shadow-lg ${
+            className={`px-10 py-5 rounded-xl font-bold text-lg cursor-pointer hover:-translate-y-1 hover:shadow-xl flex-1 max-w-sm text-center shadow-lg ${
               isDarkMode 
                 ? 'bg-gray-800 hover:bg-gray-700 text-white border border-gray-600' 
                 : 'bg-white hover:bg-gray-50 text-purple-900 border border-purple-300'
@@ -362,7 +362,7 @@ const Avatar = () => {
           </Link>
           <button 
             onClick={handleSaveEquipment}
-            className="bg-gradient-to-r from-green-500 to-green-600 text-white border-none px-10 py-5 rounded-xl font-bold text-lg cursor-pointer transition-all duration-300 hover:from-green-600 hover:to-green-700 hover:-translate-y-1 hover:shadow-xl flex-1 max-w-sm shadow-lg"
+            className="bg-gradient-to-r from-green-500 to-green-600 text-white border-none px-10 py-5 rounded-xl font-bold text-lg cursor-pointer  hover:from-green-600 hover:to-green-700 hover:-translate-y-1 hover:shadow-xl flex-1 max-w-sm shadow-lg"
           >
             💾 Save Equipment
           </button>

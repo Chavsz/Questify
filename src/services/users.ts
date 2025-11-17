@@ -34,6 +34,8 @@ export interface User {
     notifications: boolean;
   };
   streak?: number; // Login streak in days
+  lastQuestDate?: string; // YYYY-MM-DD format
+  questStats?: Record<string, number>;
   inventory?: InventoryItem[];
   exp?: number; // Experience points
   level?: number; // User level

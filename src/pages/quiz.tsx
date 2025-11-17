@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { db } from "../firebase";
 import { collection, getDocs, query, where, updateDoc, doc } from "firebase/firestore";
 import { getUser, updateUser } from "../services/users";
+import { recordQuestCompletion } from "../services/questStats";
 import type { GeneratedQuiz } from "../api/generate-quiz/generate_quiz";
 import { useAuth } from "../contexts/authContexts/auth";
 
@@ -79,6 +80,7 @@ const Quiz = () => {
             const quizData = data.quiz as GeneratedQuiz;
             if (quizData.id === quizId) {
               const newCompleted = (data.completedQuestions || 0) + 1;
+              const totalQuestions = quizData.questions.length;
               await updateDoc(doc(db, 'quests', docSnapshot.id), {
                 completedQuestions: newCompleted
               });
@@ -93,6 +95,9 @@ const Quiz = () => {
                 level += 1;
               }
               await updateUser(user.uid, { exp, level });
+              if (newCompleted >= totalQuestions && totalQuestions > 0) {
+                await recordQuestCompletion(user.uid);
+              }
             }
           });
         } catch (error) {

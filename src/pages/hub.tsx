@@ -66,7 +66,7 @@ function Hub() {
   const questsCompleted = Object.values(questStats).reduce((a, b) => a + b, 0);
 
   return (
-    <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-purple-50 to-indigo-100'} transition-colors duration-300`}>
+    <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
       <div className="max-w-7xl mx-auto p-5">
         {/* Header */}
         <header className={`flex justify-between items-center mb-10 p-6 rounded-2xl shadow-lg ${
@@ -93,7 +93,7 @@ function Hub() {
           <div className="flex items-center gap-4">
             <button
               onClick={toggleDarkMode}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-300 hover:scale-105 shadow-md ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium hover:scale-105 shadow-md ${
                 isDarkMode
                   ? "bg-gray-700 hover:bg-gray-600 text-white border border-gray-600"
                   : "bg-white hover:bg-gray-50 text-purple-900 border border-purple-300"
@@ -111,12 +111,12 @@ function Hub() {
           <aside className="flex flex-col gap-6">
             {/* Important Info Cards */}
             <div className="flex flex-col gap-4">
-              <div className={`p-4 rounded-xl font-bold text-lg shadow-md text-center ${isDarkMode ? 'bg-gray-800 text-yellow-400 border border-gray-700' : 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white'}`}>💰 Coins: {coins}</div>
+              <div className={`p-4 rounded-xl font-bold text-lg shadow-md text-center ${isDarkMode ? 'bg-gray-800 text-yellow-400 border border-gray-700' : 'bg-linear-to-r from-yellow-400 to-orange-500 text-white'}`}>💰 Coins: {coins}</div>
               <div className={`p-4 rounded-xl font-bold text-lg shadow-md text-center ${isDarkMode ? 'bg-gray-800 text-blue-300 border border-gray-700' : 'bg-gradient-to-r from-blue-400 to-blue-600 text-white'}`}>⭐ Level: {level}</div>
               <div className={`p-4 rounded-xl font-bold text-lg shadow-md text-center ${isDarkMode ? 'bg-gray-800 text-green-300 border border-gray-700' : 'bg-gradient-to-r from-green-400 to-green-600 text-white'}`}>
                 📈 EXP: {exp} / {expToNext}
                 <div className="w-full h-3 bg-gray-200 rounded-full mt-2">
-                  <div className="h-3 rounded-full bg-green-500 transition-all duration-500" style={{ width: `${expProgress}%` }}></div>
+                  <div className="h-3 rounded-full bg-green-500" style={{ width: `${expProgress}%` }}></div>
                 </div>
               </div>
               <div className={`p-4 rounded-xl font-bold text-lg shadow-md text-center ${isDarkMode ? 'bg-gray-800 text-pink-300 border border-gray-700' : 'bg-gradient-to-r from-pink-400 to-pink-600 text-white'}`}>🏆 Quests: {questsCompleted}</div>
@@ -131,7 +131,7 @@ function Hub() {
               </div>
               <Link to="/avatar"
                 onClick={handleEditAvatar}
-                className={`px-6 py-4 rounded-xl font-bold cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl text-center w-full shadow-lg ${
+                className={`px-6 py-4 rounded-xl font-bold cursor-pointer hover:-translate-y-1 hover:shadow-xl text-center w-full shadow-lg ${
                   isDarkMode 
                     ? 'bg-gray-800 hover:bg-gray-700 text-white border border-gray-600' 
                     : 'bg-white hover:bg-gray-50 text-purple-900 border border-purple-300'
@@ -200,7 +200,7 @@ function Hub() {
         <nav className="flex justify-between gap-6">
           <Link
             to="/shop"
-            className={`px-10 py-5 rounded-xl font-bold text-lg cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex-1 max-w-sm text-center shadow-lg ${
+            className={`px-10 py-5 rounded-xl font-bold text-lg cursor-pointer hover:-translate-y-1 hover:shadow-xl flex-1 max-w-sm text-center shadow-lg ${
               isDarkMode 
                 ? 'bg-gray-800 hover:bg-gray-700 text-white border border-gray-600' 
                 : 'bg-white hover:bg-gray-50 text-purple-900 border border-purple-300'
@@ -210,7 +210,7 @@ function Hub() {
           </Link>
           <Link
             to="/quest"
-            className="bg-gradient-to-r from-red-500 to-red-600 text-white border-none px-10 py-5 rounded-xl font-bold text-lg cursor-pointer transition-all duration-300 hover:from-red-600 hover:to-red-700 hover:-translate-y-1 hover:shadow-xl flex-1 max-w-sm text-center shadow-lg"
+            className="bg-gradient-to-r from-red-500 to-red-600 text-white border-none px-10 py-5 rounded-xl font-bold text-lg cursor-pointer  hover:from-red-600 hover:to-red-700 hover:-translate-y-1 hover:shadow-xl flex-1 max-w-sm text-center shadow-lg"
           >
             ⚔️ Go on A Quest!
           </Link>

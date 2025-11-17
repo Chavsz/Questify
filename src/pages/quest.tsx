@@ -162,7 +162,7 @@ const Quest = () => {
   };
 
   const getQuestItemClasses = (status: string) => {
-    const baseClasses = "bg-white rounded-xl p-6 mb-4 flex items-center transition-all duration-300 cursor-pointer border-l-4 hover:shadow-xl hover:scale-[1.02] shadow-md";
+    const baseClasses = "bg-white rounded-xl p-6 mb-4 flex items-center cursor-pointer border-l-4 hover:shadow-xl hover:scale-[1.02] shadow-md";
     switch (status) {
       case 'completed':
         return `${baseClasses} border-l-green-500 bg-green-50/30`;
@@ -248,18 +248,17 @@ const Quest = () => {
   };
 
   const renderInventoryModal = () => (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="relative bg-gradient-to-br from-yellow-100 to-orange-200 rounded-3xl shadow-2xl p-8 w-full max-w-2xl border-4 border-yellow-400 flex flex-col items-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+      <div className="relative bg-white rounded-3xl shadow-2xl p-8 w-full max-w-2xl border border-gray-500 flex flex-col items-center">
         <button
           onClick={closeInventoryModal}
-          className="absolute top-4 right-4 text-2xl font-bold text-gray-700 hover:text-red-500 bg-white rounded-full w-10 h-10 flex items-center justify-center shadow"
+          className="absolute top-4 right-4 text-2xl font-bold text-gray-700 bg-white rounded-full w-10 h-10 flex items-center justify-center shadow"
           aria-label="Close Inventory"
         >
           ×
         </button>
         <div className="flex items-center gap-3 mb-6">
-          <span className="text-4xl">🎒</span>
-          <span className="text-2xl font-bold text-yellow-700">Backpack</span>
+          <span className="text-2xl font-bold text-indigo-600">Backpack</span>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 w-full">
           {inventory.length === 0 ? (
@@ -269,10 +268,10 @@ const Quest = () => {
             </div>
           ) : (
             inventory.map(item => (
-              <div key={item.id} className="flex flex-col items-center bg-white rounded-xl shadow p-4 border-2 border-yellow-300">
+              <div key={item.id} className="flex flex-col items-center bg-white rounded-xl shadow p-4 border-2 border-gray-500">
                 <div className="text-5xl mb-2">{item.emoji}</div>
-                <div className="font-bold text-lg text-yellow-800 mb-1">{item.name}</div>
-                <div className="text-green-600 font-semibold">x{item.quantity}</div>
+                <div className="font-bold text-lg text-indigo-600 mb-1">{item.name}</div>
+                <div className="text-gray-600 font-semibold">x{item.quantity}</div>
               </div>
             ))
           )}
@@ -300,7 +299,7 @@ const Quest = () => {
   };
 
   return (
-    <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-purple-50 to-indigo-100'} transition-colors duration-300`}>
+    <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
       <div className="max-w-7xl mx-auto p-5 min-h-screen flex flex-col">
         {/* Header */}
         <header className={`flex justify-between items-center mb-8 p-6 rounded-2xl shadow-lg ${
@@ -327,7 +326,7 @@ const Quest = () => {
           <div className="flex items-center gap-4">
             <button
               onClick={toggleDarkMode}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-300 hover:scale-105 shadow-md ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium hover:scale-105 shadow-md ${
                 isDarkMode 
                   ? 'bg-gray-700 hover:bg-gray-600 text-white border border-gray-600' 
                   : 'bg-white hover:bg-gray-50 text-purple-900 border border-purple-300'
@@ -429,21 +428,21 @@ const Quest = () => {
         <nav className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Link to="/"
             onClick={navigateToHub}
-            className={`${isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-white' : 'bg-white hover:bg-gray-50 text-purple-600'}  p-6 rounded-xl font-bold text-base cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col items-center gap-3 shadow-lg`}
+            className={`${isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-white' : 'bg-white hover:bg-gray-50 text-purple-600'}  p-6 rounded-xl font-bold text-base cursor-pointer hover:-translate-y-1 hover:shadow-xl flex flex-col items-center gap-3 shadow-lg`}
           >
             <FaHome className="text-3xl text-gray-700" />
             <span>Back to Hub</span>
           </Link>
           <button 
             onClick={() => setIsUploadModalOpen(true)}
-            className="bg-linear-to-r from-purple-600 to-indigo-600 text-white border-none p-6 rounded-xl font-bold text-base cursor-pointer transition-all duration-300 hover:from-purple-700 hover:to-indigo-700 hover:-translate-y-1 hover:shadow-xl flex flex-col items-center gap-3 shadow-lg"
+            className="bg-linear-to-r from-purple-600 to-indigo-600 text-white border-none p-6 rounded-xl font-bold text-base cursor-pointer hover:from-purple-700 hover:to-indigo-700 hover:-translate-y-1 hover:shadow-xl flex flex-col items-center gap-3 shadow-lg"
           >
             <FaUpload className="text-3xl text-white" />
             <span>Upload Resource</span>
           </button>
           <button 
             onClick={checkInventory}
-            className={`${isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-white' : 'bg-white hover:bg-gray-50 text-purple-600'} p-6 rounded-xl font-bold text-base cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col items-center gap-3 shadow-lg`}
+            className={`${isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-white' : 'bg-white hover:bg-gray-50 text-purple-600'} p-6 rounded-xl font-bold text-base cursor-pointer hover:-translate-y-1 hover:shadow-xl flex flex-col items-center gap-3 shadow-lg`}
           >
             <FaCube className="text-3xl text-purple" />
             <span>Check Inventory</span>
@@ -451,7 +450,7 @@ const Quest = () => {
           {isInventoryModalOpen && renderInventoryModal()}
           <button 
             onClick={embarkOnQuest}
-            className="bg-linear-to-r from-green-500 to-emerald-600 text-white border-none p-6 rounded-xl font-bold text-base cursor-pointer transition-all duration-300 hover:from-green-600 hover:to-emerald-700 hover:-translate-y-1 hover:shadow-xl flex flex-col items-center gap-3 shadow-lg"
+            className="bg-linear-to-r from-green-500 to-emerald-600 text-white border-none p-6 rounded-xl font-bold text-base cursor-pointer hover:from-green-600 hover:to-emerald-700 hover:-translate-y-1 hover:shadow-xl flex flex-col items-center gap-3 shadow-lg"
           >
             <FaStar className="text-3xl text-white" />
             <span>Embark on Quest</span>
@@ -465,7 +464,7 @@ const Quest = () => {
           <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} text-purple-900 rounded-2xl p-8 max-w-lg w-11/12 shadow-2xl`}>
             <h2 className="text-3xl font-bold mb-6 text-center text-purple-600">Upload Study Material</h2>
             <div 
-              className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center mb-6 cursor-pointer transition-all duration-300 hover:border-purple-500 hover:bg-purple-50/30"
+              className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center mb-6 cursor-pointer hover:border-purple-500 hover:bg-purple-50/30"
               onClick={() => document.getElementById('fileInput')?.click()}
             >
               <FaUpload className="text-6xl text-purple-500 mb-4 mx-auto" />
@@ -487,14 +486,14 @@ const Quest = () => {
             <div className="flex gap-4">
               <button 
                 onClick={() => setIsUploadModalOpen(false)}
-                className="flex-1 p-4 border-none rounded-xl font-bold cursor-pointer transition-all duration-300 hover:-translate-y-1 bg-gray-200 text-gray-600 hover:bg-gray-300"
+                className="flex-1 p-4 border-none rounded-xl font-bold cursor-pointer hover:-translate-y-1 bg-gray-200 text-gray-600 hover:bg-gray-300"
               >
                 Cancel
               </button>
               <button 
                 onClick={handleUpload}
                 disabled={isGenerating}
-                className="flex-1 p-4 border-none rounded-xl font-bold cursor-pointer transition-all duration-300 hover:-translate-y-1 bg-linear-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 p-4 border-none rounded-xl font-bold cursor-pointer hover:-translate-y-1 bg-linear-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isGenerating ? 'Generating...' : 'Generate Quest'}
               </button>
