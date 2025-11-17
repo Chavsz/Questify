@@ -455,7 +455,11 @@ const Quiz = () => {
                   <button key={item.id} onClick={() => useItem(item)} disabled={item.quantity <= 0}
                     className={`flex flex-col items-center bg-white rounded-xl shadow p-4 border-2 border-purple-300 hover:bg-purple-100 transition-all duration-200 ${item.quantity <= 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
-                    <div className="text-5xl mb-2">{item.emoji}</div>
+                    <div className="text-5xl mb-2">
+                      {typeof item.emoji === 'string' && item.emoji.endsWith('.png')
+                        ? <img src={item.emoji} alt={item.name} className="object-contain w-14 h-14" style={{imageRendering:'pixelated'}} />
+                        : item.emoji}
+                    </div>
                     <div className="font-bold text-lg text-purple-800 mb-1">{item.name}</div>
                     <div className="text-gray-600 text-xs mb-1">x{item.quantity}</div>
                     <div className="text-gray-500 text-xs text-center">

@@ -1,3 +1,8 @@
+import charm from '../assets/Ruby.png';
+import heal from '../assets/HealthPotionMedium.png';
+import clue from '../assets/KeyIron.png';
+import shield from '../assets/ShieldGold1.png';
+import mana from '../assets/ManaPotionMedium.png';
 import { useState, useEffect } from "react";
 import { useTheme } from "../components/theme";
 import { IoSunnyOutline } from "react-icons/io5";
@@ -15,7 +20,7 @@ interface ShopItem {
   name: string;
   price: number;
   category: string;
-  emoji: string;
+  emoji: string; // emoji or image path
   slot: string;
   description: string;
 }
@@ -67,7 +72,7 @@ const Shop = () => {
       name: "Healing Potion",
       price: 50,
       category: "consumables",
-      emoji: "🧪",
+      emoji: heal,
       description: "Restore 50 HP",
       slot: "inventory",
     },
@@ -75,164 +80,39 @@ const Shop = () => {
       id: 2,
       name: "Clue Token",
       price: 30,
-      category: "Accessories",
-      emoji: "🔍",
+      category: "consumables",
+      emoji: clue,
       description: "Get a hint",
-      slot: "accessory",
+      slot: "inventory",
     },
     {
       id: 3,
       name: "Magic Shield",
       price: 150,
-      category: "Accessories",
-      emoji: "🛡️",
+      category: "consumables",
+      emoji: shield,
       description: "+20 Defense",
-      slot: "accessory",
+      slot: "inventory",
     },
     {
       id: 4,
       name: "Energy Drink",
       price: 40,
-      category: "Consumables",
-      emoji: "🥤",
-      description: "Extra time",
+      category: "consumables",
+      emoji: mana,
+      description: "Bonus points",
       slot: "inventory",
     },
     {
       id: 5,
       name: "Lucky Charm",
       price: 120,
-      category: "Accessories",
-      emoji: "🍀",
+      category: "consumables",
+      emoji: charm,
       description: "Bonus points",
-      slot: "accessory",
+      slot: "inventory",
     },
-    {
-      id: 6,
-      name: "Warrior Helmet",
-      price: 60,
-      category: "Headwear",
-      emoji: "⛑️",
-      description: "Bonus points",
-      slot: "head",
-    },
-    {
-      id: 7,
-      name: "Crown",
-      price: 70,
-      category: "Headwear",
-      emoji: "👑",
-      description: "Bonus points",
-      slot: "head",
-    },
-    {
-      id: 8,
-      name: "Wizard Hat",
-      price: 70,
-      category: "Headwear",
-      emoji: "🎩",
-      description: "Bonus points",
-      slot: "head",
-    },
-    {
-      id: 9,
-      name: "Gold Armor",
-      price: 65,
-      category: "Body",
-      emoji: "🦺",
-      description: "Bonus points",
-      slot: "body",
-    },
-    {
-      id: 10,
-      name: "Blue Tunic",
-      price: 85,
-      category: "Body",
-      emoji: "👕",
-      description: "Bonus points",
-      slot: "body",
-    },
-    {
-      id: 11,
-      name: "Leather Vest",
-      price: 100,
-      category: "Body",
-      emoji: "🧥",
-      description: "Bonus points",
-      slot: "body",
-    },
-    {
-      id: 12,
-      name: "Speed Boots",
-      price: 45,
-      category: "Footwear",
-      emoji: "👢",
-      description: "Bonus points",
-      slot: "feet",
-    },
-    {
-      id: 13,
-      name: "Iron Boots",
-      price: 50,
-      category: "Footwear",
-      emoji: "🥾",
-      description: "Bonus points",
-      slot: "feet",
-    },
-    {
-      id: 14,
-      name: "Red Cape",
-      price: 50,
-      category: "Accessory",
-      emoji: "🧣",
-      description: "Bonus points",
-      slot: "back",
-    },
-    {
-      id: 15,
-      name: "Iron Sword",
-      price: 140,
-      category: "Weapon",
-      emoji: "⚔️",
-      description: "Bonus points",
-      slot: "weapon",
-    },
-    {
-      id: 16,
-      name: "Magic Wand",
-      price: 90,
-      category: "Weapon",
-      emoji: "🪄",
-      description: "Bonus points",
-      slot: "weapon",
-    },
-    {
-      id: 17,
-      name: "Battle Axe",
-      price: 80,
-      category: "Weapon",
-      emoji: "🪓",
-      description: "Bonus points",
-      slot: "weapon",
-    },
-    {
-      id: 18,
-      name: "Leather Gloves",
-      price: 75,
-      category: "Accessory",
-      emoji: "🧤",
-      description: "Bonus points",
-      slot: "hands",
-    },
-    {
-      id: 19,
-      name: "Gold Ring",
-      price: 90,
-      category: "Accessory",
-      emoji: "💍",
-      description: "Bonus points",
-      slot: "ring",
-    },
+    
   ];
 
   const openInventoryModal = () => setIsInventoryModalOpen(true);
@@ -329,7 +209,9 @@ const Shop = () => {
           onClick={() => selectItem(item as ShopItem)}
         >
           <div className="w-full h-32 bg-gradient-to-br from-indigo-400 to-purple-600 rounded-lg mb-4 flex items-center justify-center text-5xl">
-            {item.emoji}
+            {typeof item.emoji === 'string' && item.emoji.endsWith('.png')
+              ? <img src={item.emoji} alt={item.name} className="object-contain w-20 h-20" style={{imageRendering:'pixelated'}} />
+              : item.emoji}
           </div>
           <div
             className={`font-bold mb-3 text-base ${
@@ -368,7 +250,11 @@ const Shop = () => {
           ) : (
             inventory.map(item => (
               <div key={item.id} className="flex flex-col items-center bg-white rounded-xl shadow p-4 border-2 border-gray-500">
-                <div className="text-5xl mb-2">{item.emoji}</div>
+                <div className="text-5xl mb-2">
+                  {typeof item.emoji === 'string' && item.emoji.endsWith('.png')
+                    ? <img src={item.emoji} alt={item.name} className="object-contain w-14 h-14" style={{imageRendering:'pixelated'}} />
+                    : item.emoji}
+                </div>
                 <div className="font-bold text-lg text-indigo-600 mb-1">{item.name}</div>
                 <div className="text-gray-600 font-semibold">x{item.quantity}</div>
               </div>
@@ -443,7 +329,7 @@ return (
         Items for Purchase
       </h2>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-7">
+      <div className="grid sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-7">
         {renderItems()}
       </div>
     </main>

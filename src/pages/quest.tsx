@@ -290,7 +290,11 @@ const Quest = () => {
           ) : (
             inventory.map(item => (
               <div key={item.id} className="flex flex-col items-center bg-white rounded-xl shadow p-4 border-2 border-gray-500">
-                <div className="text-5xl mb-2">{item.emoji}</div>
+                <div className="text-5xl mb-2">
+                  {typeof item.emoji === 'string' && item.emoji.endsWith('.png')
+                    ? <img src={item.emoji} alt={item.name} className="object-contain w-14 h-14" style={{imageRendering:'pixelated'}} />
+                    : item.emoji}
+                </div>
                 <div className="font-bold text-lg text-indigo-600 mb-1">{item.name}</div>
                 <div className="text-gray-600 font-semibold">x{item.quantity}</div>
               </div>
