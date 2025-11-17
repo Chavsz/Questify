@@ -379,127 +379,109 @@ const Shop = () => {
     </div>
   );
 
-  return (
-    <div className="min-h-screen ">
-      <div className="">
-        {/* Header */}
-        <header
-          className={`flex justify-between items-center mb-10 p-6 rounded-2xl ${
-            isDarkMode
-              ? "bg-gray-800 border border-gray-700"
-              : "bg-white border border-gray-300"
-          }`}
-        >
-          <div className="flex items-center gap-8">
-            <div
-              className={`px-6 py-4 rounded-xl font-bold text-lg shadow-md ${
-                isDarkMode
-                  ? "bg-orange-600 text-white"
-                  : "bg-gradient-to-r from-orange-500 to-red-500 text-white"
-              }`}
-            >
-              Streak:{" "}
-              {loadingStreak
-                ? "..."
-                : `${streak ?? 0} day${streak === 1 ? "" : "s"}`}
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <button
-              onClick={toggleDarkMode}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium hover:scale-105 shadow-md ${
-                isDarkMode
-                  ? "bg-gray-700 hover:bg-gray-600 text-white border border-gray-600"
-                  : "bg-white hover:bg-gray-50 text-gray-600 border border-gray-300"
-              }`}
-            >
-              {isDarkMode ? <IoSunnyOutline /> : <FaRegMoon />}
-              <span>{isDarkMode ? "Light" : "Dark"}</span>
-            </button>
-          </div>
-        </header>
-
-        {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8 mb-10">
-          {/* Left Sidebar */}
-          <aside className="flex flex-col gap-5">
-            <div
-              className={`p-4 rounded-lg text-center font-bold text-lg ${
-                isDarkMode
-                  ? "bg-gray-800 text-white border border-gray-700"
-                  : "bg-white text-gray-600 border border-gray-300"
-              }`}
-            >
-              🟡 {userCoins} Coins
-            </div>
-            <div
-              className={`p-5 rounded-lg text-center font-bold w-full ${
-                isDarkMode
-                  ? "bg-gray-800 text-white border border-gray-700"
-                  : "bg-white text-gray-800 border border-gray-200"
-              }`}
-            >
-              <div className={isDarkMode ? "text-white" : "text-gray-800"}>
-                Shop Owner
-              </div>
-              <div className="w-full h-52 bg-gradient-to-br from-red-400 to-orange-500 rounded-lg mt-4 flex items-center justify-center text-6xl">
-                🧙‍♂️
-              </div>
-            </div>
-          </aside>
-
-          {/* Display Area */}
-          <main
-            className={`rounded-2xl p-10 min-h-[500px] ${
-              isDarkMode
-                ? "bg-gray-800 text-white border border-gray-700"
-                : "bg-white text-gray-800 border border-gray-200"
-            }`}
-          >
-            <h2
-              className={`text-2xl font-bold mb-8 text-center ${
-                isDarkMode ? "text-white" : "text-gray-600"
-              }`}
-            >
-              Items for Purchase
-            </h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
-              {renderItems()}
-            </div>
-          </main>
-        </div>
-
-        {/* Bottom Navigation */}
-        <nav className="flex justify-end gap-5">
-          <button
-            onClick={openInventoryModal}
-            className={`px-7 py-4 rounded-lg font-bold text-lg cursor-pointer hover:shadow-lg ${
-              isDarkMode
-                ? "bg-gray-600 text-white border border-gray-700 hover:bg-gray-700"
-                : "bg-white text-gray-600 border border-gray-300 hover:bg-gray-50"
-            }`}
-          >
-            Inventory
-          </button>
-          <button
-            onClick={handlePurchase}
-            disabled={!selectedItem}
-            className={`border-none px-7 py-4 rounded-lg font-bold text-lg cursor-pointer hover:shadow-lg ${
-              selectedItem
-                ? "bg-green-500 text-white hover:bg-green-600"
-                : "bg-green-500 text-white hover:bg-green-600"
-            }`}
-          >
-            {selectedItem
-              ? `💳 Buy ${selectedItem.name} (${selectedItem.price} coins)`
-              : "Purchase"}
-          </button>
-        </nav>
+return (
+  <div className="min-h-screen">
+    {/* === HEADER === */}
+    <header
+      className={`flex justify-between items-center mb-6 p-6 rounded-2xl ${
+        isDarkMode
+          ? "bg-gray-800 border border-gray-700"
+          : "bg-white border border-gray-300"
+      }`}
+    >
+      {/* Streak */}
+      <div
+        className={`px-6 py-4 rounded-xl font-bold text-lg shadow-md ${
+          isDarkMode
+            ? "bg-orange-600 text-white"
+            : "bg-gradient-to-r from-orange-500 to-red-500 text-white"
+        }`}
+      >
+        Streak: {loadingStreak ? "..." : `${streak ?? 0} day${streak === 1 ? "" : "s"}`}
       </div>
-      {isInventoryModalOpen && renderInventoryModal()}
-      {renderModal()}
+
+      {/* Toggle Theme */}
+      <button
+        onClick={toggleDarkMode}
+        className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium hover:scale-105 shadow-md ${
+          isDarkMode
+            ? "bg-gray-700 hover:bg-gray-600 text-white border border-gray-600"
+            : "bg-white hover:bg-gray-50 text-gray-600 border border-gray-300"
+        }`}
+      >
+        {isDarkMode ? <IoSunnyOutline /> : <FaRegMoon />}
+        <span>{isDarkMode ? "Light" : "Dark"}</span>
+      </button>
+    </header>
+
+    {/* === COINS DISPLAY (SEPARATE — not inside header) === */}
+    <div className="flex justify-start mb-8">
+      <div
+        className={`px-8 py-5 rounded-2xl font-bold text-2xl shadow-md flex items-center gap-3 ${
+          isDarkMode
+            ? "bg-gray-700 text-yellow-300 border border-gray-600"
+            : "bg-yellow-200 text-yellow-800 border border-yellow-300"
+        }`}
+      >
+        🟡 {userCoins} Coins
+      </div>
     </div>
-  );
+
+    {/* === ITEMS SECTION === */}
+    <main
+      className={`rounded-2xl p-10 mb-10 min-height-[500px] ${
+        isDarkMode
+          ? "bg-gray-800 text-white border border-gray-700"
+          : "bg-white text-gray-800 border border-gray-200"
+      }`}
+    >
+      <h2
+        className={`text-3xl font-bold mb-8 text-center ${
+          isDarkMode ? "text-white" : "text-gray-700"
+        }`}
+      >
+        Items for Purchase
+      </h2>
+
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-7">
+        {renderItems()}
+      </div>
+    </main>
+
+    {/* === BOTTOM BUTTONS === */}
+    <nav className="flex justify-end gap-5">
+      <button
+        onClick={openInventoryModal}
+        className={`px-7 py-4 rounded-lg font-bold text-lg cursor-pointer hover:shadow-lg ${
+          isDarkMode
+            ? "bg-gray-600 text-white border border-gray-700 hover:bg-gray-700"
+            : "bg-white text-gray-600 border border-gray-300 hover:bg-gray-50"
+        }`}
+      >
+        Inventory
+      </button>
+
+      <button
+        onClick={handlePurchase}
+        disabled={!selectedItem}
+        className={`px-7 py-4 rounded-lg font-bold text-lg cursor-pointer hover:shadow-lg ${
+          selectedItem
+            ? "bg-green-500 text-white hover:bg-green-600"
+            : "bg-green-400 text-white opacity-50"
+        }`}
+      >
+        {selectedItem
+          ? `💳 Buy ${selectedItem.name} (${selectedItem.price} coins)`
+          : "Purchase"}
+      </button>
+    </nav>
+
+    {isInventoryModalOpen && renderInventoryModal()}
+    {renderModal()}
+  </div>
+);
+
+
 };
 
 export default Shop;

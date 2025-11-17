@@ -1,3 +1,4 @@
+import knightWalkGif from '../assets/walking avatar.gif';
 import { useTheme } from "../components/theme";
 import { IoSunnyOutline } from "react-icons/io5";
 import { FaRegMoon } from "react-icons/fa";
@@ -174,9 +175,16 @@ function Hub() {
                   : "bg-white border border-gray-300"
               }`}
             >
-              <div className="w-64 h-80 rounded-2xl flex items-center justify-center text-8xl shadow-2xl bg-linear-to-br from-purple-600 to-indigo-700">
-                🛡️
+              {/* === REPLACED SHIELD WITH GIF === */}
+              <div className="w-64 h-80 rounded-2xl flex items-center justify-center shadow-2xl overflow-hidden">
+                <img
+                  src={knightWalkGif}
+                  alt="Walking Avatar"
+                  className="object-contain w-full h-full"
+                  style={{ transform: "scale(5)", imageRendering: "pixelated" }}
+                  />
               </div>
+              {/* === END REPLACEMENT === */}
             </div>
 
             {/* Weekly quest completion activity */}
