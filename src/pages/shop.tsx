@@ -31,6 +31,7 @@ const Shop = () => {
   const user = authContext?.currentUser;
   const [isInventoryModalOpen, setIsInventoryModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<ShopItem | null>(null);
+  const [purchaseQuantity, setPurchaseQuantity] = useState(1);
   const [modal, setModal] = useState<{ open: boolean; title: string; message: string; type: 'success' | 'error' | 'info' }>({ open: false, title: '', message: '', type: 'info' });
   const [userCoins, setUserCoins] = useState(0);
   const [streak, setStreak] = useState<number | null>(null);
@@ -78,11 +79,11 @@ const Shop = () => {
     },
     {
       id: 2,
-      name: "Clue Token",
-      price: 30,
+      name: "Speedrun Key",
+      price: 9999,
       category: "consumables",
       emoji: clue,
-      description: "Get a hint",
+      description: "Instantly finish a quest",
       slot: "inventory",
     },
     {
@@ -120,6 +121,7 @@ const Shop = () => {
 
   const selectItem = (item: ShopItem) => {
     setSelectedItem(item);
+    setPurchaseQuantity(1);
   };
 
   const handlePurchase = async () => {
@@ -127,22 +129,27 @@ const Shop = () => {
       setModal({ open: true, title: "No Item Selected", message: "Please select an item to purchase.", type: "error" });
       return;
     }
-    if (userCoins < selectedItem.price) {
-      setModal({ open: true, title: "Not Enough Coins", message: `You need ${selectedItem.price} coins but only have ${userCoins} coins.`, type: "error" });
+    if (purchaseQuantity < 1 || !Number.isInteger(purchaseQuantity)) {
+      setModal({ open: true, title: "Invalid Quantity", message: "Please enter a valid quantity (1 or more).", type: "error" });
+      return;
+    }
+    const totalCost = selectedItem.price * purchaseQuantity;
+    if (userCoins < totalCost) {
+      setModal({ open: true, title: "Not Enough Coins", message: `You need ${totalCost} coins but only have ${userCoins} coins.`, type: "error" });
       return;
     }
     if (!user) {
       setModal({ open: true, title: "Not Logged In", message: "You must be logged in to purchase items.", type: "error" });
       return;
     }
-    // Deduct coins in Firestore and add item
-    const newCoins = userCoins - selectedItem.price;
+    // Deduct coins in Firestore and add item(s)
+    const newCoins = userCoins - totalCost;
     await updateUser(user.uid, { coins: newCoins });
     setUserCoins(newCoins);
     await addItemToInventory(user.uid, {
       id: selectedItem.id,
       name: selectedItem.name,
-      quantity: 1,
+      quantity: purchaseQuantity,
       emoji: selectedItem.emoji,
       slot: selectedItem.slot,
     });
@@ -153,10 +160,11 @@ const Shop = () => {
     setModal({
       open: true,
       title: "Purchase Successful!",
-      message: `You bought: ${selectedItem.name}\nCost: ${selectedItem.price} coins\nRemaining coins: ${userData?.coins ?? newCoins}`,
+      message: `You bought: ${selectedItem.name} x${purchaseQuantity}\nCost: ${totalCost} coins\nRemaining coins: ${userData?.coins ?? newCoins}`,
       type: "success"
     });
     setSelectedItem(null);
+    setPurchaseQuantity(1);
   };
   // Modal component
   const renderModal = () => (
@@ -220,7 +228,7 @@ const Shop = () => {
           >
             {item.name}
           </div>
-          <div className="text-red-500 font-bold text-sm">
+          <div className="text-white-500 font-bold text-sm">
             💰 {(item as ShopItem).price} Coins
           </div>
         </div>
@@ -347,6 +355,20 @@ return (
         Inventory
       </button>
 
+      {selectedItem && (
+        <div className="flex items-center gap-3">
+          <label htmlFor="quantity" className="font-bold text-lg">Qty:</label>
+          <input
+            id="quantity"
+            type="number"
+            min={1}
+            value={purchaseQuantity}
+            onChange={e => setPurchaseQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+            className="w-20 px-2 py-1 rounded border border-gray-400 text-lg text-center"
+            style={{ fontFamily: 'monospace' }}
+          />
+        </div>
+      )}
       <button
         onClick={handlePurchase}
         disabled={!selectedItem}
@@ -357,7 +379,7 @@ return (
         }`}
       >
         {selectedItem
-          ? `💳 Buy ${selectedItem.name} (${selectedItem.price} coins)`
+          ? `💳 Buy ${selectedItem.name} (${selectedItem.price * purchaseQuantity} coins)`
           : "Purchase"}
       </button>
     </nav>

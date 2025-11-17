@@ -208,15 +208,43 @@ const Quiz = () => {
         closeInventory();
       }
     } else if (item.name === "Clue Token") {
-      if (!hintUsed) {
-        // Try to show a hint if available, else fallback
-        const q = quiz?.questions[currentQuestionIndex] as any;
-        setHint("Hint: " + (q?.hint || "No hint available."));
-        setHintUsed(true);
-        await removeItemFromInventory(user.uid, item.id, 1);
-        setInventory((inv) => inv.map(i => i.id === item.id ? { ...i, quantity: i.quantity - 1 } : i).filter(i => i.quantity > 0));
-        closeInventory();
+      // (Legacy: Clue Token logic, if needed)
+      setCurrentQuestionIndex(quiz?.questions.length || 0);
+      await removeItemFromInventory(user.uid, item.id, 1);
+      setInventory((inv) => inv.map(i => i.id === item.id ? { ...i, quantity: i.quantity - 1 } : i).filter(i => i.quantity > 0));
+      closeInventory();
+    } else if (item.name === "Speedrun Key") {
+      // Instantly finish the quest and update progress/exp/coins
+      if (!quiz) return;
+      setCurrentQuestionIndex(quiz.questions.length);
+      // Update quest progress in Firestore
+      const questsRef = collection(db, 'quests');
+      const q = query(questsRef, where('userId', '==', user.uid));
+      const querySnapshot = await getDocs(q);
+      for (const docSnapshot of querySnapshot.docs) {
+        const data = docSnapshot.data();
+        const quizData = data.quiz as GeneratedQuiz;
+        if (quizData.id === quizId) {
+          await updateDoc(doc(db, 'quests', docSnapshot.id), {
+            completedQuestions: quiz.questions.length
+          });
+        }
       }
+      // Award EXP for all remaining questions
+      const userData = await getUser(user.uid);
+      let exp = userData?.exp ?? 0;
+      let level = userData?.level ?? 1;
+      const expToNext = 100 + (level - 1) * 50;
+      exp += 20 * (quiz.questions.length - currentQuestionIndex); // 20 EXP per remaining question
+      while (exp >= expToNext) {
+        exp -= expToNext;
+        level += 1;
+      }
+      await updateUser(user.uid, { exp, level });
+      await recordQuestCompletion(user.uid);
+      await removeItemFromInventory(user.uid, item.id, 1);
+      setInventory((inv) => inv.map(i => i.id === item.id ? { ...i, quantity: i.quantity - 1 } : i).filter(i => i.quantity > 0));
+      closeInventory();
     } else if (item.name === "Magic Shield") {
       setShieldActive(true);
       await removeItemFromInventory(user.uid, item.id, 1);
@@ -407,7 +435,7 @@ const Quiz = () => {
           <img
             src={Orc}
             alt="Orc Boss"
-            className="w-56 h-56 object-contain"
+            className="w-80 h-50 object-contain"
             style={{
               imageRendering: "pixelated",
               filter: 'drop-shadow(0 0 20px rgba(220, 38, 38, 0.7))',
@@ -506,7 +534,7 @@ const Quiz = () => {
                   <p>No items in your inventory</p>
                 </div>
               ) : (
-                inventory.filter(item => ["Healing Potion","Clue Token","Magic Shield","Energy Drink","Lucky Charm"].includes(item.name)).map(item => (
+                inventory.filter(item => ["Healing Potion","Clue Token","Speedrun Key","Magic Shield","Energy Drink","Lucky Charm"].includes(item.name)).map(item => (
                   <button key={item.id} onClick={() => useItem(item)} disabled={item.quantity <= 0}
                     className={`flex flex-col items-center bg-white rounded-xl shadow p-4 border-2 border-purple-300 hover:bg-purple-100 transition-all duration-200 ${item.quantity <= 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
@@ -520,6 +548,7 @@ const Quiz = () => {
                     <div className="text-gray-500 text-xs text-center">
                       {item.name === "Healing Potion" && "Restore 1 heart (if not full)"}
                       {item.name === "Clue Token" && "Show a hint for this question"}
+                      {item.name === "Speedrun Key" && "Instantly finish a quest"}
                       {item.name === "Magic Shield" && "Block next wrong answer"}
                       {item.name === "Energy Drink" && "Skip this question"}
                       {item.name === "Lucky Charm" && "Auto-correct one wrong answer"}
