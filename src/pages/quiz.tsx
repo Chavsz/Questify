@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { db } from "../firebase";
 import { collection, getDocs, query, where, updateDoc, doc } from "firebase/firestore";
-import { getUser, updateUser } from "../services/users";
+import { getUser, updateUser, removeItemFromInventory, type InventoryItem } from "../services/users";
 import { recordQuestCompletion } from "../services/questStats";
 import type { GeneratedQuiz } from "../api/generate-quiz/generate_quiz";
 import { useAuth } from "../contexts/authContexts/auth";
@@ -22,20 +22,23 @@ const Quiz = () => {
   const [loading, setLoading] = useState(true);
   const [lives, setLives] = useState(INITIAL_LIVES);
   const [failed, setFailed] = useState(false);
+  const [inventory, setInventory] = useState<InventoryItem[]>([]);
+  const [isInventoryOpen, setIsInventoryOpen] = useState(false);
+  const [hintUsed, setHintUsed] = useState(false);
+  const [hint, setHint] = useState("");
+  const [shieldActive, setShieldActive] = useState(false);
+  const [luckyActive, setLuckyActive] = useState(false);
 
   useEffect(() => {
     const loadQuiz = async () => {
       if (!quizId || !user) return;
-
       try {
         const questsRef = collection(db, 'quests');
         const q = query(questsRef, where('userId', '==', user.uid));
         const querySnapshot = await getDocs(q);
-
         querySnapshot.forEach((docSnapshot) => {
           const data = docSnapshot.data();
           const quizData = data.quiz as GeneratedQuiz;
-          
           if (quizData.id === quizId) {
             setQuiz(quizData);
             // Start from the first unanswered question
@@ -45,13 +48,15 @@ const Quiz = () => {
             }
           }
         });
+        // Load inventory
+        const userData = await getUser(user.uid);
+        setInventory(userData?.inventory || []);
       } catch (error) {
-        console.error('Error loading quiz:', error);
+        console.error('Error loading quiz/inventory:', error);
       } finally {
         setLoading(false);
       }
     };
-
     loadQuiz();
   }, [quizId, user]);
 
@@ -63,10 +68,16 @@ const Quiz = () => {
     const userAnswerLower = userAnswer.toLowerCase().trim();
 
     // Check if answer is correct (allowing for partial matches)
-    const isAnswerCorrect = 
+    let isAnswerCorrect = 
       userAnswerLower === correctAnswer ||
       userAnswerLower.includes(correctAnswer) ||
       correctAnswer.includes(userAnswerLower);
+
+    // Lucky Charm: auto-correct one wrong answer
+    if (!isAnswerCorrect && luckyActive) {
+      isAnswerCorrect = true;
+      setLuckyActive(false);
+    }
 
     setIsCorrect(isAnswerCorrect);
     setShowFeedback(true);
@@ -110,6 +121,11 @@ const Quiz = () => {
       };
       updateProgressAndExp();
     } else if (!isAnswerCorrect) {
+      // Magic Shield: block one wrong answer
+      if (shieldActive) {
+        setShieldActive(false);
+        return;
+      }
       // Lose a life on wrong answer
       setLives((prev) => {
         if (prev <= 1) {
@@ -124,6 +140,9 @@ const Quiz = () => {
   const nextQuestion = () => {
     if (!quiz) return;
 
+    setHint("");
+    setHintUsed(false);
+
     if (currentQuestionIndex < quiz.questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
       setUserAnswer("");
@@ -132,6 +151,59 @@ const Quiz = () => {
     } else {
       // Quiz completed
       navigate('/quest');
+    }
+  };
+  // Inventory modal and item usage
+  const openInventory = async () => {
+    if (!user) return;
+    const userData = await getUser(user.uid);
+    setInventory(userData?.inventory || []);
+    setIsInventoryOpen(true);
+  };
+  const closeInventory = () => setIsInventoryOpen(false);
+
+  const useItem = async (item: InventoryItem) => {
+    if (!user) return;
+    if (item.name === "Healing Potion") {
+      if (lives < INITIAL_LIVES) {
+        setLives((l) => Math.min(INITIAL_LIVES, l + 1));
+        await removeItemFromInventory(user.uid, item.id, 1);
+        setInventory((inv) => inv.map(i => i.id === item.id ? { ...i, quantity: i.quantity - 1 } : i).filter(i => i.quantity > 0));
+        closeInventory();
+      }
+    } else if (item.name === "Clue Token") {
+      if (!hintUsed) {
+        // Try to show a hint if available, else fallback
+        const q = quiz?.questions[currentQuestionIndex] as any;
+        setHint("Hint: " + (q?.hint || "No hint available."));
+        setHintUsed(true);
+        await removeItemFromInventory(user.uid, item.id, 1);
+        setInventory((inv) => inv.map(i => i.id === item.id ? { ...i, quantity: i.quantity - 1 } : i).filter(i => i.quantity > 0));
+        closeInventory();
+      }
+    } else if (item.name === "Magic Shield") {
+      setShieldActive(true);
+      await removeItemFromInventory(user.uid, item.id, 1);
+      setInventory((inv) => inv.map(i => i.id === item.id ? { ...i, quantity: i.quantity - 1 } : i).filter(i => i.quantity > 0));
+      closeInventory();
+    } else if (item.name === "Energy Drink") {
+      // Skip question
+      if (currentQuestionIndex < (quiz?.questions.length || 0) - 1) {
+        await removeItemFromInventory(user.uid, item.id, 1);
+        setInventory((inv) => inv.map(i => i.id === item.id ? { ...i, quantity: i.quantity - 1 } : i).filter(i => i.quantity > 0));
+        setShowFeedback(false);
+        setUserAnswer("");
+        setIsCorrect(null);
+        setHint("");
+        setHintUsed(false);
+        setCurrentQuestionIndex((idx) => idx + 1);
+        closeInventory();
+      }
+    } else if (item.name === "Lucky Charm") {
+      setLuckyActive(true);
+      await removeItemFromInventory(user.uid, item.id, 1);
+      setInventory((inv) => inv.map(i => i.id === item.id ? { ...i, quantity: i.quantity - 1 } : i).filter(i => i.quantity > 0));
+      closeInventory();
     }
   };
 
@@ -216,14 +288,66 @@ const Quiz = () => {
   return (
     <div className="min-h-screen bg-white flex flex-col items-center justify-center p-8">
       {/* Hearts/Lives Display */}
-      <div className="mb-6 flex gap-2">
+      <div className="mb-6 flex gap-2 items-center">
         {Array.from({ length: lives }).map((_, i) => (
           <span key={i} style={{ fontSize: 32, color: '#D96B2B' }}>❤️</span>
         ))}
         {Array.from({ length: INITIAL_LIVES - lives }).map((_, i) => (
           <span key={i} style={{ fontSize: 32, color: '#ddd' }}>🤍</span>
         ))}
+        <button onClick={openInventory} className="ml-4 px-4 py-2 bg-yellow-400 text-white rounded font-bold shadow hover:bg-yellow-500" style={{ fontFamily: 'monospace' }}>
+          🎒 Inventory
+        </button>
+        {shieldActive && <span className="ml-2 px-2 py-1 bg-blue-200 text-blue-800 rounded font-bold" style={{ fontFamily: 'monospace', fontSize: 16 }}>🛡️ Shield</span>}
+        {luckyActive && <span className="ml-2 px-2 py-1 bg-pink-200 text-pink-800 rounded font-bold" style={{ fontFamily: 'monospace', fontSize: 16 }}>🍀 Lucky</span>}
       </div>
+            {/* Inventory Modal */}
+            {isInventoryOpen && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-lg border-4 border-yellow-400 flex flex-col items-center">
+                  <button
+                    onClick={closeInventory}
+                    className="absolute top-4 right-4 text-2xl font-bold text-gray-700 hover:text-red-500 bg-white rounded-full w-10 h-10 flex items-center justify-center shadow"
+                    aria-label="Close Inventory"
+                  >
+                    ×
+                  </button>
+                  <div className="flex items-center gap-3 mb-6">
+                    <span className="text-4xl">🎒</span>
+                    <span className="text-2xl font-bold text-yellow-700">Inventory</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-6 w-full">
+                    {inventory.length === 0 ? (
+                      <div className="col-span-full text-center text-gray-500">
+                        <div className="text-6xl mb-2">📦</div>
+                        <p>No items in your inventory</p>
+                      </div>
+                    ) : (
+                      inventory.filter(item => ["Healing Potion","Clue Token","Magic Shield","Energy Drink","Lucky Charm"].includes(item.name)).map(item => (
+                        <button key={item.id} onClick={() => useItem(item)} disabled={item.quantity <= 0}
+                          className={`flex flex-col items-center bg-white rounded-xl shadow p-4 border-2 border-yellow-300 hover:bg-yellow-100 transition-all duration-200 ${item.quantity <= 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        >
+                          <div className="text-5xl mb-2">{item.emoji}</div>
+                          <div className="font-bold text-lg text-yellow-800 mb-1">{item.name}</div>
+                          <div className="text-gray-600 text-xs mb-1">x{item.quantity}</div>
+                          <div className="text-gray-500 text-xs text-center">
+                            {item.name === "Healing Potion" && "Restore 1 heart (if not full)"}
+                            {item.name === "Clue Token" && "Show a hint for this question"}
+                            {item.name === "Magic Shield" && "Block next wrong answer"}
+                            {item.name === "Energy Drink" && "Skip this question"}
+                            {item.name === "Lucky Charm" && "Auto-correct one wrong answer"}
+                          </div>
+                        </button>
+                      ))
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+            {/* Hint Display */}
+            {hint && (
+              <div className="mb-4 text-center text-blue-700 font-bold text-lg" style={{ fontFamily: 'monospace' }}>{hint}</div>
+            )}
       <div className="w-full max-w-4xl flex flex-col items-center">
         {/* Question */}
         <div className="mb-8 text-center px-4">
