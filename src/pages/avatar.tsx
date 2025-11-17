@@ -4,6 +4,10 @@ import { useTheme } from "../components/theme";
 import { IoSunnyOutline } from "react-icons/io5";
 import { FaRegMoon } from "react-icons/fa";
 import { useAuth } from "../contexts/authContexts/auth";
+import MiniSwordManIdle from "../assets/MiniSwordManIdle.gif";
+import MiniSwordManIdleAttack from "../assets/MiniSwordManIdleAttack.gif";
+import MiniSwordManIdleHit from "../assets/MiniSwordManIdleHit.gif";
+import MiniSwordManIdleWalk from "../assets/MiniSwordManIdleWalk.gif";
 
 
 interface AvatarItem {
@@ -25,6 +29,32 @@ const Avatar = () => {
   const [loadingStreak, setLoadingStreak] = useState(true);
   const [userCoins, setUserCoins] = useState(0);
   const [modal, setModal] = useState<{ open: boolean; title: string; message: string; type: 'success' | 'error' | 'info' }>({ open: false, title: '', message: '', type: 'info' });
+  const miniSwordCrew = [
+    {
+      id: "idle",
+      label: "Idle",
+      description: "Calm stance before the action starts.",
+      image: MiniSwordManIdle
+    },
+    {
+      id: "attack",
+      label: "Attack",
+      description: "Sword strike mid-animation.",
+      image: MiniSwordManIdleAttack
+    },
+    {
+      id: "hit",
+      label: "Hit",
+      description: "Taking a hit but staying on his feet.",
+      image: MiniSwordManIdleHit
+    },
+    {
+      id: "walk",
+      label: "Walk",
+      description: "Marching forward into the quest.",
+      image: MiniSwordManIdleWalk
+    }
+  ];
   useEffect(() => {
     const fetchStreak = async () => {
       if (!user) {
@@ -329,6 +359,38 @@ const Avatar = () => {
             <h2 className={`text-2xl font-bold mb-6 text-center ${
               isDarkMode ? 'text-white' : 'text-gray-600'
             }`}>Customize Your Character</h2>
+            <section className="mb-8">
+              <h3 className={`text-xl font-semibold mb-4 text-center ${isDarkMode ? 'text-white' : 'text-gray-700'}`}>
+                Mini Sword Squad
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {miniSwordCrew.map((character) => (
+                  <div
+                    key={character.id}
+                    className={`rounded-xl p-5 flex flex-col items-center text-center shadow-md border ${
+                      isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50 border-gray-200'
+                    }`}
+                  >
+                    <div className={`w-28 h-28 mb-4 rounded-lg flex items-center justify-center overflow-hidden border ${
+                      isDarkMode ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'
+                    }`}>
+                      <img
+                        src={character.image}
+                        alt={`${character.label} Mini Sword`}
+                        className="w-full h-full object-contain"
+                        style={{ imageRendering: "pixelated" }}
+                      />
+                    </div>
+                    <p className={`text-lg font-bold mb-1 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+                      {character.label}
+                    </p>
+                    <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                      {character.description}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </section>
             {/* Category Tabs */}
             <div className="flex gap-2 mb-6 flex-wrap justify-center">
               <button 
