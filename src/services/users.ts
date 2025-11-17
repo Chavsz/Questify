@@ -13,6 +13,13 @@ import {
 } from "firebase/firestore";
 
 // User interface for type safety
+export interface InventoryItem {
+  id: number;
+  name: string;
+  quantity: number;
+  emoji: string;
+}
+
 export interface User {
   uid: string;
   email: string;
@@ -27,7 +34,43 @@ export interface User {
     notifications: boolean;
   };
   streak?: number; // Login streak in days
+  inventory?: InventoryItem[];
 }
+
+// Add item to user inventory
+export const addItemToInventory = async (uid: string, item: InventoryItem) => {
+  const userRef = doc(db, 'users', uid);
+  const userSnap = await getDoc(userRef);
+  let inventory: InventoryItem[] = [];
+  if (userSnap.exists()) {
+    const data = userSnap.data();
+    inventory = data.inventory || [];
+  }
+  const existing = inventory.find(i => i.id === item.id);
+  if (existing) {
+    existing.quantity += item.quantity;
+  } else {
+    inventory.push(item);
+  }
+  await updateDoc(userRef, { inventory, updatedAt: serverTimestamp() });
+};
+
+// Remove item from user inventory
+export const removeItemFromInventory = async (uid: string, itemId: number, qty: number = 1) => {
+  const userRef = doc(db, 'users', uid);
+  const userSnap = await getDoc(userRef);
+  let inventory: InventoryItem[] = [];
+  if (userSnap.exists()) {
+    const data = userSnap.data();
+    inventory = data.inventory || [];
+  }
+  const idx = inventory.findIndex(i => i.id === itemId);
+  if (idx !== -1) {
+    inventory[idx].quantity -= qty;
+    if (inventory[idx].quantity <= 0) inventory.splice(idx, 1);
+    await updateDoc(userRef, { inventory, updatedAt: serverTimestamp() });
+  }
+};
 
 // Create or update user in Firestore
 export const createUser = async (userData: Omit<User, 'createdAt' | 'updatedAt'>) => {

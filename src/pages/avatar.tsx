@@ -18,6 +18,7 @@ const Avatar = () => {
   const { isDarkMode, toggleDarkMode } = useTheme();
   const authContext = useAuth();
   const user = authContext?.currentUser;
+  const [gender, setGender] = useState<'male' | 'female'>('male');
   const [equippedItems, setEquippedItems] = useState<Map<string, AvatarItem>>(new Map());
   const [currentCategory, setCurrentCategory] = useState('all');
   const [streak, setStreak] = useState<number | null>(null);
@@ -133,14 +134,14 @@ const Avatar = () => {
 
   const updateAvatarPreview = () => {
     const equipped = Array.from(equippedItems.values());
-    
+    const baseAvatar = gender === 'male' ? '🧑‍🦱' : '👩‍🦰';
     if (equipped.length > 0) {
-      const emojis = equipped.map(item => item.emoji).join(' ');
+      const emojis = [baseAvatar, ...equipped.map(item => item.emoji)].join(' ');
       return (
         <div className="text-4xl leading-relaxed">{emojis}</div>
       );
     } else {
-      return <div className="text-6xl">🛡️</div>;
+      return <div className="text-6xl">{baseAvatar}</div>;
     }
   };
 
@@ -214,9 +215,36 @@ const Avatar = () => {
         </header>
 
         {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8 mb-10">
+        <div className="flex flex-col lg:flex-row gap-10 mb-10">
           {/* Left Sidebar */}
-          <aside className="flex flex-col gap-6">
+          <aside className="w-full max-w-xs flex-shrink-0 flex flex-col gap-8 mx-auto lg:mx-0">
+            {/* Gender Selection */}
+            <div className="flex justify-center gap-4 mb-2">
+              <button
+                className={`px-5 py-2 rounded-lg font-bold transition-all duration-300 shadow-md hover:scale-105 flex items-center gap-2 text-base ${
+                  gender === 'male'
+                    ? 'bg-blue-500 text-white shadow-lg'
+                    : isDarkMode
+                      ? 'bg-gray-700 hover:bg-gray-600 text-white'
+                      : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                }`}
+                onClick={() => setGender('male')}
+              >
+                🧑‍🦱 Male
+              </button>
+              <button
+                className={`px-5 py-2 rounded-lg font-bold transition-all duration-300 shadow-md hover:scale-105 flex items-center gap-2 text-base ${
+                  gender === 'female'
+                    ? 'bg-pink-500 text-white shadow-lg'
+                    : isDarkMode
+                      ? 'bg-gray-700 hover:bg-gray-600 text-white'
+                      : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                }`}
+                onClick={() => setGender('female')}
+              >
+                👩‍🦰 Female
+              </button>
+            </div>
             <div className={`p-6 rounded-2xl text-center font-bold text-lg shadow-lg ${
               isDarkMode 
                 ? 'bg-gray-800 text-yellow-400 border border-gray-700' 
@@ -229,15 +257,15 @@ const Avatar = () => {
                 ? 'bg-gray-800 text-white border border-gray-700' 
                 : 'bg-white text-purple-900 border border-purple-200'
             }`}>
-              <div className="text-xl mb-4">⚔️ Avatar Preview</div>
-              <div className={`w-full h-64 rounded-2xl mt-4 flex flex-col items-center justify-center text-white text-6xl relative overflow-hidden shadow-inner ${
+              <div className="text-xl mb-2">⚔️ Avatar Preview</div>
+              <div className={`w-full h-56 rounded-2xl mt-2 flex flex-col items-center justify-center text-white text-6xl relative overflow-hidden shadow-inner ${
                 isDarkMode 
                   ? 'bg-gradient-to-br from-purple-600 to-indigo-700' 
                   : 'bg-gradient-to-br from-indigo-400 to-purple-600'
               }`}>
                 {updateAvatarPreview()}
               </div>
-              <div className={`mt-4 text-left text-xs max-h-24 overflow-y-auto p-3 rounded-lg ${
+              <div className={`mt-3 text-left text-xs max-h-20 overflow-y-auto p-2 rounded-lg ${
                 isDarkMode 
                   ? 'bg-gray-700 text-gray-300' 
                   : 'bg-gray-100 text-gray-600'
@@ -248,19 +276,14 @@ const Avatar = () => {
           </aside>
 
           {/* Items Display Area */}
-          <main className={`rounded-2xl p-10 min-h-[500px] shadow-lg ${
-            isDarkMode 
-              ? 'bg-gray-800 text-white border border-gray-700' 
-              : 'bg-white text-purple-900 border border-purple-200'
-          }`}>
-            <h2 className={`text-3xl font-bold mb-8 text-center ${
+          <main className="flex-1 rounded-2xl p-8 min-h-[500px] shadow-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+            <h2 className={`text-3xl font-bold mb-6 text-center ${
               isDarkMode ? 'text-white' : 'text-purple-900'
             }`}>🎨 Customize Your Character</h2>
-            
             {/* Category Tabs */}
-            <div className="flex gap-3 mb-8 flex-wrap justify-center">
+            <div className="flex gap-2 mb-6 flex-wrap justify-center">
               <button 
-                className={`px-6 py-3 rounded-xl font-bold transition-all duration-300 shadow-md hover:scale-105 ${
+                className={`px-5 py-2 rounded-lg font-bold transition-all duration-300 shadow-md hover:scale-105 ${
                   currentCategory === 'all' 
                     ? 'bg-green-500 text-white shadow-lg' 
                     : isDarkMode 
@@ -272,7 +295,7 @@ const Avatar = () => {
                 All Items
               </button>
               <button 
-                className={`px-6 py-3 rounded-xl font-bold transition-all duration-300 shadow-md hover:scale-105 ${
+                className={`px-5 py-2 rounded-lg font-bold transition-all duration-300 shadow-md hover:scale-105 ${
                   currentCategory === 'Headwear' 
                     ? 'bg-green-500 text-white shadow-lg' 
                     : isDarkMode 
@@ -284,7 +307,7 @@ const Avatar = () => {
                 👑 Headwear
               </button>
               <button 
-                className={`px-6 py-3 rounded-xl font-bold transition-all duration-300 shadow-md hover:scale-105 ${
+                className={`px-5 py-2 rounded-lg font-bold transition-all duration-300 shadow-md hover:scale-105 ${
                   currentCategory === 'Body' 
                     ? 'bg-green-500 text-white shadow-lg' 
                     : isDarkMode 
@@ -296,7 +319,7 @@ const Avatar = () => {
                 🦺 Body
               </button>
               <button 
-                className={`px-6 py-3 rounded-xl font-bold transition-all duration-300 shadow-md hover:scale-105 ${
+                className={`px-5 py-2 rounded-lg font-bold transition-all duration-300 shadow-md hover:scale-105 ${
                   currentCategory === 'Weapon' 
                     ? 'bg-green-500 text-white shadow-lg' 
                     : isDarkMode 
@@ -308,7 +331,7 @@ const Avatar = () => {
                 ⚔️ Weapon
               </button>
               <button 
-                className={`px-6 py-3 rounded-xl font-bold transition-all duration-300 shadow-md hover:scale-105 ${
+                className={`px-5 py-2 rounded-lg font-bold transition-all duration-300 shadow-md hover:scale-105 ${
                   currentCategory === 'Accessory' 
                     ? 'bg-green-500 text-white shadow-lg' 
                     : isDarkMode 
@@ -320,8 +343,7 @@ const Avatar = () => {
                 💍 Accessories
               </button>
             </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
               {renderItems()}
             </div>
           </main>

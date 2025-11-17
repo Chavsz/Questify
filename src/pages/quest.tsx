@@ -17,9 +17,9 @@ import {
 import { generateQuizFromFile } from "../api/generate-quiz/generate_quiz";
 import type { GeneratedQuiz } from "../api/generate-quiz/generate_quiz";
 import { db } from "../firebase";
-import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
+import { collection, addDoc, getDocs, query, where, updateDoc, doc, deleteDoc } from "firebase/firestore";
 import { useAuth } from "../contexts/authContexts/auth";
-import { getUser } from "../services/users";
+import { getUser, type InventoryItem } from "../services/users";
 
 interface QuestItem {
   id: string;
@@ -219,14 +219,23 @@ const Quest = () => {
   const [isInventoryModalOpen, setIsInventoryModalOpen] = useState(false);
   const openInventoryModal = () => setIsInventoryModalOpen(true);
   const closeInventoryModal = () => setIsInventoryModalOpen(false);
-  // Example inventory items (replace with real data if available)
-  const inventoryItems = [
-    { id: 1, name: "Healing Potion", quantity: 3, emoji: "🧪" },
-    { id: 2, name: "Clue Token", quantity: 5, emoji: "🔍" },
-    { id: 3, name: "Warrior Helmet", quantity: 1, emoji: "⛑️" },
-    { id: 4, name: "Basic Sword", quantity: 1, emoji: "⚔️" }
-  ];
-  const checkInventory = openInventoryModal;
+  const [inventory, setInventory] = useState<InventoryItem[]>([]);
+  const fetchInventory = async () => {
+    if (!user) {
+      setInventory([]);
+      return;
+    }
+    const userData = await getUser(user.uid);
+    setInventory(userData?.inventory || []);
+  };
+  useEffect(() => {
+    fetchInventory();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
+  const checkInventory = async () => {
+    await fetchInventory();
+    setIsInventoryModalOpen(true);
+  };
 
   const renderInventoryModal = () => (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -243,13 +252,13 @@ const Quest = () => {
           <span className="text-2xl font-bold text-yellow-700">Backpack</span>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 w-full">
-          {inventoryItems.length === 0 ? (
+          {inventory.length === 0 ? (
             <div className="col-span-full text-center text-gray-500">
               <div className="text-6xl mb-2">📦</div>
               <p>No items in your backpack</p>
             </div>
           ) : (
-            inventoryItems.map(item => (
+            inventory.map(item => (
               <div key={item.id} className="flex flex-col items-center bg-white rounded-xl shadow p-4 border-2 border-yellow-300">
                 <div className="text-5xl mb-2">{item.emoji}</div>
                 <div className="font-bold text-lg text-yellow-800 mb-1">{item.name}</div>
@@ -349,9 +358,7 @@ const Quest = () => {
                   onClick={() => viewQuest(quest.id)}
                 >
                   <div className="flex items-center gap-4 flex-1">
-                    <div className="shrink-0">
-                      {quest.icon}
-                    </div>
+                    <div className="shrink-0">{quest.icon}</div>
                     <div className="flex-1">
                       <div className="font-bold text-xl mb-2">{quest.name}</div>
                       <div className="text-sm text-gray-600 mb-3">{quest.details}</div>
@@ -362,7 +369,7 @@ const Quest = () => {
                         )}
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div 
+                        <div
                           className={`h-2 rounded-full transition-all duration-500 ${
                             quest.status === 'completed' ? 'bg-green-500' :
                             quest.status === 'in-progress' ? 'bg-orange-500' : 'bg-gray-400'
@@ -372,9 +379,35 @@ const Quest = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="text-right text-sm text-gray-600 shrink-0 ml-4">
+                  <div className="flex flex-col gap-2 items-end text-sm text-gray-600 shrink-0 ml-4 mt-2">
                     <div className="text-2xl font-bold text-purple-600">{quest.progress}</div>
                     <div className="text-sm">{quest.progressText}</div>
+                    <div className="flex gap-2 mt-2">
+                      <button
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          if (window.confirm('Restart this quest? Progress will be reset.')) {
+                            await updateDoc(doc(db, 'quests', quest.id), { completedQuestions: 0 });
+                            window.location.reload();
+                          }
+                        }}
+                        className="px-3 py-1 bg-yellow-400 hover:bg-yellow-500 text-white rounded font-bold text-xs shadow"
+                      >
+                        Restart
+                      </button>
+                      <button
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          if (window.confirm('Delete this quest? This cannot be undone.')) {
+                            await deleteDoc(doc(db, 'quests', quest.id));
+                            window.location.reload();
+                          }
+                        }}
+                        className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded font-bold text-xs shadow"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}

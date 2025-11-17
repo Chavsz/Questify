@@ -4,7 +4,7 @@ import { IoSunnyOutline } from "react-icons/io5";
 import { FaRegMoon } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/authContexts/auth";
-import { getUser } from "../services/users";
+import { getUser, addItemToInventory, type InventoryItem } from "../services/users";
 
 interface ShopItem {
   id: number;
@@ -14,12 +14,6 @@ interface ShopItem {
   description: string;
 }
 
-interface InventoryItem {
-  id: number;
-  name: string;
-  quantity: number;
-  emoji: string;
-}
 
 const Shop = () => {
   const { isDarkMode, toggleDarkMode } = useTheme();
@@ -30,23 +24,27 @@ const Shop = () => {
   const [userCoins, setUserCoins] = useState(1250);
   const [streak, setStreak] = useState<number | null>(null);
   const [loadingStreak, setLoadingStreak] = useState(true);
+  const [inventory, setInventory] = useState<InventoryItem[]>([]);
   useEffect(() => {
-    const fetchStreak = async () => {
+    const fetchUserData = async () => {
       if (!user) {
         setStreak(null);
         setLoadingStreak(false);
+        setInventory([]);
         return;
       }
       try {
         const userData = await getUser(user.uid);
         setStreak(userData && typeof userData.streak === 'number' ? userData.streak : 0);
+        setInventory(userData?.inventory || []);
       } catch (e) {
         setStreak(0);
+        setInventory([]);
       } finally {
         setLoadingStreak(false);
       }
     };
-    fetchStreak();
+    fetchUserData();
   }, [user]);
 
   const shopItems: ShopItem[] = [
@@ -60,12 +58,6 @@ const Shop = () => {
     { id: 8, name: "Lucky Charm", price: 120, emoji: "🍀", description: "Bonus points" }
   ];
 
-  const inventoryItems: InventoryItem[] = [
-    { id: 1, name: "Healing Potion", quantity: 3, emoji: "🧪" },
-    { id: 2, name: "Clue Token", quantity: 5, emoji: "🔍" },
-    { id: 3, name: "Warrior Helmet", quantity: 1, emoji: "⛑️" },
-    { id: 4, name: "Basic Sword", quantity: 1, emoji: "⚔️" }
-  ];
 
   const openInventoryModal = () => setIsInventoryModalOpen(true);
   const closeInventoryModal = () => setIsInventoryModalOpen(false);
@@ -74,20 +66,30 @@ const Shop = () => {
     setSelectedItem(item);
   };
 
-  const handlePurchase = () => {
-
-
+  const handlePurchase = async () => {
     if (!selectedItem) {
       alert('Please select an item to purchase');
       return;
     }
-
     if (userCoins < selectedItem.price) {
       alert(`Not enough coins! You need ${selectedItem.price} coins but only have ${userCoins} coins.`);
       return;
     }
-
+    if (!user) {
+      alert('You must be logged in to purchase items.');
+      return;
+    }
     setUserCoins(userCoins - selectedItem.price);
+    // Add item to Firestore inventory
+    await addItemToInventory(user.uid, {
+      id: selectedItem.id,
+      name: selectedItem.name,
+      quantity: 1,
+      emoji: selectedItem.emoji
+    });
+    // Refresh inventory from Firestore
+    const userData = await getUser(user.uid);
+    setInventory(userData?.inventory || []);
     alert(`✅ Purchase successful!\n\nYou bought: ${selectedItem.name}\nCost: ${selectedItem.price} coins\nRemaining coins: ${userCoins - selectedItem.price}`);
     setSelectedItem(null);
   };
@@ -142,13 +144,13 @@ const Shop = () => {
           <span className="text-2xl font-bold text-yellow-700">Backpack</span>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 w-full">
-          {inventoryItems.length === 0 ? (
+          {inventory.length === 0 ? (
             <div className="col-span-full text-center text-gray-500">
               <div className="text-6xl mb-2">📦</div>
               <p>No items in your backpack</p>
             </div>
           ) : (
-            inventoryItems.map(item => (
+            inventory.map(item => (
               <div key={item.id} className="flex flex-col items-center bg-white rounded-xl shadow p-4 border-2 border-yellow-300">
                 <div className="text-5xl mb-2">{item.emoji}</div>
                 <div className="font-bold text-lg text-yellow-800 mb-1">{item.name}</div>

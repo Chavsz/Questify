@@ -5,7 +5,10 @@ import { FaRegMoon } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/authContexts/auth";
 import { useEffect, useState } from "react";
+
 import { getUser } from "../services/users";
+import { getUserQuestStats } from "../services/questStats";
+import type { QuestStats } from "../services/questStats";
 
 
 function Hub() {
@@ -14,12 +17,16 @@ function Hub() {
   const user = authContext?.currentUser;
   const [streak, setStreak] = useState<number | null>(null);
   const [loadingStreak, setLoadingStreak] = useState(true);
+  const [questStats, setQuestStats] = useState<QuestStats>({});
+  const [loadingStats, setLoadingStats] = useState(true);
 
   useEffect(() => {
-    const fetchStreak = async () => {
+    const fetchStreakAndStats = async () => {
       if (!user) {
         setStreak(null);
         setLoadingStreak(false);
+        setQuestStats({});
+        setLoadingStats(false);
         return;
       }
       try {
@@ -30,8 +37,16 @@ function Hub() {
       } finally {
         setLoadingStreak(false);
       }
+      try {
+        const stats = await getUserQuestStats(user.uid);
+        setQuestStats(stats);
+      } catch (e) {
+        setQuestStats({});
+      } finally {
+        setLoadingStats(false);
+      }
     };
-    fetchStreak();
+    fetchStreakAndStats();
   }, [user]);
 
   const handleEditAvatar = () => {
@@ -82,12 +97,12 @@ function Hub() {
         <div className="grid grid-cols-1 lg:grid-cols-[250px_1fr] gap-8 mb-10">
           {/* Left Sidebar */}
           <aside className="flex flex-col gap-6">
-            <div className={`p-6 rounded-2xl text-center font-bold text-lg shadow-lg ${
-              isDarkMode 
-                ? 'bg-gray-800 text-yellow-400 border border-gray-700' 
-                : 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white'
-            }`}>
-              💰 1,250 Coins
+            {/* Important Info Cards */}
+            <div className="flex flex-col gap-4">
+              <div className={`p-4 rounded-xl font-bold text-lg shadow-md text-center ${isDarkMode ? 'bg-gray-800 text-yellow-400 border border-gray-700' : 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white'}`}>💰 Coins: 1,250</div>
+              <div className={`p-4 rounded-xl font-bold text-lg shadow-md text-center ${isDarkMode ? 'bg-gray-800 text-blue-300 border border-gray-700' : 'bg-gradient-to-r from-blue-400 to-blue-600 text-white'}`}>⭐ Level: 5</div>
+              <div className={`p-4 rounded-xl font-bold text-lg shadow-md text-center ${isDarkMode ? 'bg-gray-800 text-green-300 border border-gray-700' : 'bg-gradient-to-r from-green-400 to-green-600 text-white'}`}>📈 EXP: 1,800</div>
+              <div className={`p-4 rounded-xl font-bold text-lg shadow-md text-center ${isDarkMode ? 'bg-gray-800 text-pink-300 border border-gray-700' : 'bg-gradient-to-r from-pink-400 to-pink-600 text-white'}`}>🏆 Quests: {Object.values(questStats).reduce((a, b) => a + b, 0)}</div>
             </div>
             <div className="flex flex-col items-center gap-6">
               <div className={`w-36 h-36 rounded-full flex items-center justify-center text-6xl shadow-2xl ${
@@ -138,66 +153,26 @@ function Hub() {
                   ? 'bg-gray-700 text-gray-300' 
                   : 'bg-gray-100 text-gray-600'
               }`}>
+                {/* Dynamic Bar Graph */}
                 <div className="flex items-end gap-4 h-40">
-                  <div
-                    className="w-10 bg-gradient-to-t from-indigo-400 to-purple-600 rounded-t-lg relative"
-                    style={{ height: "80px" }}
-                  >
-                    <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs text-gray-600">
-                      Mon
-                    </span>
-                  </div>
-                  <div
-                    className="w-10 bg-gradient-to-t from-indigo-400 to-purple-600 rounded-t-lg relative"
-                    style={{ height: "120px" }}
-                  >
-                    <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs text-gray-600">
-                      Tue
-                    </span>
-                  </div>
-                  <div
-                    className="w-10 bg-gradient-to-t from-indigo-400 to-purple-600 rounded-t-lg relative"
-                    style={{ height: "60px" }}
-                  >
-                    <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs text-gray-600">
-                      Wed
-                    </span>
-                  </div>
-                  <div
-                    className="w-10 bg-gradient-to-t from-indigo-400 to-purple-600 rounded-t-lg relative"
-                    style={{ height: "140px" }}
-                  >
-                    <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs text-gray-600">
-                      Thu
-                    </span>
-                  </div>
-                  <div
-                    className="w-10 bg-gradient-to-t from-indigo-400 to-purple-600 rounded-t-lg relative"
-                    style={{ height: "100px" }}
-                  >
-                    <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs text-gray-600">
-                      Fri
-                    </span>
-                  </div>
-                  <div
-                    className="w-10 bg-gradient-to-t from-indigo-400 to-purple-600 rounded-t-lg relative"
-                    style={{ height: "90px" }}
-                  >
-                    <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs text-gray-600">
-                      Sat
-                    </span>
-                  </div>
-                  <div
-                    className="w-10 bg-gradient-to-t from-indigo-400 to-purple-600 rounded-t-lg relative"
-                    style={{ height: "110px" }}
-                  >
-                    <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs text-gray-600">
-                      Sun
-                    </span>
-                  </div>
+                  {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(day => {
+                    const val = questStats[day] || 0;
+                    // Max bar height 140px, scale by max value in week
+                    const max = Math.max(1, ...Object.values(questStats));
+                    const height = 40 + (max ? (100 * val / max) : 0); // min 40px
+                    return (
+                      <div key={day}
+                        className="w-10 bg-gradient-to-t from-indigo-400 to-purple-600 rounded-t-lg relative flex flex-col items-center"
+                        style={{ height: `${height}px` }}
+                      >
+                        <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs text-gray-600">{day}</span>
+                        <span className="absolute top-2 left-1/2 transform -translate-x-1/2 text-xs font-bold text-white">{loadingStats ? '...' : val}</span>
+                      </div>
+                    );
+                  })}
                 </div>
                 <p className="mt-10 text-sm">
-                  Weekly quest completion activity
+                  {loadingStats ? 'Loading...' : 'Weekly quest completion activity'}
                 </p>
               </div>
             </div>
