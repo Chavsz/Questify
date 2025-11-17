@@ -26,6 +26,7 @@ export interface User {
     theme: string;
     notifications: boolean;
   };
+  streak?: number; // Login streak in days
 }
 
 // Create or update user in Firestore

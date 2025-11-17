@@ -19,6 +19,7 @@ import type { GeneratedQuiz } from "../api/generate-quiz/generate_quiz";
 import { db } from "../firebase";
 import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
 import { useAuth } from "../contexts/authContexts/auth";
+import { getUser } from "../services/users";
 
 interface QuestItem {
   id: string;
@@ -38,6 +39,26 @@ const Quest = () => {
   const user = authContext?.currentUser;
   const navigate = useNavigate();
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [streak, setStreak] = useState<number | null>(null);
+  const [loadingStreak, setLoadingStreak] = useState(true);
+  useEffect(() => {
+    const fetchStreak = async () => {
+      if (!user) {
+        setStreak(null);
+        setLoadingStreak(false);
+        return;
+      }
+      try {
+        const userData = await getUser(user.uid);
+        setStreak(userData && typeof userData.streak === 'number' ? userData.streak : 0);
+      } catch (e) {
+        setStreak(0);
+      } finally {
+        setLoadingStreak(false);
+      }
+    };
+    fetchStreak();
+  }, [user]);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [quests, setQuests] = useState<QuestItem[]>([]);
@@ -195,9 +216,51 @@ const Quest = () => {
     console.log('Navigate to Hub');
   };
 
-  const checkInventory = () => {
-    alert('Opening inventory...\n\nHere you can view:\n• Healing Potions: 3\n• Clue Tokens: 5\n• Equipped Items\n• Available Items');
-  };
+  const [isInventoryModalOpen, setIsInventoryModalOpen] = useState(false);
+  const openInventoryModal = () => setIsInventoryModalOpen(true);
+  const closeInventoryModal = () => setIsInventoryModalOpen(false);
+  // Example inventory items (replace with real data if available)
+  const inventoryItems = [
+    { id: 1, name: "Healing Potion", quantity: 3, emoji: "🧪" },
+    { id: 2, name: "Clue Token", quantity: 5, emoji: "🔍" },
+    { id: 3, name: "Warrior Helmet", quantity: 1, emoji: "⛑️" },
+    { id: 4, name: "Basic Sword", quantity: 1, emoji: "⚔️" }
+  ];
+  const checkInventory = openInventoryModal;
+
+  const renderInventoryModal = () => (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="relative bg-gradient-to-br from-yellow-100 to-orange-200 rounded-3xl shadow-2xl p-8 w-full max-w-2xl border-4 border-yellow-400 flex flex-col items-center">
+        <button
+          onClick={closeInventoryModal}
+          className="absolute top-4 right-4 text-2xl font-bold text-gray-700 hover:text-red-500 bg-white rounded-full w-10 h-10 flex items-center justify-center shadow"
+          aria-label="Close Inventory"
+        >
+          ×
+        </button>
+        <div className="flex items-center gap-3 mb-6">
+          <span className="text-4xl">🎒</span>
+          <span className="text-2xl font-bold text-yellow-700">Backpack</span>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 w-full">
+          {inventoryItems.length === 0 ? (
+            <div className="col-span-full text-center text-gray-500">
+              <div className="text-6xl mb-2">📦</div>
+              <p>No items in your backpack</p>
+            </div>
+          ) : (
+            inventoryItems.map(item => (
+              <div key={item.id} className="flex flex-col items-center bg-white rounded-xl shadow p-4 border-2 border-yellow-300">
+                <div className="text-5xl mb-2">{item.emoji}</div>
+                <div className="font-bold text-lg text-yellow-800 mb-1">{item.name}</div>
+                <div className="text-green-600 font-semibold">x{item.quantity}</div>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+    </div>
+  );
 
   const embarkOnQuest = () => {
     const inProgressQuest = quests.find(quest => quest.status === 'in-progress');
@@ -239,7 +302,7 @@ const Quest = () => {
                 ? 'bg-orange-600 text-white' 
                 : 'bg-linear-to-r from-orange-500 to-red-500 text-white'
             }`}>
-              🔥 Streak: 5 days
+              🔥 Streak: {loadingStreak ? '...' : `${streak ?? 0} day${streak === 1 ? '' : 's'}`}
             </div>
           </div>
           <div className="flex items-center gap-4">
@@ -342,6 +405,7 @@ const Quest = () => {
             <FaCube className="text-3xl text-purple" />
             <span>Check Inventory</span>
           </button>
+          {isInventoryModalOpen && renderInventoryModal()}
           <button 
             onClick={embarkOnQuest}
             className="bg-linear-to-r from-green-500 to-emerald-600 text-white border-none p-6 rounded-xl font-bold text-base cursor-pointer transition-all duration-300 hover:from-green-600 hover:to-emerald-700 hover:-translate-y-1 hover:shadow-xl flex flex-col items-center gap-3 shadow-lg"

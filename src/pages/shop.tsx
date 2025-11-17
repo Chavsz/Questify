@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTheme } from "../components/theme";
 import { IoSunnyOutline } from "react-icons/io5";
 import { FaRegMoon } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { useAuth } from "../contexts/authContexts/auth";
+import { getUser } from "../services/users";
 
 interface ShopItem {
   id: number;
@@ -21,9 +23,31 @@ interface InventoryItem {
 
 const Shop = () => {
   const { isDarkMode, toggleDarkMode } = useTheme();
-  const [isInventoryView, setIsInventoryView] = useState(false);
+  const authContext = useAuth();
+  const user = authContext?.currentUser;
+  const [isInventoryModalOpen, setIsInventoryModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<ShopItem | null>(null);
   const [userCoins, setUserCoins] = useState(1250);
+  const [streak, setStreak] = useState<number | null>(null);
+  const [loadingStreak, setLoadingStreak] = useState(true);
+  useEffect(() => {
+    const fetchStreak = async () => {
+      if (!user) {
+        setStreak(null);
+        setLoadingStreak(false);
+        return;
+      }
+      try {
+        const userData = await getUser(user.uid);
+        setStreak(userData && typeof userData.streak === 'number' ? userData.streak : 0);
+      } catch (e) {
+        setStreak(0);
+      } finally {
+        setLoadingStreak(false);
+      }
+    };
+    fetchStreak();
+  }, [user]);
 
   const shopItems: ShopItem[] = [
     { id: 1, name: "Healing Potion", price: 50, emoji: "🧪", description: "Restore 50 HP" },
@@ -43,21 +67,15 @@ const Shop = () => {
     { id: 4, name: "Basic Sword", quantity: 1, emoji: "⚔️" }
   ];
 
-  const toggleInventory = () => {
-    setIsInventoryView(!isInventoryView);
-    setSelectedItem(null);
-  };
+  const openInventoryModal = () => setIsInventoryModalOpen(true);
+  const closeInventoryModal = () => setIsInventoryModalOpen(false);
 
   const selectItem = (item: ShopItem) => {
-    if (isInventoryView) return;
     setSelectedItem(item);
   };
 
   const handlePurchase = () => {
-    if (isInventoryView) {
-      alert('Switch to Shop view to purchase items');
-      return;
-    }
+
 
     if (!selectedItem) {
       alert('Please select an item to purchase');
@@ -75,9 +93,7 @@ const Shop = () => {
   };
 
   const renderItems = () => {
-    const items = isInventoryView ? inventoryItems : shopItems;
-
-    if (items.length === 0) {
+    if (shopItems.length === 0) {
       return (
         <div className="text-center py-16 px-5 text-gray-500">
           <div className="text-6xl mb-5">📦</div>
@@ -85,9 +101,8 @@ const Shop = () => {
         </div>
       );
     }
-
-    return items.map(item => {
-      const isSelected = !isInventoryView && selectedItem?.id === item.id;
+    return shopItems.map(item => {
+      const isSelected = selectedItem?.id === item.id;
       return (
         <div
           key={item.id}
@@ -98,7 +113,7 @@ const Shop = () => {
                 ? 'bg-gray-700 hover:bg-gray-600 border-gray-600' 
                 : 'bg-white hover:bg-gray-50 border-gray-200'
           }`}
-          onClick={() => !isInventoryView && selectItem(item as ShopItem)}
+          onClick={() => selectItem(item as ShopItem)}
         >
           <div className="w-full h-32 bg-gradient-to-br from-indigo-400 to-purple-600 rounded-lg mb-4 flex items-center justify-center text-5xl">
             {item.emoji}
@@ -106,15 +121,45 @@ const Shop = () => {
           <div className={`font-bold mb-3 text-base ${
             isDarkMode ? 'text-white' : 'text-gray-800'
           }`}>{item.name}</div>
-          {isInventoryView ? (
-            <div className="text-green-500 font-bold text-sm">Quantity: {(item as InventoryItem).quantity}</div>
-          ) : (
-            <div className="text-red-500 font-bold text-sm">💰 {(item as ShopItem).price} Coins</div>
-          )}
+          <div className="text-red-500 font-bold text-sm">💰 {(item as ShopItem).price} Coins</div>
         </div>
       );
     });
   };
+
+  const renderInventoryModal = () => (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="relative bg-gradient-to-br from-yellow-100 to-orange-200 rounded-3xl shadow-2xl p-8 w-full max-w-2xl border-4 border-yellow-400 flex flex-col items-center">
+        <button
+          onClick={closeInventoryModal}
+          className="absolute top-4 right-4 text-2xl font-bold text-gray-700 hover:text-red-500 bg-white rounded-full w-10 h-10 flex items-center justify-center shadow"
+          aria-label="Close Inventory"
+        >
+          ×
+        </button>
+        <div className="flex items-center gap-3 mb-6">
+          <span className="text-4xl">🎒</span>
+          <span className="text-2xl font-bold text-yellow-700">Backpack</span>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 w-full">
+          {inventoryItems.length === 0 ? (
+            <div className="col-span-full text-center text-gray-500">
+              <div className="text-6xl mb-2">📦</div>
+              <p>No items in your backpack</p>
+            </div>
+          ) : (
+            inventoryItems.map(item => (
+              <div key={item.id} className="flex flex-col items-center bg-white rounded-xl shadow p-4 border-2 border-yellow-300">
+                <div className="text-5xl mb-2">{item.emoji}</div>
+                <div className="font-bold text-lg text-yellow-800 mb-1">{item.name}</div>
+                <div className="text-green-600 font-semibold">x{item.quantity}</div>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-purple-50 to-indigo-100'} transition-colors duration-300`}>
@@ -138,7 +183,7 @@ const Shop = () => {
                 ? 'bg-orange-600 text-white' 
                 : 'bg-gradient-to-r from-orange-500 to-red-500 text-white'
             }`}>
-              🔥 Streak: 5 days
+              🔥 Streak: {loadingStreak ? '...' : `${streak ?? 0} day${streak === 1 ? '' : 's'}`}
             </div>
           </div>
           <div className="flex items-center gap-4">
@@ -188,7 +233,7 @@ const Shop = () => {
             <h2 className={`text-2xl font-bold mb-8 text-center ${
               isDarkMode ? 'text-white' : 'text-gray-800'
             }`}>
-              {isInventoryView ? '🎒 Items Owned' : '🛒 Items for Purchase'}
+              🛒 Items for Purchase
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
               {renderItems()}
@@ -209,30 +254,29 @@ const Shop = () => {
           Back to Hub
           </Link>
           <button 
-            onClick={toggleInventory}
+            onClick={openInventoryModal}
             className={`px-10 py-5 rounded-lg font-bold text-lg cursor-pointer transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg flex-1 max-w-sm ${
               isDarkMode 
                 ? 'bg-gray-800 text-white border border-gray-700 hover:bg-gray-700' 
                 : 'bg-white text-gray-800 border border-gray-300 hover:bg-gray-50'
             }`}
           >
-            {isInventoryView ? '🛒 Back to Shop' : '🎒 Inventory'}
+            🎒 Inventory
           </button>
           <button 
             onClick={handlePurchase}
-            disabled={isInventoryView}
+            disabled={!selectedItem}
             className={`border-none px-10 py-5 rounded-lg font-bold text-lg cursor-pointer transition-all duration-300 hover:-translate-y-0.5 flex-1 max-w-sm ${
-              isInventoryView 
-                ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
-                : selectedItem 
-                  ? 'bg-green-500 text-white hover:bg-green-600' 
-                  : 'bg-green-500 text-white hover:bg-green-600'
+              selectedItem 
+                ? 'bg-green-500 text-white hover:bg-green-600' 
+                : 'bg-green-500 text-white hover:bg-green-600'
             }`}
           >
             {selectedItem ? `💳 Buy ${selectedItem.name} (${selectedItem.price} coins)` : '💳 Purchase'}
           </button>
         </nav>
       </div>
+      {isInventoryModalOpen && renderInventoryModal()}
     </div>
   );
 };

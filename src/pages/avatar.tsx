@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useTheme } from "../components/theme";
 import { IoSunnyOutline } from "react-icons/io5";
 import { FaRegMoon } from "react-icons/fa";
+import { useAuth } from "../contexts/authContexts/auth";
+import { getUser } from "../services/users";
 
 interface AvatarItem {
   id: number;
@@ -14,8 +16,30 @@ interface AvatarItem {
 
 const Avatar = () => {
   const { isDarkMode, toggleDarkMode } = useTheme();
+  const authContext = useAuth();
+  const user = authContext?.currentUser;
   const [equippedItems, setEquippedItems] = useState<Map<string, AvatarItem>>(new Map());
   const [currentCategory, setCurrentCategory] = useState('all');
+  const [streak, setStreak] = useState<number | null>(null);
+  const [loadingStreak, setLoadingStreak] = useState(true);
+  useEffect(() => {
+    const fetchStreak = async () => {
+      if (!user) {
+        setStreak(null);
+        setLoadingStreak(false);
+        return;
+      }
+      try {
+        const userData = await getUser(user.uid);
+        setStreak(userData && typeof userData.streak === 'number' ? userData.streak : 0);
+      } catch (e) {
+        setStreak(0);
+      } finally {
+        setLoadingStreak(false);
+      }
+    };
+    fetchStreak();
+  }, [user]);
 
   // Avatar customization items with categories
   const avatarItems: AvatarItem[] = [
@@ -170,7 +194,7 @@ const Avatar = () => {
                 ? 'bg-orange-600 text-white' 
                 : 'bg-gradient-to-r from-orange-500 to-red-500 text-white'
             }`}>
-              🔥 Streak: 5 days
+              🔥 Streak: {loadingStreak ? '...' : `${streak ?? 0} day${streak === 1 ? '' : 's'}`}
             </div>
           </div>
           <div className="flex items-center gap-4">

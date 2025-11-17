@@ -133,6 +133,30 @@ const Quiz = () => {
     );
   }
 
+  // Guard: If finished, show completed message
+  if (currentQuestionIndex >= quiz.questions.length) {
+    return (
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center">
+        <div className="text-4xl font-bold mb-6" style={{ fontFamily: 'monospace', color: '#8B2B2B' }}>
+          Quiz Completed!
+        </div>
+        <button
+          onClick={() => navigate('/quest')}
+          className="px-8 py-4 bg-gray-800 text-white font-bold"
+          style={{
+            fontFamily: 'monospace',
+            textTransform: 'uppercase',
+            letterSpacing: '2px',
+            border: '4px solid #000000',
+            cursor: 'pointer'
+          }}
+        >
+          Back to Quests
+        </button>
+      </div>
+    );
+  }
+
   const currentQuestion = quiz.questions[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex === quiz.questions.length - 1;
 

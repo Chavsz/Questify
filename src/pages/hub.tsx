@@ -1,10 +1,38 @@
+
 import { useTheme } from "../components/theme";
 import { IoSunnyOutline } from "react-icons/io5";
 import { FaRegMoon } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { useAuth } from "../contexts/authContexts/auth";
+import { useEffect, useState } from "react";
+import { getUser } from "../services/users";
+
 
 function Hub() {
   const { isDarkMode, toggleDarkMode } = useTheme();
+  const authContext = useAuth();
+  const user = authContext?.currentUser;
+  const [streak, setStreak] = useState<number | null>(null);
+  const [loadingStreak, setLoadingStreak] = useState(true);
+
+  useEffect(() => {
+    const fetchStreak = async () => {
+      if (!user) {
+        setStreak(null);
+        setLoadingStreak(false);
+        return;
+      }
+      try {
+        const userData = await getUser(user.uid);
+        setStreak(userData && typeof userData.streak === 'number' ? userData.streak : 0);
+      } catch (e) {
+        setStreak(0);
+      } finally {
+        setLoadingStreak(false);
+      }
+    };
+    fetchStreak();
+  }, [user]);
 
   const handleEditAvatar = () => {
     console.log("Navigate to Avatar");
@@ -32,7 +60,7 @@ function Hub() {
                 ? 'bg-orange-600 text-white' 
                 : 'bg-gradient-to-r from-orange-500 to-red-500 text-white'
             }`}>
-              🔥 Streak: 5 days
+              🔥 Streak: {loadingStreak ? '...' : `${streak ?? 0} day${streak === 1 ? '' : 's'}`}
             </div>
           </div>
           <div className="flex items-center gap-4">
