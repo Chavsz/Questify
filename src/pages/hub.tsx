@@ -115,7 +115,7 @@ function Hub() {
                     : "bg-white text-gray-600 border border-gray-300"
                 }`}
               >
-                Level: {level}
+                Level: <span className="text-indigo-600">{level}</span>
               </div>
               <div
                 className={`p-4 rounded-xl font-bold text-lg text-center ${

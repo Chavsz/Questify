@@ -224,13 +224,16 @@ const Quest = () => {
   const [isInventoryModalOpen, setIsInventoryModalOpen] = useState(false);
   const closeInventoryModal = () => setIsInventoryModalOpen(false);
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
+  const filterInventoryItems = (items: InventoryItem[] = []) =>
+    items.filter((item) => (item.slot ?? 'inventory') === 'inventory');
+
   const fetchInventory = async () => {
     if (!user) {
       setInventory([]);
       return;
     }
     const userData = await getUser(user.uid);
-    setInventory(userData?.inventory || []);
+    setInventory(filterInventoryItems(userData?.inventory || []));
   };
   useEffect(() => {
     fetchInventory();

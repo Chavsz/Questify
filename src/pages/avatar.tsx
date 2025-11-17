@@ -334,6 +334,18 @@ const Avatar = () => {
               >
                 💍 Accessories
               </button>
+              <button 
+                className={`px-5 py-2 rounded-lg font-bold shadow-md hover:scale-105 ${
+                  currentCategory === 'Consumables' 
+                    ? 'bg-green-500 text-white shadow-lg' 
+                    : isDarkMode 
+                      ? 'bg-gray-700 hover:bg-gray-600 text-white' 
+                      : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                }`}
+                onClick={() => filterByCategory('Consumables')}
+              >
+                💍 Consumables
+              </button>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
               {renderItems()}

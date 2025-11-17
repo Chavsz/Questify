@@ -18,6 +18,7 @@ export interface InventoryItem {
   name: string;
   quantity: number;
   emoji: string;
+  slot?: string;
 }
 
 export interface User {
@@ -54,6 +55,9 @@ export const addItemToInventory = async (uid: string, item: InventoryItem) => {
   const existing = inventory.find(i => i.id === item.id);
   if (existing) {
     existing.quantity += item.quantity;
+    if (!existing.slot && item.slot) {
+      existing.slot = item.slot;
+    }
   } else {
     inventory.push(item);
   }
