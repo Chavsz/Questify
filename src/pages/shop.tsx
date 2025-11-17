@@ -199,7 +199,7 @@ const Shop = () => {
         {/* Bottom Navigation */}
         <nav className="flex justify-between gap-5">
           <Link 
-            to="/Questify"
+            to="/"
             className={`px-10 py-5 rounded-lg font-bold text-lg cursor-pointer transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg flex-1 max-w-sm text-center ${
               isDarkMode 
                 ? 'bg-gray-800 text-white border border-gray-700 hover:bg-gray-700' 

@@ -252,53 +252,6 @@ Generate diverse questions covering key concepts. Make sure all questions are cl
 }
 
 /**
- * Fallback quiz generation using simple text analysis
- */
-function generateFallbackQuiz(text: string, fileName: string): GeneratedQuiz {
-  const sentences = text.split(/[.!?]\s+/).filter((s) => s.length > 20);
-  const questions: QuizQuestion[] = [];
-
-  // Generate questions from key sentences
-  const numQuestions = Math.min(10, Math.floor(sentences.length / 2));
-
-  for (let i = 0; i < numQuestions && i * 2 < sentences.length; i++) {
-    const sentence = sentences[i * 2];
-    const words = sentence.split(" ");
-
-    if (words.length > 5) {
-      // Create a fill-in-the-blank or definition question
-      const keyWord = words[Math.floor(words.length / 2)];
-      const question = sentence.replace(keyWord, "_____");
-
-      questions.push({
-        id: `q${i + 1}`,
-        question:
-          question ||
-          `What is mentioned about: ${words.slice(0, 3).join(" ")}?`,
-        answer: keyWord || "Answer not available",
-      });
-    }
-  }
-
-  // If we don't have enough questions, add generic ones
-  while (questions.length < 5) {
-    questions.push({
-      id: `q${questions.length + 1}`,
-      question: `Question ${questions.length + 1} about the content`,
-      answer: "Please review the material",
-    });
-  }
-
-  return {
-    id: `quiz_${Date.now()}`,
-    title: fileName.replace(/\.[^/.]+$/, ""),
-    questions,
-    sourceFile: fileName,
-    createdAt: new Date(),
-  };
-}
-
-/**
  * Main function to generate quiz from uploaded file
  */
 export async function generateQuizFromFile(

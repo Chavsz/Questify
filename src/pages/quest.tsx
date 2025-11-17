@@ -321,7 +321,7 @@ const Quest = () => {
 
         {/* Bottom Navigation */}
         <nav className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Link to="/Questify"
+          <Link to="/"
             onClick={navigateToHub}
             className={`${isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-white' : 'bg-white hover:bg-gray-50 text-purple-600'}  p-6 rounded-xl font-bold text-base cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col items-center gap-3 shadow-lg`}
           >
