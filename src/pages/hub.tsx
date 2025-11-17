@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/authContexts/auth";
 import { useEffect, useState } from "react";
 
-import { getUser } from "../services/users";
+import { getUser, type User } from "../services/users";
 import { getUserQuestStats } from "../services/questStats";
 import type { QuestStats } from "../services/questStats";
 
@@ -19,6 +19,7 @@ function Hub() {
   const [loadingStreak, setLoadingStreak] = useState(true);
   const [questStats, setQuestStats] = useState<QuestStats>({});
   const [loadingStats, setLoadingStats] = useState(true);
+  const [userData, setUserData] = useState<User | null>(null);
 
   useEffect(() => {
     const fetchStreakAndStats = async () => {
@@ -27,13 +28,16 @@ function Hub() {
         setLoadingStreak(false);
         setQuestStats({});
         setLoadingStats(false);
+        setUserData(null);
         return;
       }
       try {
-        const userData = await getUser(user.uid);
-        setStreak(userData && typeof userData.streak === 'number' ? userData.streak : 0);
+        const uData = await getUser(user.uid);
+        setUserData(uData);
+        setStreak(uData && typeof uData.streak === 'number' ? uData.streak : 0);
       } catch (e) {
         setStreak(0);
+        setUserData(null);
       } finally {
         setLoadingStreak(false);
       }
@@ -52,6 +56,14 @@ function Hub() {
   const handleEditAvatar = () => {
     console.log("Navigate to Avatar");
   };
+
+  // EXP/Level logic
+  const coins = userData?.coins ?? 0;
+  const exp = userData?.exp ?? 0;
+  const level = userData?.level ?? 1;
+  const expToNext = 100 + (level - 1) * 50; // Example: 100, 150, 200, ...
+  const expProgress = Math.min(100, Math.round((exp / expToNext) * 100));
+  const questsCompleted = Object.values(questStats).reduce((a, b) => a + b, 0);
 
   return (
     <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-purple-50 to-indigo-100'} transition-colors duration-300`}>
@@ -99,10 +111,15 @@ function Hub() {
           <aside className="flex flex-col gap-6">
             {/* Important Info Cards */}
             <div className="flex flex-col gap-4">
-              <div className={`p-4 rounded-xl font-bold text-lg shadow-md text-center ${isDarkMode ? 'bg-gray-800 text-yellow-400 border border-gray-700' : 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white'}`}>💰 Coins: 1,250</div>
-              <div className={`p-4 rounded-xl font-bold text-lg shadow-md text-center ${isDarkMode ? 'bg-gray-800 text-blue-300 border border-gray-700' : 'bg-gradient-to-r from-blue-400 to-blue-600 text-white'}`}>⭐ Level: 5</div>
-              <div className={`p-4 rounded-xl font-bold text-lg shadow-md text-center ${isDarkMode ? 'bg-gray-800 text-green-300 border border-gray-700' : 'bg-gradient-to-r from-green-400 to-green-600 text-white'}`}>📈 EXP: 1,800</div>
-              <div className={`p-4 rounded-xl font-bold text-lg shadow-md text-center ${isDarkMode ? 'bg-gray-800 text-pink-300 border border-gray-700' : 'bg-gradient-to-r from-pink-400 to-pink-600 text-white'}`}>🏆 Quests: {Object.values(questStats).reduce((a, b) => a + b, 0)}</div>
+              <div className={`p-4 rounded-xl font-bold text-lg shadow-md text-center ${isDarkMode ? 'bg-gray-800 text-yellow-400 border border-gray-700' : 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white'}`}>💰 Coins: {coins}</div>
+              <div className={`p-4 rounded-xl font-bold text-lg shadow-md text-center ${isDarkMode ? 'bg-gray-800 text-blue-300 border border-gray-700' : 'bg-gradient-to-r from-blue-400 to-blue-600 text-white'}`}>⭐ Level: {level}</div>
+              <div className={`p-4 rounded-xl font-bold text-lg shadow-md text-center ${isDarkMode ? 'bg-gray-800 text-green-300 border border-gray-700' : 'bg-gradient-to-r from-green-400 to-green-600 text-white'}`}>
+                📈 EXP: {exp} / {expToNext}
+                <div className="w-full h-3 bg-gray-200 rounded-full mt-2">
+                  <div className="h-3 rounded-full bg-green-500 transition-all duration-500" style={{ width: `${expProgress}%` }}></div>
+                </div>
+              </div>
+              <div className={`p-4 rounded-xl font-bold text-lg shadow-md text-center ${isDarkMode ? 'bg-gray-800 text-pink-300 border border-gray-700' : 'bg-gradient-to-r from-pink-400 to-pink-600 text-white'}`}>🏆 Quests: {questsCompleted}</div>
             </div>
             <div className="flex flex-col items-center gap-6">
               <div className={`w-36 h-36 rounded-full flex items-center justify-center text-6xl shadow-2xl ${

@@ -35,6 +35,9 @@ export interface User {
   };
   streak?: number; // Login streak in days
   inventory?: InventoryItem[];
+  exp?: number; // Experience points
+  level?: number; // User level
+  coins?: number; // User coins
 }
 
 // Add item to user inventory
@@ -78,15 +81,16 @@ export const createUser = async (userData: Omit<User, 'createdAt' | 'updatedAt'>
     const userRef = doc(db, 'users', userData.uid);
     const userDoc = {
       ...userData,
+      coins: userData.coins ?? 1250,
+      exp: userData.exp ?? 0,
+      level: userData.level ?? 1,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     };
-    
     // Remove any undefined values to prevent Firestore errors
     const cleanUserDoc = Object.fromEntries(
       Object.entries(userDoc).filter(([_, value]) => value !== undefined)
     );
-    
     await setDoc(userRef, cleanUserDoc);
     console.log('User created successfully:', userData.uid);
     return userData.uid;
@@ -101,9 +105,13 @@ export const getUser = async (uid: string): Promise<User | null> => {
   try {
     const userRef = doc(db, 'users', uid);
     const userSnap = await getDoc(userRef);
-    
     if (userSnap.exists()) {
-      return userSnap.data() as User;
+      const data = userSnap.data() as User;
+      // Patch for legacy users: if coins is undefined, set to 1250
+      if (typeof data.coins !== 'number') {
+        data.coins = 1250;
+      }
+      return data;
     } else {
       console.log('No user found with UID:', uid);
       return null;

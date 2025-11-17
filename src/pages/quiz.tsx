@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { db } from "../firebase";
 import { collection, getDocs, query, where, updateDoc, doc } from "firebase/firestore";
+import { getUser, updateUser } from "../services/users";
 import type { GeneratedQuiz } from "../api/generate-quiz/generate_quiz";
 import { useAuth } from "../contexts/authContexts/auth";
 
@@ -66,8 +67,8 @@ const Quiz = () => {
     setShowFeedback(true);
 
     if (isAnswerCorrect && user) {
-      // Update progress in Firebase
-      const updateProgress = async () => {
+      // Update progress in Firebase and award EXP
+      const updateProgressAndExp = async () => {
         try {
           const questsRef = collection(db, 'quests');
           const q = query(questsRef, where('userId', '==', user.uid));
@@ -76,20 +77,29 @@ const Quiz = () => {
           querySnapshot.forEach(async (docSnapshot) => {
             const data = docSnapshot.data();
             const quizData = data.quiz as GeneratedQuiz;
-            
             if (quizData.id === quizId) {
               const newCompleted = (data.completedQuestions || 0) + 1;
               await updateDoc(doc(db, 'quests', docSnapshot.id), {
                 completedQuestions: newCompleted
               });
+              // Award EXP for completing a question
+              const userData = await getUser(user.uid);
+              let exp = userData?.exp ?? 0;
+              let level = userData?.level ?? 1;
+              const expToNext = 100 + (level - 1) * 50;
+              exp += 20; // Award 20 EXP per correct answer
+              if (exp >= expToNext) {
+                exp -= expToNext;
+                level += 1;
+              }
+              await updateUser(user.uid, { exp, level });
             }
           });
         } catch (error) {
-          console.error('Error updating progress:', error);
+          console.error('Error updating progress/exp:', error);
         }
       };
-
-      updateProgress();
+      updateProgressAndExp();
     }
   };
 

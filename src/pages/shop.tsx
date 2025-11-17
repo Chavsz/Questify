@@ -4,7 +4,7 @@ import { IoSunnyOutline } from "react-icons/io5";
 import { FaRegMoon } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/authContexts/auth";
-import { getUser, addItemToInventory, type InventoryItem } from "../services/users";
+import { getUser, addItemToInventory, updateUser, type InventoryItem } from "../services/users";
 
 interface ShopItem {
   id: number;
@@ -21,7 +21,7 @@ const Shop = () => {
   const user = authContext?.currentUser;
   const [isInventoryModalOpen, setIsInventoryModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<ShopItem | null>(null);
-  const [userCoins, setUserCoins] = useState(1250);
+  const [userCoins, setUserCoins] = useState(0);
   const [streak, setStreak] = useState<number | null>(null);
   const [loadingStreak, setLoadingStreak] = useState(true);
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
@@ -31,15 +31,18 @@ const Shop = () => {
         setStreak(null);
         setLoadingStreak(false);
         setInventory([]);
+        setUserCoins(0);
         return;
       }
       try {
         const userData = await getUser(user.uid);
         setStreak(userData && typeof userData.streak === 'number' ? userData.streak : 0);
         setInventory(userData?.inventory || []);
+        setUserCoins(userData?.coins ?? 0);
       } catch (e) {
         setStreak(0);
         setInventory([]);
+        setUserCoins(0);
       } finally {
         setLoadingStreak(false);
       }
@@ -79,18 +82,21 @@ const Shop = () => {
       alert('You must be logged in to purchase items.');
       return;
     }
-    setUserCoins(userCoins - selectedItem.price);
-    // Add item to Firestore inventory
+    // Deduct coins in Firestore and add item
+    const newCoins = userCoins - selectedItem.price;
+    await updateUser(user.uid, { coins: newCoins });
+    setUserCoins(newCoins);
     await addItemToInventory(user.uid, {
       id: selectedItem.id,
       name: selectedItem.name,
       quantity: 1,
       emoji: selectedItem.emoji
     });
-    // Refresh inventory from Firestore
+    // Refresh inventory and coins from Firestore
     const userData = await getUser(user.uid);
     setInventory(userData?.inventory || []);
-    alert(`✅ Purchase successful!\n\nYou bought: ${selectedItem.name}\nCost: ${selectedItem.price} coins\nRemaining coins: ${userCoins - selectedItem.price}`);
+    setUserCoins(userData?.coins ?? newCoins);
+    alert(`✅ Purchase successful!\n\nYou bought: ${selectedItem.name}\nCost: ${selectedItem.price} coins\nRemaining coins: ${userData?.coins ?? newCoins}`);
     setSelectedItem(null);
   };
 
