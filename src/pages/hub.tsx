@@ -144,15 +144,7 @@ function Hub() {
               </div>
             </div>
             <div className="flex flex-col items-center gap-6">
-              <div
-                className={`w-36 h-36 rounded-full flex items-center justify-center text-6xl shadow-2xl ${
-                  isDarkMode
-                    ? "bg-gradient-to-br from-purple-600 to-indigo-700"
-                    : "bg-gradient-to-br from-indigo-400 to-purple-600"
-                }`}
-              >
-                ⚔️
-              </div>
+           
               <Link
                 to="/avatar"
                 onClick={handleEditAvatar}

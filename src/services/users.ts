@@ -41,6 +41,7 @@ export interface User {
   exp?: number; // Experience points
   level?: number; // User level
   coins?: number; // User coins
+  selectedCharacter?: string; // Selected avatar character id
 }
 
 // Add item to user inventory

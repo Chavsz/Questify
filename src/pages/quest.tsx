@@ -1,4 +1,25 @@
 import { useState, useEffect } from "react";
+import MiniSwordManIdle from "../assets/MiniSwordManIdle.gif";
+import MiniSpear from "../assets/MiniSpearManIdle.gif";
+import MiniArcher from "../assets/MiniArcherIdle.gif";
+// Avatar character list (sync with avatar.tsx)
+const miniSwordCrew = [
+  {
+    id: "idle",
+    label: "Mini Swordman",
+    image: MiniSwordManIdle
+  },
+  {
+    id: "idle1",
+    label: "Mini Spearman",
+    image: MiniSpear
+  },
+  {
+    id: "idle2",
+    label: "Mini Archer",
+    image: MiniArcher
+  }
+];
 import { useTheme } from "../components/theme";
 import { IoSunnyOutline } from "react-icons/io5";
 import { FaRegMoon } from "react-icons/fa";
@@ -34,6 +55,20 @@ const Quest = () => {
   const { isDarkMode, toggleDarkMode } = useTheme();
   const authContext = useAuth();
   const user = authContext?.currentUser;
+  // Avatar state
+  const [selectedCharacter, setSelectedCharacter] = useState<string>(miniSwordCrew[0].id);
+
+  // Load selected character from Firestore
+  useEffect(() => {
+    const fetchSelectedCharacter = async () => {
+      if (!user) return;
+      const userData = await getUser(user.uid);
+      if (userData && userData.selectedCharacter) {
+        setSelectedCharacter(userData.selectedCharacter);
+      }
+    };
+    fetchSelectedCharacter();
+  }, [user]);
   const navigate = useNavigate();
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [streak, setStreak] = useState<number | null>(null);
@@ -432,7 +467,17 @@ const Quest = () => {
               <h3 className="text-xl font-bold mb-4">Avatar Character</h3>
               <div className="relative">
                 <div className="w-64 h-64 bg-indigo-600 rounded-2xl flex items-center justify-center text-8xl shadow-lg">
-                  ⚔️
+                  {(() => {
+                    const char = miniSwordCrew.find(c => c.id === selectedCharacter) || miniSwordCrew[0];
+                    return (
+                      <img
+                        src={char.image}
+                        alt={char.label}
+                        className="w-40 h-40 object-contain"
+                        style={{ imageRendering: "pixelated" }}
+                      />
+                    );
+                  })()}
                 </div>
               </div>
             </div>

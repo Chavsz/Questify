@@ -1,3 +1,25 @@
+import MiniSwordManIdle from "../assets/MiniSwordManIdle.gif";
+import MiniSpear from "../assets/MiniSpearManIdle.gif";
+import MiniArcher from "../assets/MiniArcherIdle.gif";
+import Orc from "../assets/OrcIdle.gif";
+// Avatar character list (sync with avatar.tsx)
+const miniSwordCrew = [
+  {
+    id: "idle",
+    label: "Mini Swordman",
+    image: MiniSwordManIdle
+  },
+  {
+    id: "idle1",
+    label: "Mini Spearman",
+    image: MiniSpear
+  },
+  {
+    id: "idle2",
+    label: "Mini Archer",
+    image: MiniArcher
+  }
+];
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { db } from "../firebase";
@@ -14,6 +36,20 @@ const Quiz = () => {
   const navigate = useNavigate();
   const authContext = useAuth();
   const user = authContext?.currentUser;
+  // Avatar state
+  const [selectedCharacter, setSelectedCharacter] = useState<string>(miniSwordCrew[0].id);
+
+  // Load selected character from Firestore
+  useEffect(() => {
+    const fetchSelectedCharacter = async () => {
+      if (!user) return;
+      const userData = await getUser(user.uid);
+      if (userData && userData.selectedCharacter) {
+        setSelectedCharacter(userData.selectedCharacter);
+      }
+    };
+    fetchSelectedCharacter();
+  }, [user]);
   const [quiz, setQuiz] = useState<GeneratedQuiz | null>(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswer, setUserAnswer] = useState("");
@@ -335,8 +371,18 @@ const Quiz = () => {
           animation: 'float 3s ease-in-out infinite'
         }}
       >
-        <div className="text-8xl mb-2" style={{ filter: 'drop-shadow(0 0 10px rgba(34, 197, 94, 0.5))' }}>
-          🧙‍♂️
+        <div className="mb-2">
+          {(() => {
+            const char = miniSwordCrew.find(c => c.id === selectedCharacter) || miniSwordCrew[0];
+            return (
+              <img
+                src={char.image}
+                alt={char.label}
+                className="w-40 h-40 object-contain"
+                style={{ imageRendering: "pixelated", filter: 'drop-shadow(0 0 10px rgba(34, 197, 94, 0.5))' }}
+              />
+            );
+          })()}
         </div>
         <div className="px-4 py-2 bg-green-900/80 border-2 border-green-400 rounded-lg backdrop-blur-sm">
           <div className="text-green-300 font-bold text-sm" style={{ fontFamily: 'monospace' }}>HERO</div>
@@ -357,8 +403,17 @@ const Quiz = () => {
           animation: 'floatBoss 3.5s ease-in-out infinite'
         }}
       >
-        <div className="text-8xl mb-2" style={{ filter: 'drop-shadow(0 0 20px rgba(220, 38, 38, 0.7))' }}>
-          👹
+        <div className="mb-2">
+          <img
+            src={Orc}
+            alt="Orc Boss"
+            className="w-56 h-56 object-contain"
+            style={{
+              imageRendering: "pixelated",
+              filter: 'drop-shadow(0 0 20px rgba(220, 38, 38, 0.7))',
+              transform: 'scaleX(-1)'
+            }}
+          />
         </div>
         <div className="px-4 py-2 bg-red-900/80 border-2 border-red-400 rounded-lg backdrop-blur-sm">
           <div className="text-red-300 font-bold text-sm" style={{ fontFamily: 'monospace' }}>BOSS</div>

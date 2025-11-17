@@ -5,10 +5,8 @@ import { IoSunnyOutline } from "react-icons/io5";
 import { FaRegMoon } from "react-icons/fa";
 import { useAuth } from "../contexts/authContexts/auth";
 import MiniSwordManIdle from "../assets/MiniSwordManIdle.gif";
-import MiniSwordManIdleAttack from "../assets/MiniSwordManIdleAttack.gif";
-import MiniSwordManIdleHit from "../assets/MiniSwordManIdleHit.gif";
-import MiniSwordManIdleWalk from "../assets/MiniSwordManIdleWalk.gif";
-
+import MiniSpear from "../assets/MiniSpearManIdle.gif";
+import MiniArcher from "../assets/MiniArcherIdle.gif";
 
 interface AvatarItem {
   id: number;
@@ -17,6 +15,29 @@ interface AvatarItem {
   emoji: string;
   slot: string;
 }
+
+
+// Move miniSwordCrew above Avatar so it can be used in state initialization
+const miniSwordCrew = [
+  {
+    id: "idle",
+    label: "Mini Swordman",
+    description: "A tiny but fearless warrior who charges into battle with quick slashes. Agile, brave, and always on the front line.",
+    image: MiniSwordManIdle
+  },
+  {
+    id: "idle1",
+    label: "Mini Spearman",
+    description: "A small defender armed with a long spear, keeping enemies at a distance. Steady, disciplined, and great for holding the line.",
+    image: MiniSpear
+  },
+  {
+    id: "idle2",
+    label: "Mini Archer",
+    description: "A miniature marksman who fires arrows from afar with surprising accuracy. Light, swift, and perfect for ranged support.",
+    image: MiniArcher
+  }
+];
 
 const Avatar = () => {
   const { isDarkMode, toggleDarkMode } = useTheme();
@@ -29,32 +50,31 @@ const Avatar = () => {
   const [loadingStreak, setLoadingStreak] = useState(true);
   const [userCoins, setUserCoins] = useState(0);
   const [modal, setModal] = useState<{ open: boolean; title: string; message: string; type: 'success' | 'error' | 'info' }>({ open: false, title: '', message: '', type: 'info' });
-  const miniSwordCrew = [
-    {
-      id: "idle",
-      label: "Idle",
-      description: "Calm stance before the action starts.",
-      image: MiniSwordManIdle
-    },
-    {
-      id: "attack",
-      label: "Attack",
-      description: "Sword strike mid-animation.",
-      image: MiniSwordManIdleAttack
-    },
-    {
-      id: "hit",
-      label: "Hit",
-      description: "Taking a hit but staying on his feet.",
-      image: MiniSwordManIdleHit
-    },
-    {
-      id: "walk",
-      label: "Walk",
-      description: "Marching forward into the quest.",
-      image: MiniSwordManIdleWalk
-    }
-  ];
+  // Character selection state
+  const [selectedCharacter, setSelectedCharacter] = useState<string>(miniSwordCrew[0].id);
+
+  // Load selected character from Firestore on mount
+  useEffect(() => {
+    const fetchSelectedCharacter = async () => {
+      if (!user) return;
+      const userData = await getUser(user.uid);
+      if (userData && userData.selectedCharacter) {
+        setSelectedCharacter(userData.selectedCharacter);
+      }
+    };
+    fetchSelectedCharacter();
+  }, [user]);
+
+  // Handle character selection and save to Firestore
+  const handleSelectCharacter = async (charId: string) => {
+    if (!user) return;
+    setSelectedCharacter(charId);
+    // Save to Firestore (users collection)
+    const { updateUser } = await import("../services/users");
+    await updateUser(user.uid, { selectedCharacter: charId });
+    setModal({ open: true, title: "Character Selected", message: "Your character has been updated!", type: "success" });
+  };
+  // (removed duplicate miniSwordCrew declaration)
   useEffect(() => {
     const fetchStreak = async () => {
       if (!user) {
@@ -120,6 +140,18 @@ const Avatar = () => {
     setCurrentCategory(category);
   };
 
+                      {/* Avatar Preview: Show selected character gif */}
+                      {(() => {
+                        const char = miniSwordCrew.find(c => c.id === selectedCharacter) || miniSwordCrew[0];
+                        return (
+                          <img
+                            src={char.image}
+                            alt={char.label}
+                            className="w-32 h-32 object-contain"
+                            style={{ imageRendering: "pixelated" }}
+                          />
+                        );
+                      })()}
   const equipItem = (item: AvatarItem) => {
     const currentEquipped = equippedItems.get(item.slot);
     
@@ -184,16 +216,16 @@ const Avatar = () => {
   };
 
   const updateAvatarPreview = () => {
-    const equipped = Array.from(equippedItems.values());
-    const baseAvatar = gender === 'male' ? '🧑‍🦱' : '👩‍🦰';
-    if (equipped.length > 0) {
-      const emojis = [baseAvatar, ...equipped.map(item => item.emoji)].join(' ');
-      return (
-        <div className="text-4xl leading-relaxed">{emojis}</div>
-      );
-    } else {
-      return <div className="text-6xl">{baseAvatar}</div>;
-    }
+    // Show selected character gif if selected, else default to first character
+    const char = miniSwordCrew.find(c => c.id === selectedCharacter) || miniSwordCrew[0];
+    return (
+      <img
+        src={char.image}
+        alt={char.label}
+        className="w-32 h-32 object-contain"
+        style={{ imageRendering: "pixelated" }}
+      />
+    );
   };
 
   const updateEquippedList = () => {
@@ -297,33 +329,6 @@ const Avatar = () => {
         <div className="flex flex-col lg:flex-row gap-10 mb-10">
           {/* Left Sidebar */}
           <aside className="w-full max-w-xs shrink-0 flex flex-col gap-8 mx-auto lg:mx-0">
-            {/* Gender Selection */}
-            <div className="flex justify-center gap-4 mb-2">
-              <button
-                className={`px-5 py-2 rounded-lg font-bold hover:scale-105 flex items-center gap-2 text-base ${
-                  gender === 'male'
-                    ? 'bg-blue-500 text-white shadow-lg'
-                    : isDarkMode
-                      ? 'bg-gray-700 hover:bg-gray-600 text-white'
-                      : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                }`}
-                onClick={() => setGender('male')}
-              >
-                🧑‍🦱 Male
-              </button>
-              <button
-                className={`px-5 py-2 rounded-lg font-bold hover:scale-105 flex items-center gap-2 text-base ${
-                  gender === 'female'
-                    ? 'bg-pink-500 text-white shadow-lg'
-                    : isDarkMode
-                      ? 'bg-gray-700 hover:bg-gray-600 text-white'
-                      : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                }`}
-                onClick={() => setGender('female')}
-              >
-                👩‍🦰 Female
-              </button>
-            </div>
             <div className={`p-6 rounded-2xl text-center font-bold text-lg ${
               isDarkMode 
                 ? 'bg-gray-800 text-white border border-gray-700' 
@@ -363,13 +368,20 @@ const Avatar = () => {
               <h3 className={`text-xl font-semibold mb-4 text-center ${isDarkMode ? 'text-white' : 'text-gray-700'}`}>
                 Mini Sword Squad
               </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7">
                 {miniSwordCrew.map((character) => (
                   <div
                     key={character.id}
-                    className={`rounded-xl p-5 flex flex-col items-center text-center shadow-md border ${
-                      isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50 border-gray-200'
+                    className={`rounded-xl p-5 flex flex-col items-center text-center shadow-md border transition-all duration-200 cursor-pointer ${
+                      selectedCharacter === character.id
+                        ? isDarkMode
+                          ? 'border-indigo-400 ring-2 ring-indigo-300 bg-gray-900'
+                          : 'border-indigo-600 ring-2 ring-indigo-400 bg-indigo-50'
+                        : isDarkMode
+                        ? 'bg-gray-800 border-gray-700 hover:bg-gray-700'
+                        : 'bg-gray-50 border-gray-200 hover:bg-indigo-100'
                     }`}
+                    onClick={() => setSelectedCharacter(character.id)}
                   >
                     <div className={`w-28 h-28 mb-4 rounded-lg flex items-center justify-center overflow-hidden border ${
                       isDarkMode ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'
@@ -387,6 +399,19 @@ const Avatar = () => {
                     <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                       {character.description}
                     </p>
+                    <button
+                      className={`mt-3 px-4 py-2 rounded-lg font-bold transition-all w-full ${
+                        selectedCharacter === character.id
+                          ? isDarkMode
+                            ? 'bg-indigo-700 text-white cursor-not-allowed border border-indigo-400'
+                            : 'bg-gray-400 text-white cursor-not-allowed'
+                          : 'bg-indigo-500 text-white hover:bg-indigo-600'
+                      }`}
+                      disabled={selectedCharacter === character.id}
+                      onClick={e => { e.stopPropagation(); setSelectedCharacter(character.id); }}
+                    >
+                      {selectedCharacter === character.id ? 'Selected' : 'Select'}
+                    </button>
                   </div>
                 ))}
               </div>
@@ -399,10 +424,15 @@ const Avatar = () => {
         {/* Bottom Navigation */}
         <nav className="flex justify-end">
           <button 
-            onClick={handleSaveEquipment}
+            onClick={async () => {
+              if (!user) return;
+              const { updateUser } = await import("../services/users");
+              await updateUser(user.uid, { selectedCharacter });
+              setModal({ open: true, title: "Character Saved", message: "Your character has been saved!", type: "success" });
+            }}
             className="bg-green-600 text-white border-none px-7 py-4 rounded-xl font-bold text-lg cursor-pointer hover:bg-green-700 hover:shadow-xl"
           >
-            Save Equipment
+            Save Character
           </button>
         </nav>
       </div>
