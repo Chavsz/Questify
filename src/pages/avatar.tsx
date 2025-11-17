@@ -22,18 +22,22 @@ const Avatar = () => {
   const [currentCategory, setCurrentCategory] = useState('all');
   const [streak, setStreak] = useState<number | null>(null);
   const [loadingStreak, setLoadingStreak] = useState(true);
+  const [userCoins, setUserCoins] = useState(0);
   useEffect(() => {
     const fetchStreak = async () => {
       if (!user) {
         setStreak(null);
         setLoadingStreak(false);
+        setUserCoins(0);
         return;
       }
       try {
         const userData = await getUser(user.uid);
         setStreak(userData && typeof userData.streak === 'number' ? userData.streak : 0);
+        setUserCoins(userData?.coins ?? 0);
       } catch (e) {
         setStreak(0);
+        setUserCoins(0);
       } finally {
         setLoadingStreak(false);
       }
@@ -238,7 +242,7 @@ const Avatar = () => {
                 ? 'bg-gray-800 text-white border border-gray-700' 
                 : 'bg-white text-gray-600 border border-gray-300'
             }`}>
-              🟡 1250 Coins
+              🟡 {userCoins} Coins
             </div>
             <div className={`p-6 rounded-2xl text-center font-bold w-full ${
               isDarkMode 
