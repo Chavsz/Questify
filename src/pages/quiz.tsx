@@ -7,6 +7,8 @@ import { recordQuestCompletion } from "../services/questStats";
 import type { GeneratedQuiz } from "../api/generate-quiz/generate_quiz";
 import { useAuth } from "../contexts/authContexts/auth";
 
+const INITIAL_LIVES = 3;
+
 const Quiz = () => {
   const { quizId } = useParams<{ quizId: string }>();
   const navigate = useNavigate();
@@ -18,6 +20,8 @@ const Quiz = () => {
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [lives, setLives] = useState(INITIAL_LIVES);
+  const [failed, setFailed] = useState(false);
 
   useEffect(() => {
     const loadQuiz = async () => {
@@ -52,7 +56,7 @@ const Quiz = () => {
   }, [quizId, user]);
 
   const checkAnswer = () => {
-    if (!quiz || !userAnswer.trim()) return;
+    if (!quiz || !userAnswer.trim() || failed) return;
 
     const currentQuestion = quiz.questions[currentQuestionIndex];
     const correctAnswer = currentQuestion.answer.toLowerCase().trim();
@@ -105,6 +109,15 @@ const Quiz = () => {
         }
       };
       updateProgressAndExp();
+    } else if (!isAnswerCorrect) {
+      // Lose a life on wrong answer
+      setLives((prev) => {
+        if (prev <= 1) {
+          setFailed(true);
+          return 0;
+        }
+        return prev - 1;
+      });
     }
   };
 
@@ -149,6 +162,31 @@ const Quiz = () => {
   }
 
   // Guard: If finished, show completed message
+  if (failed) {
+    return (
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center">
+        <div className="text-4xl font-bold mb-6" style={{ fontFamily: 'monospace', color: '#8B2B2B' }}>
+          Quest Failed!
+        </div>
+        <div className="text-2xl mb-6" style={{ fontFamily: 'monospace', color: '#D96B2B' }}>
+          You lost all your hearts.
+        </div>
+        <button
+          onClick={() => navigate('/quest')}
+          className="px-8 py-4 bg-gray-800 text-white font-bold"
+          style={{
+            fontFamily: 'monospace',
+            textTransform: 'uppercase',
+            letterSpacing: '2px',
+            border: '4px solid #000000',
+            cursor: 'pointer'
+          }}
+        >
+          Back to Quests
+        </button>
+      </div>
+    );
+  }
   if (currentQuestionIndex >= quiz.questions.length) {
     return (
       <div className="min-h-screen bg-white flex flex-col items-center justify-center">
@@ -177,7 +215,15 @@ const Quiz = () => {
 
   return (
     <div className="min-h-screen bg-white flex flex-col items-center justify-center p-8">
-      {/* Plain white background - no gradient or pattern */}
+      {/* Hearts/Lives Display */}
+      <div className="mb-6 flex gap-2">
+        {Array.from({ length: lives }).map((_, i) => (
+          <span key={i} style={{ fontSize: 32, color: '#D96B2B' }}>❤️</span>
+        ))}
+        {Array.from({ length: INITIAL_LIVES - lives }).map((_, i) => (
+          <span key={i} style={{ fontSize: 32, color: '#ddd' }}>🤍</span>
+        ))}
+      </div>
       <div className="w-full max-w-4xl flex flex-col items-center">
         {/* Question */}
         <div className="mb-8 text-center px-4">
