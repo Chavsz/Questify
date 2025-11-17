@@ -59,6 +59,7 @@ const Quest = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [quests, setQuests] = useState<QuestItem[]>([]);
+  const [modal, setModal] = useState<{ open: boolean; title: string; message: string; type: 'success' | 'error' | 'info' | 'confirm'; onConfirm?: () => void }>({ open: false, title: '', message: '', type: 'info' });
 
   // Load quests from Firebase
   useEffect(() => {
@@ -289,9 +290,52 @@ const Quest = () => {
     if (quest && quest.quizId) {
       navigate(`/quiz/${quest.quizId}`);
     } else {
-      alert('Quiz not found');
+      setModal({ open: true, title: "Quiz Not Found", message: "Quiz not found.", type: "error" });
     }
   };
+  // Modal component
+  const renderModal = () => (
+    modal.open && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+        <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md border-4 flex flex-col items-center relative"
+          style={{ borderColor: modal.type === 'success' ? '#22C55E' : modal.type === 'error' ? '#EF4444' : modal.type === 'confirm' ? '#F59E42' : '#3B82F6' }}>
+          <button
+            onClick={() => setModal({ ...modal, open: false })}
+            className="absolute top-4 right-4 text-2xl font-bold text-gray-700 hover:text-red-500 bg-white rounded-full w-10 h-10 flex items-center justify-center shadow"
+            aria-label="Close Modal"
+          >
+            ×
+          </button>
+          <div className="flex items-center gap-3 mb-4">
+            <span className="text-3xl">
+              {modal.type === 'success' && '✅'}
+              {modal.type === 'error' && '❌'}
+              {modal.type === 'info' && 'ℹ️'}
+              {modal.type === 'confirm' && '⚠️'}
+            </span>
+            <span className={`text-2xl font-bold ${modal.type === 'success' ? 'text-green-600' : modal.type === 'error' ? 'text-red-600' : modal.type === 'confirm' ? 'text-yellow-600' : 'text-blue-600'}`}>{modal.title}</span>
+          </div>
+          <div className="text-gray-700 text-center whitespace-pre-line mb-2 text-lg">{modal.message}</div>
+          {modal.type === 'confirm' && (
+            <div className="flex gap-4 mt-4">
+              <button
+                onClick={() => { setModal({ ...modal, open: false }); }}
+                className="px-6 py-2 bg-gray-300 text-gray-800 rounded font-bold shadow hover:bg-gray-400"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => { if (modal.onConfirm) modal.onConfirm(); setModal({ ...modal, open: false }); }}
+                className="px-6 py-2 bg-red-500 text-white rounded font-bold shadow hover:bg-red-600"
+              >
+                Confirm
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    )
+  );
 
   return (
     <div className="min-h-screen" >
@@ -378,24 +422,36 @@ const Quest = () => {
                     <div className="text-sm">{quest.progressText}</div>
                     <div className="flex gap-2 mt-2">
                       <button
-                        onClick={async (e) => {
+                        onClick={(e) => {
                           e.stopPropagation();
-                          if (window.confirm('Restart this quest? Progress will be reset.')) {
-                            await updateDoc(doc(db, 'quests', quest.id), { completedQuestions: 0 });
-                            window.location.reload();
-                          }
+                          setModal({
+                            open: true,
+                            title: "Restart Quest?",
+                            message: "Restart this quest? Progress will be reset.",
+                            type: "confirm",
+                            onConfirm: async () => {
+                              await updateDoc(doc(db, 'quests', quest.id), { completedQuestions: 0 });
+                              window.location.reload();
+                            }
+                          });
                         }}
                         className="px-3 py-1 bg-yellow-400 hover:bg-yellow-500 text-white rounded font-bold text-xs shadow"
                       >
                         Restart
                       </button>
                       <button
-                        onClick={async (e) => {
+                        onClick={(e) => {
                           e.stopPropagation();
-                          if (window.confirm('Delete this quest? This cannot be undone.')) {
-                            await deleteDoc(doc(db, 'quests', quest.id));
-                            window.location.reload();
-                          }
+                          setModal({
+                            open: true,
+                            title: "Delete Quest?",
+                            message: "Delete this quest? This cannot be undone.",
+                            type: "confirm",
+                            onConfirm: async () => {
+                              await deleteDoc(doc(db, 'quests', quest.id));
+                              window.location.reload();
+                            }
+                          });
                         }}
                         className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded font-bold text-xs shadow"
                       >
@@ -434,6 +490,7 @@ const Quest = () => {
       </div>
 
       {/* Upload Modal */}
+      {renderModal()}
       {isUploadModalOpen && (
         <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-50">
           <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} text-purple-900 rounded-2xl p-8 max-w-lg w-11/12 shadow-2xl`}>

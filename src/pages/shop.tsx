@@ -26,6 +26,7 @@ const Shop = () => {
   const user = authContext?.currentUser;
   const [isInventoryModalOpen, setIsInventoryModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<ShopItem | null>(null);
+  const [modal, setModal] = useState<{ open: boolean; title: string; message: string; type: 'success' | 'error' | 'info' }>({ open: false, title: '', message: '', type: 'info' });
   const [userCoins, setUserCoins] = useState(0);
   const [streak, setStreak] = useState<number | null>(null);
   const [loadingStreak, setLoadingStreak] = useState(true);
@@ -243,17 +244,15 @@ const Shop = () => {
 
   const handlePurchase = async () => {
     if (!selectedItem) {
-      alert("Please select an item to purchase");
+      setModal({ open: true, title: "No Item Selected", message: "Please select an item to purchase.", type: "error" });
       return;
     }
     if (userCoins < selectedItem.price) {
-      alert(
-        `Not enough coins! You need ${selectedItem.price} coins but only have ${userCoins} coins.`
-      );
+      setModal({ open: true, title: "Not Enough Coins", message: `You need ${selectedItem.price} coins but only have ${userCoins} coins.`, type: "error" });
       return;
     }
     if (!user) {
-      alert("You must be logged in to purchase items.");
+      setModal({ open: true, title: "Not Logged In", message: "You must be logged in to purchase items.", type: "error" });
       return;
     }
     // Deduct coins in Firestore and add item
@@ -271,13 +270,40 @@ const Shop = () => {
     const userData = await getUser(user.uid);
     setInventory(filterInventoryItems(userData?.inventory || []));
     setUserCoins(userData?.coins ?? newCoins);
-    alert(
-      `✅ Purchase successful!\n\nYou bought: ${selectedItem.name}\nCost: ${
-        selectedItem.price
-      } coins\nRemaining coins: ${userData?.coins ?? newCoins}`
-    );
+    setModal({
+      open: true,
+      title: "Purchase Successful!",
+      message: `You bought: ${selectedItem.name}\nCost: ${selectedItem.price} coins\nRemaining coins: ${userData?.coins ?? newCoins}`,
+      type: "success"
+    });
     setSelectedItem(null);
   };
+  // Modal component
+  const renderModal = () => (
+    modal.open && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+        <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md border-4 flex flex-col items-center relative"
+          style={{ borderColor: modal.type === 'success' ? '#22C55E' : modal.type === 'error' ? '#EF4444' : '#F59E42' }}>
+          <button
+            onClick={() => setModal({ ...modal, open: false })}
+            className="absolute top-4 right-4 text-2xl font-bold text-gray-700 hover:text-red-500 bg-white rounded-full w-10 h-10 flex items-center justify-center shadow"
+            aria-label="Close Modal"
+          >
+            ×
+          </button>
+          <div className="flex items-center gap-3 mb-4">
+            <span className="text-3xl">
+              {modal.type === 'success' && '✅'}
+              {modal.type === 'error' && '❌'}
+              {modal.type === 'info' && 'ℹ️'}
+            </span>
+            <span className={`text-2xl font-bold ${modal.type === 'success' ? 'text-green-600' : modal.type === 'error' ? 'text-red-600' : 'text-yellow-600'}`}>{modal.title}</span>
+          </div>
+          <div className="text-gray-700 text-center whitespace-pre-line mb-2 text-lg">{modal.message}</div>
+        </div>
+      </div>
+    )
+  );
 
   const renderItems = () => {
     if (shopItems.length === 0) {
@@ -471,6 +497,7 @@ const Shop = () => {
         </nav>
       </div>
       {isInventoryModalOpen && renderInventoryModal()}
+      {renderModal()}
     </div>
   );
 };

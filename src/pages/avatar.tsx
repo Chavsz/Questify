@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
+import { getUser, type InventoryItem } from "../services/users";
 import { useTheme } from "../components/theme";
 import { IoSunnyOutline } from "react-icons/io5";
 import { FaRegMoon } from "react-icons/fa";
 import { useAuth } from "../contexts/authContexts/auth";
-import { getUser } from "../services/users";
+
 
 interface AvatarItem {
   id: number;
@@ -23,6 +24,7 @@ const Avatar = () => {
   const [streak, setStreak] = useState<number | null>(null);
   const [loadingStreak, setLoadingStreak] = useState(true);
   const [userCoins, setUserCoins] = useState(0);
+  const [modal, setModal] = useState<{ open: boolean; title: string; message: string; type: 'success' | 'error' | 'info' }>({ open: false, title: '', message: '', type: 'info' });
   useEffect(() => {
     const fetchStreak = async () => {
       if (!user) {
@@ -45,24 +47,44 @@ const Avatar = () => {
     fetchStreak();
   }, [user]);
 
-  // Avatar customization items with categories
-  const avatarItems: AvatarItem[] = [
-    { id: 1, name: "Warrior Helmet", category: "Headwear", emoji: "⛑️", slot: "head" },
-    { id: 2, name: "Crown", category: "Headwear", emoji: "👑", slot: "head" },
-    { id: 3, name: "Wizard Hat", category: "Headwear", emoji: "🎩", slot: "head" },
-    { id: 4, name: "Gold Armor", category: "Body", emoji: "🦺", slot: "body" },
-    { id: 5, name: "Blue Tunic", category: "Body", emoji: "👕", slot: "body" },
-    { id: 6, name: "Leather Vest", category: "Body", emoji: "🧥", slot: "body" },
-    { id: 7, name: "Speed Boots", category: "Footwear", emoji: "👢", slot: "feet" },
-    { id: 8, name: "Iron Boots", category: "Footwear", emoji: "🥾", slot: "feet" },
-    { id: 9, name: "Magic Shield", category: "Accessory", emoji: "🛡️", slot: "accessory" },
-    { id: 10, name: "Red Cape", category: "Accessory", emoji: "🧣", slot: "back" },
-    { id: 11, name: "Iron Sword", category: "Weapon", emoji: "⚔️", slot: "weapon" },
-    { id: 12, name: "Magic Wand", category: "Weapon", emoji: "🪄", slot: "weapon" },
-    { id: 13, name: "Battle Axe", category: "Weapon", emoji: "🪓", slot: "weapon" },
-    { id: 14, name: "Leather Gloves", category: "Accessory", emoji: "🧤", slot: "hands" },
-    { id: 15, name: "Gold Ring", category: "Accessory", emoji: "💍", slot: "ring" },
-  ];
+  // Avatar items now come from user inventory (shop purchases)
+  const [inventory, setInventory] = useState<InventoryItem[]>([]);
+  useEffect(() => {
+    const fetchInventory = async () => {
+      if (!user) {
+        setInventory([]);
+        return;
+      }
+      const userData = await getUser(user.uid);
+      setInventory(userData?.inventory || []);
+    };
+    fetchInventory();
+  }, [user]);
+
+  // Only show items that are wearable (have a slot)
+  const avatarItems: AvatarItem[] = inventory
+    .filter(item => typeof item.slot === "string" && ["head","body","feet","accessory","back","weapon","hands","ring"].includes(item.slot))
+    .map(item => ({
+      id: item.id,
+      name: item.name,
+      category: getCategoryFromSlot(item.slot ?? ""),
+      emoji: item.emoji,
+      slot: item.slot ?? ""
+    }));
+
+  function getCategoryFromSlot(slot: string) {
+    switch (slot) {
+      case "head": return "Headwear";
+      case "body": return "Body";
+      case "feet": return "Footwear";
+      case "accessory": return "Accessory";
+      case "back": return "Accessory";
+      case "weapon": return "Weapon";
+      case "hands": return "Accessory";
+      case "ring": return "Accessory";
+      default: return "Other";
+    }
+  }
 
   const filterByCategory = (category: string) => {
     setCurrentCategory(category);
@@ -162,18 +184,53 @@ const Avatar = () => {
 
   const handleSaveEquipment = () => {
     const equipped = Array.from(equippedItems.values());
-    
     if (equipped.length === 0) {
-      alert('⚠️ No items equipped!\n\nSelect items to customize your character.');
+      setModal({
+        open: true,
+        title: 'No Items Equipped',
+        message: 'Select items to customize your character.',
+        type: 'error'
+      });
       return;
     }
-
     const itemsList = equipped.map(item => `${item.emoji} ${item.name}`).join('\n');
-    alert(`✅ Equipment saved successfully!\n\nEquipped items:\n${itemsList}`);
+    setModal({
+      open: true,
+      title: 'Equipment Saved!',
+      message: `Equipped items:\n${itemsList}`,
+      type: 'success'
+    });
   };
+  // Modal component
+  const renderModal = () => (
+    modal.open && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+        <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md border-4 flex flex-col items-center relative"
+          style={{ borderColor: modal.type === 'success' ? '#22C55E' : modal.type === 'error' ? '#EF4444' : '#F59E42' }}>
+          <button
+            onClick={() => setModal({ ...modal, open: false })}
+            className="absolute top-4 right-4 text-2xl font-bold text-gray-700 hover:text-red-500 bg-white rounded-full w-10 h-10 flex items-center justify-center shadow"
+            aria-label="Close Modal"
+          >
+            ×
+          </button>
+          <div className="flex items-center gap-3 mb-4">
+            <span className="text-3xl">
+              {modal.type === 'success' && '✅'}
+              {modal.type === 'error' && '❌'}
+              {modal.type === 'info' && 'ℹ️'}
+            </span>
+            <span className={`text-2xl font-bold ${modal.type === 'success' ? 'text-green-600' : modal.type === 'error' ? 'text-red-600' : 'text-yellow-600'}`}>{modal.title}</span>
+          </div>
+          <div className="text-gray-700 text-center whitespace-pre-line mb-2 text-lg">{modal.message}</div>
+        </div>
+      </div>
+    )
+  );
 
   return (
     <div>
+      {renderModal()}
       <div className="">
         {/* Header */}
         <header className={`flex justify-between items-center mb-10 p-6 rounded-2xl ${
