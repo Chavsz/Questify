@@ -51,11 +51,7 @@ function Hub() {
     };
     fetchStreakAndStats();
   }, [user]);
-
-  const handleEditAvatar = () => {
-    console.log("Navigate to Avatar");
-  };
-
+  
   // EXP/Level logic
   const exp = userData?.exp ?? 0;
   const level = userData?.level ?? 1;
@@ -147,7 +143,6 @@ function Hub() {
            
               <Link
                 to="/avatar"
-                onClick={handleEditAvatar}
                 className={`px-6 py-4 rounded-xl font-bold cursor-pointer hover:-translate-y-1 hover:shadow-xl text-center w-full shadow-lg ${
                   isDarkMode
                     ? "bg-gray-800 hover:bg-gray-700 text-white border border-gray-700"

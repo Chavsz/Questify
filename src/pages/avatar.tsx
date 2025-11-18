@@ -45,10 +45,6 @@ const Avatar = () => {
   const { isDarkMode, toggleDarkMode } = useTheme();
   const authContext = useAuth();
   const user = authContext?.currentUser;
-  const [equippedItems, setEquippedItems] = useState<Map<string, AvatarItem>>(
-    new Map()
-  );
-  const [currentCategory, setCurrentCategory] = useState("all");
   const [streak, setStreak] = useState<number | null>(null);
   const [loadingStreak, setLoadingStreak] = useState(true);
   const [userCoins, setUserCoins] = useState(0);
@@ -75,20 +71,20 @@ const Avatar = () => {
     fetchSelectedCharacter();
   }, [user]);
 
-  // Handle character selection and save to Firestore
-  const handleSelectCharacter = async (charId: string) => {
-    if (!user) return;
-    setSelectedCharacter(charId);
-    // Save to Firestore (users collection)
-    const { updateUser } = await import("../services/users");
-    await updateUser(user.uid, { selectedCharacter: charId });
-    setModal({
-      open: true,
-      title: "Character Selected",
-      message: "Your character has been updated!",
-      type: "success",
-    });
-  };
+  // // Handle character selection and save to Firestore
+  // const handleSelectCharacter = async (charId: string) => {
+  //   if (!user) return;
+  //   setSelectedCharacter(charId);
+  //   // Save to Firestore (users collection)
+  //   const { updateUser } = await import("../services/users");
+  //   await updateUser(user.uid, { selectedCharacter: charId });
+  //   setModal({
+  //     open: true,
+  //     title: "Character Selected",
+  //     message: "Your character has been updated!",
+  //     type: "success",
+  //   });
+  // };
 
   // (removed duplicate miniSwordCrew declaration)
   useEffect(() => {
@@ -114,75 +110,7 @@ const Avatar = () => {
     };
     fetchStreak();
   }, [user]);
-
-  // Avatar items now come from user inventory (shop purchases)
-  const [inventory, setInventory] = useState<InventoryItem[]>([]);
-  useEffect(() => {
-    const fetchInventory = async () => {
-      if (!user) {
-        setInventory([]);
-        return;
-      }
-      const userData = await getUser(user.uid);
-      setInventory(userData?.inventory || []);
-    };
-    fetchInventory();
-  }, [user]);
-
-  // Only show items that are wearable (have a slot)
-  const avatarItems: AvatarItem[] = inventory
-    .filter(
-      (item) =>
-        typeof item.slot === "string" &&
-        [
-          "head",
-          "body",
-          "feet",
-          "accessory",
-          "back",
-          "weapon",
-          "hands",
-          "ring",
-        ].includes(item.slot)
-    )
-    .map((item) => ({
-      id: item.id,
-      name: item.name,
-      category: getCategoryFromSlot(item.slot ?? ""),
-      emoji: item.emoji,
-      slot: item.slot ?? "",
-    }));
-
-  function getCategoryFromSlot(slot: string) {
-    switch (slot) {
-      case "head":
-        return "Headwear";
-      case "body":
-        return "Body";
-      case "feet":
-        return "Footwear";
-      case "accessory":
-        return "Accessory";
-      case "back":
-        return "Accessory";
-      case "weapon":
-        return "Weapon";
-      case "hands":
-        return "Accessory";
-      case "ring":
-        return "Accessory";
-      default:
-        return "Other";
-    }
-  }
-
-  const filterByCategory = (category: string) => {
-    setCurrentCategory(category);
-  };
-
-  {
-    /* Avatar Preview: Show selected character gif */
-  }
+  
   {
     (() => {
       const char =
@@ -198,21 +126,6 @@ const Avatar = () => {
       );
     })();
   }
-  const equipItem = (item: AvatarItem) => {
-    const currentEquipped = equippedItems.get(item.slot);
-
-    if (currentEquipped?.id === item.id) {
-      // Unequip if clicking the same item
-      const newEquipped = new Map(equippedItems);
-      newEquipped.delete(item.slot);
-      setEquippedItems(newEquipped);
-    } else {
-      // Equip the new item (replaces any item in the same slot)
-      const newEquipped = new Map(equippedItems);
-      newEquipped.set(item.slot, item);
-      setEquippedItems(newEquipped);
-    }
-  };
 
   const updateAvatarPreview = () => {
     // Show selected character gif if selected, else default to first character
@@ -228,41 +141,6 @@ const Avatar = () => {
     );
   };
 
-  const updateEquippedList = () => {
-    const equipped = Array.from(equippedItems.values());
-
-    if (equipped.length === 0) {
-      return <div className="text-center text-gray-500">No items equipped</div>;
-    }
-
-    return equipped.map((item) => (
-      <div key={item.id} className="p-1 bg-gray-100 my-1 rounded text-xs">
-        {item.emoji} {item.name}
-      </div>
-    ));
-  };
-
-  const handleSaveEquipment = () => {
-    const equipped = Array.from(equippedItems.values());
-    if (equipped.length === 0) {
-      setModal({
-        open: true,
-        title: "No Items Equipped",
-        message: "Select items to customize your character.",
-        type: "error",
-      });
-      return;
-    }
-    const itemsList = equipped
-      .map((item) => `${item.emoji} ${item.name}`)
-      .join("\n");
-    setModal({
-      open: true,
-      title: "Equipment Saved!",
-      message: `Equipped items:\n${itemsList}`,
-      type: "success",
-    });
-  };
   // Modal component
   const renderModal = () =>
     modal.open && (
@@ -374,15 +252,6 @@ const Avatar = () => {
               <div className="text-xl mb-2"> Avatar Preview</div>
               <div className="w-full h-56 rounded-2xl mt-2 flex flex-col items-center justify-center text-white text-6xl relative overflow-hidden shadow-inner bg-gradient-to-br from-purple-600 to-indigo-700">
                 {updateAvatarPreview()}
-              </div>
-              <div
-                className={`mt-3 text-left text-xs max-h-20 overflow-y-auto p-2 rounded-lg ${
-                  isDarkMode
-                    ? "bg-gray-700 text-gray-300"
-                    : "bg-gray-100 text-gray-600"
-                }`}
-              >
-                {updateEquippedList()}
               </div>
             </div>
           </aside>

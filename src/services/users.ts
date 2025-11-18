@@ -139,7 +139,6 @@ export const updateUser = async (uid: string, updateData: Partial<User>) => {
     };
     
     await updateDoc(userRef, updateDocData);
-    console.log('User updated successfully:', uid);
   } catch (error) {
     console.error('Error updating user:', error);
     throw error;
