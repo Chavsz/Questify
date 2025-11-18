@@ -40,15 +40,6 @@ const Shop = () => {
   const filterInventoryItems = (items: InventoryItem[] = []) =>
     items.filter((item) => (item.slot ?? "inventory") === "inventory");
 
-  // Helper function to check if a string is an image path/URL
-  const isImagePath = (path: string): boolean => {
-    if (typeof path !== 'string') return false;
-    // Check if it's a URL (starts with / or http)
-    if (path.startsWith('/') || path.startsWith('http')) return true;
-    // Check if it contains image file extensions
-    return /\.(png|jpg|jpeg|gif|webp|svg)(\?.*)?$/i.test(path);
-  };
-
   useEffect(() => {
     const fetchUserData = async () => {
       if (!user) {
@@ -226,7 +217,7 @@ const Shop = () => {
           onClick={() => selectItem(item as ShopItem)}
         >
           <div className="w-full h-32 bg-gradient-to-br from-indigo-400 to-purple-600 rounded-lg mb-4 flex items-center justify-center text-5xl">
-            {typeof item.emoji === 'string' && isImagePath(item.emoji)
+            {typeof item.emoji === 'string' && item.emoji.endsWith('.png')
               ? <img src={item.emoji} alt={item.name} className="object-contain w-20 h-20" style={{imageRendering:'pixelated'}} />
               : item.emoji}
           </div>
@@ -268,7 +259,7 @@ const Shop = () => {
             inventory.map(item => (
               <div key={item.id} className="flex flex-col items-center bg-white rounded-xl shadow p-4 border-2 border-gray-500">
                 <div className="text-5xl mb-2">
-                  {typeof item.emoji === 'string' && isImagePath(item.emoji)
+                  {typeof item.emoji === 'string' && item.emoji.endsWith('.png')
                     ? <img src={item.emoji} alt={item.name} className="object-contain w-14 h-14" style={{imageRendering:'pixelated'}} />
                     : item.emoji}
                 </div>
