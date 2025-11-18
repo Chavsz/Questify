@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getUser, type InventoryItem } from "../services/users";
+import { getUser, } from "../services/users";
 import { useTheme } from "../components/theme";
 import { IoSunnyOutline } from "react-icons/io5";
 import { FaRegMoon } from "react-icons/fa";
@@ -7,14 +7,6 @@ import { useAuth } from "../contexts/authContexts/auth";
 import MiniSwordManIdle from "../assets/MiniSwordManIdle.gif";
 import MiniSpear from "../assets/MiniSpearManIdle.gif";
 import MiniArcher from "../assets/MiniArcherIdle.gif";
-
-interface AvatarItem {
-  id: number;
-  name: string;
-  category: string;
-  emoji: string;
-  slot: string;
-}
 
 // Move miniSwordCrew above Avatar so it can be used in state initialization
 const miniSwordCrew = [
