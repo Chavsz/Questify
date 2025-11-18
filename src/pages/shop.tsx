@@ -1,8 +1,3 @@
-import charm from '../../public/items/Ruby.png';
-import heal from '../../public/items/HealthPotionMedium.png';
-import clue from '../../public/items/KeyIron.png';
-import shield from '../../public/items/ShieldGold1.png';
-import mana from '../../public/items/ManaPotionMedium.png';
 import { useState, useEffect } from "react";
 import { useTheme } from "../components/theme";
 import { IoSunnyOutline } from "react-icons/io5";
@@ -73,7 +68,7 @@ const Shop = () => {
       name: "Healing Potion",
       price: 50,
       category: "consumables",
-      emoji: heal,
+      emoji: "/items/HealthPotionMedium.png",
       description: "Restore 50 HP",
       slot: "inventory",
     },
@@ -82,7 +77,7 @@ const Shop = () => {
       name: "Speedrun Key",
       price: 9999,
       category: "consumables",
-      emoji: clue,
+      emoji: "/items/KeyIron.png",
       description: "Instantly finish a quest",
       slot: "inventory",
     },
@@ -91,7 +86,7 @@ const Shop = () => {
       name: "Magic Shield",
       price: 150,
       category: "consumables",
-      emoji: shield,
+      emoji: "/items/ShieldGold1.png",
       description: "+20 Defense",
       slot: "inventory",
     },
@@ -100,7 +95,7 @@ const Shop = () => {
       name: "Energy Drink",
       price: 40,
       category: "consumables",
-      emoji: mana,
+      emoji: "/items/ManaPotionMedium.png",
       description: "Bonus points",
       slot: "inventory",
     },
@@ -109,7 +104,7 @@ const Shop = () => {
       name: "Lucky Charm",
       price: 120,
       category: "consumables",
-      emoji: charm,
+      emoji: "/items/Ruby.png",
       description: "Bonus points",
       slot: "inventory",
     },
