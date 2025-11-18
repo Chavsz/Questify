@@ -17,28 +17,31 @@ const Sidebar = () => {
     }
   };
   return (
-    <div className={`p-4 sticky top-0 h-screen ${
-      isDarkMode ? 'dark-mode-card' : 'bg-white'
-    }`}>
-      <div className="top-4 h-[calc(100vh-32px-50px)]">
-        <h1 className={`text-xl md:text-2xl font-bold text-center mb-9 hidden md:block ${
-          isDarkMode ? 'text-[#4f46e5]' : 'text-indigo-600'
-        }`}>
-          QUESTIFY
-        </h1>
-        <RouteSelect />
-      </div>
+    <div
+      className={`pixel-border min-h-screen ${
+        isDarkMode ? "dark-mode-card" : "bg-white"
+      }`}
+    >
+      <div className="sticky top-0 flex h-screen flex-col justify-between p-4">
+        <div>
+          <h1
+            className={`text-xl md:text-xl font-bold text-center mb-9 hidden md:block pixel-text ${
+              isDarkMode ? "text-[#ffd700]" : "text-amber-600"
+            }`}
+          >
+            ⚔ QUESTIFY
+          </h1>
+          <RouteSelect />
+        </div>
 
-      <div>
         <button
-          className={`flex items-center md:justify-start justify-center gap-2 w-full rounded px-2 py-1.5 md:text-sm text-1xl shadow-none transition-colors duration-300 ${
-            isDarkMode 
-              ? 'hover:bg-gray-600 text-gray-300' 
-              : 'hover:bg-[#e2e6fd] text-[#696969]'
+          className={`pixel-button pixel-button-red flex items-center md:justify-start justify-center gap-2 w-full px-2 py-1.5 md:text-sm text-1xl transition-colors duration-300 ${
+            isDarkMode ? "" : ""
           }`}
           onClick={logout}
         >
-          <fiIcons.FiLogOut /> <p className="text-md font-semibold hidden md:block">Log out</p>
+          <fiIcons.FiLogOut />{" "}
+          <p className="text-sm font-semibold hidden md:block">LOG OUT</p>
         </button>
       </div>
     </div>

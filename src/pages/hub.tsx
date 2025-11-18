@@ -64,10 +64,10 @@ function Hub() {
       <div className="">
         {/* Header */}
         <header
-          className={`flex justify-between items-center mb-10 p-6 rounded-2xl ${
+          className={`pixel-header pixel-border flex justify-between items-center mb-10 p-6 ${
             isDarkMode
-              ? "bg-gray-800 border border-gray-700"
-              : "bg-white border border-gray-300"
+              ? "bg-gray-800"
+              : "bg-white"
           }`}
         >
           <div className="flex items-center">
@@ -87,14 +87,14 @@ function Hub() {
           <div className="flex items-center gap-4">
             <button
               onClick={toggleDarkMode}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium hover:scale-105 shadow-md ${
+              className={`pixel-button pixel-button-red flex items-center gap-2 px-4 py-2 font-medium text-xs ${
                 isDarkMode
-                  ? "bg-gray-700 hover:bg-gray-600 text-white border border-gray-600"
-                  : "bg-white hover:bg-gray-50 text-gray-600 border border-gray-300"
+                  ? ""
+                  : ""
               }`}
             >
               {isDarkMode ? <IoSunnyOutline /> : <FaRegMoon />}
-              <span>{isDarkMode ? "Light" : "Dark"}</span>
+              <span>{isDarkMode ? "LIGHT" : "DARK"}</span>
             </button>
           </div>
         </header>
@@ -106,34 +106,37 @@ function Hub() {
             {/* Important Info Cards */}
             <div className="flex flex-col gap-4">
               <div
-                className={`p-4 rounded-xl font-bold text-lg text-center ${
+                className={`pixel-card p-4 font-bold text-lg text-center ${
                   isDarkMode
-                    ? "bg-gray-800 text-white border border-gray-700"
-                    : "bg-white text-gray-600 border border-gray-300"
+                    ? "text-white"
+                    : "text-gray-600"
                 }`}
               >
-                Level: <span className="text-indigo-600">{level}</span>
+                Level: <span className={isDarkMode ? "text-[#ffd700]" : "text-amber-600"}>{level}</span>
               </div>
               <div
-                className={`p-4 rounded-xl font-bold text-lg text-center ${
+                className={`pixel-card p-4 font-bold text-lg text-center ${
                   isDarkMode
-                    ? "bg-gray-800 text-white border border-gray-700"
-                    : "bg-white text-gray-600 border border-gray-300"
+                    ? "text-white"
+                    : "text-gray-600"
                 }`}
               >
                 EXP: {exp} / {expToNext}
-                <div className="w-full h-2 bg-gray-200 rounded-full mt-2">
+                <div className="pixel-stat-bar w-full mt-2">
                   <div
-                    className="h-2 rounded-full bg-indigo-600"
+                    className="pixel-stat-fill-xp"
                     style={{ width: `${expProgress}%` }}
                   ></div>
+                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xs font-bold text-white" style={{ textShadow: '1px 1px 0 black', zIndex: 1 }}>
+                    {expProgress}%
+                  </div>
                 </div>
               </div>
               <div
-                className={`p-4 rounded-xl font-bold text-lg text-center ${
+                className={`pixel-card p-4 font-bold text-lg text-center ${
                   isDarkMode
-                    ? "bg-gray-800 text-white border border-gray-700"
-                    : "bg-white text-gray-600 border border-gray-300"
+                    ? "text-white"
+                    : "text-gray-600"
                 }`}
               >
                 Quests: {questsCompleted}
@@ -143,27 +146,27 @@ function Hub() {
            
               <Link
                 to="/avatar"
-                className={`px-6 py-4 rounded-xl font-bold cursor-pointer hover:-translate-y-1 hover:shadow-xl text-center w-full shadow-lg ${
+                className={`pixel-button pixel-button-gold px-6 py-4 font-bold cursor-pointer text-center w-full text-xs ${
                   isDarkMode
-                    ? "bg-gray-800 hover:bg-gray-700 text-white border border-gray-700"
-                    : "bg-white hover:bg-gray-50 text-gray-600 border border-gray-300"
+                    ? ""
+                    : ""
                 }`}
               >
-                Edit Avatar
+                EDIT AVATAR
               </Link>
             </div>
           </aside>
 
           <main className="flex flex-col gap-8">
             <div
-              className={`rounded-2xl p-10 flex justify-center items-center min-h-[400px] relative shadow-lg ${
+              className={`pixel-card pixel-border p-10 flex justify-center items-center min-h-[400px] relative ${
                 isDarkMode
-                  ? "bg-gray-800 border border-gray-700"
-                  : "bg-white border border-gray-300"
+                  ? "bg-gray-800"
+                  : "bg-white"
               }`}
             >
               {/* === REPLACED SHIELD WITH GIF === */}
-              <div className="w-64 h-80 rounded-2xl flex items-center justify-center shadow-2xl overflow-hidden">
+              <div className="w-64 h-80 flex items-center justify-center overflow-hidden">
                 <img
                   src={knightWalkGif}
                   alt="Walking Avatar"
@@ -176,21 +179,21 @@ function Hub() {
 
             {/* Weekly quest completion activity */}
             <div
-              className={`rounded-2xl p-8 min-h-[300px] shadow-lg ${
+              className={`pixel-card pixel-border p-8 min-h-[300px] ${
                 isDarkMode
-                  ? "bg-gray-800 text-white border border-gray-700"
-                  : "bg-white border border-gray-300"
+                  ? "bg-gray-800 text-white"
+                  : "bg-white text-gray-600"
               }`}
             >
               <h3
-                className={`mb-6 text-xl font-bold ${
-                  isDarkMode ? "text-white" : "text-gray-600"
+                className={`mb-6 text-xl font-bold pixel-text ${
+                  isDarkMode ? "text-[#ffd700]" : "text-amber-600"
                 }`}
               >
                 Weekly quest completion activity
               </h3>
               <div
-                className={`h-64 rounded-xl flex flex-col items-center justify-center gap-4 shadow-inner ${
+                className={`h-64 flex flex-col items-center justify-center gap-4 shadow-inner ${
                   isDarkMode
                     ? "bg-gray-700 text-gray-300"
                     : "bg-gray-100 text-gray-600"
@@ -207,13 +210,17 @@ function Hub() {
                       return (
                         <div
                           key={day}
-                          className="w-10 bg-indigo-600 rounded-t relative flex flex-col items-center"
+                          className={`w-10 rounded-t relative flex flex-col items-center ${
+                            isDarkMode ? "bg-indigo-600" : "bg-indigo-500"
+                          }`}
                           style={{ height: `${height}px` }}
                         >
-                          <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs text-gray-600">
+                          <span className={`absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs ${
+                            isDarkMode ? "text-gray-300" : "text-gray-600"
+                          }`}>
                             {day}
                           </span>
-                          <span className="absolute top-2 left-1/2 transform -translate-x-1/2 text-xs font-bold text-white">
+                          <span className="absolute top-2 left-1/2 transform -translate-x-1/2 text-xs font-bold text-white" style={{ textShadow: '1px 1px 0 black' }}>
                             {loadingStats ? "..." : val}
                           </span>
                         </div>
@@ -233,9 +240,9 @@ function Hub() {
         <nav className="flex justify-end">
           <Link
             to="/quest"
-            className="bg-red-600  text-white border-none px-7 py-4 rounded-xl font-bold text-lg cursor-pointer hover:bg-red-700 hover:shadow-xl text-center shadow-lg"
+            className="pixel-button pixel-button-red px-7 py-4 font-bold text-xs cursor-pointer text-center"
           >
-            ⚔️ Go on A Quest!
+            ⚔️ GO ON A QUEST!
           </Link>
         </nav>
       </div>

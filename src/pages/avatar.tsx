@@ -186,10 +186,10 @@ const Avatar = () => {
       <div className="">
         {/* Header */}
         <header
-          className={`flex justify-between items-center mb-10 p-6 rounded-2xl ${
+          className={`pixel-header pixel-border flex justify-between items-center mb-10 p-6 ${
             isDarkMode
-              ? "bg-gray-800 border border-gray-700"
-              : "bg-white border border-gray-300"
+              ? "bg-gray-800"
+              : "bg-white"
           }`}
         >
           <div className="flex items-center gap-8">
@@ -209,14 +209,14 @@ const Avatar = () => {
           <div className="flex items-center gap-4">
             <button
               onClick={toggleDarkMode}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium hover:scale-105 shadow-md ${
+              className={`pixel-button pixel-button-red flex items-center gap-2 px-4 py-2 font-medium text-xs ${
                 isDarkMode
-                  ? "bg-gray-700 hover:bg-gray-600 text-white border border-gray-600"
-                  : "bg-white hover:bg-gray-50 text-gray-600 border border-gray-300"
+                  ? ""
+                  : ""
               }`}
             >
               {isDarkMode ? <IoSunnyOutline /> : <FaRegMoon />}
-              <span>{isDarkMode ? "Light" : "Dark"}</span>
+              <span>{isDarkMode ? "LIGHT" : "DARK"}</span>
             </button>
           </div>
         </header>
@@ -226,23 +226,27 @@ const Avatar = () => {
           {/* Left Sidebar */}
           <aside className="w-full max-w-xs shrink-0 flex flex-col gap-8 mx-auto lg:mx-0">
             <div
-              className={`p-6 rounded-2xl text-center font-bold text-lg ${
+              className={`pixel-card p-6 text-center font-bold text-lg ${
                 isDarkMode
-                  ? "bg-gray-800 text-white border border-gray-700"
-                  : "bg-white text-gray-600 border border-gray-300"
+                  ? "text-white"
+                  : "text-gray-600"
               }`}
             >
               🟡 {userCoins} Coins
             </div>
             <div
-              className={`p-6 rounded-2xl text-center font-bold w-full ${
+              className={`pixel-card p-6 text-center font-bold w-full ${
                 isDarkMode
-                  ? "bg-gray-800 text-white border border-gray-700"
-                  : "bg-white text-gray-600 border border-gray-300"
+                  ? "text-white"
+                  : "text-gray-600"
               }`}
             >
-              <div className="text-xl mb-2"> Avatar Preview</div>
-              <div className="w-full h-56 rounded-2xl mt-2 flex flex-col items-center justify-center text-white text-6xl relative overflow-hidden shadow-inner bg-gradient-to-br from-purple-600 to-indigo-700">
+              <div className="text-xl mb-2 pixel-text"> Avatar Preview</div>
+              <div className={`w-full h-56 mt-2 flex flex-col items-center justify-center text-white text-6xl relative overflow-hidden shadow-inner ${
+                isDarkMode 
+                  ? "bg-gray-800" 
+                  : "bg-white border border-gray-300"
+              }`}>
                 {updateAvatarPreview()}
               </div>
             </div>
@@ -250,23 +254,23 @@ const Avatar = () => {
 
           {/* Items Display Area */}
           <main
-            className={`flex-1 rounded-2xl p-8 min-h-[500px] ${
+            className={`pixel-card pixel-border flex-1 p-8 min-h-[500px] ${
               isDarkMode
-                ? "bg-gray-800 border border-gray-700"
-                : "bg-white border border-gray-300"
+                ? "bg-gray-800"
+                : "bg-white"
             }`}
           >
             <h2
-              className={`text-2xl font-bold mb-6 text-center ${
-                isDarkMode ? "text-white" : "text-gray-600"
+              className={`text-2xl font-bold mb-6 text-center pixel-text ${
+                isDarkMode ? "text-[#ffd700]" : "text-amber-600"
               }`}
             >
               Customize Your Character
             </h2>
             <section className="mb-8">
               <h3
-                className={`text-xl font-semibold mb-4 text-center ${
-                  isDarkMode ? "text-white" : "text-gray-700"
+                className={`text-xl font-semibold mb-4 text-center pixel-text ${
+                  isDarkMode ? "text-[#ffd700]" : "text-amber-700"
                 }`}
               >
                 Mini Sword Squad
@@ -275,19 +279,19 @@ const Avatar = () => {
                 {miniSwordCrew.map((character) => (
                   <div
                     key={character.id}
-                    className={`rounded-xl p-5 flex flex-col items-center text-center shadow-md border transition-all duration-200 cursor-pointer ${
+                    className={`pixel-card p-5 flex flex-col items-center text-center transition-all duration-200 cursor-pointer ${
                       selectedCharacter === character.id
                         ? isDarkMode
-                          ? "border-indigo-400 ring-2 ring-indigo-300 bg-gray-900"
-                          : "border-indigo-600 ring-2 ring-indigo-400 bg-indigo-50"
+                          ? "border-[#ffd700] ring-2 ring-[#ffd700] bg-gray-900"
+                          : "border-amber-600 ring-2 ring-amber-400 bg-amber-50"
                         : isDarkMode
-                        ? "bg-gray-800 border-gray-700 hover:bg-gray-700"
-                        : "bg-gray-50 border-gray-200 hover:bg-indigo-100"
+                        ? "bg-gray-800"
+                        : "bg-gray-50"
                     }`}
                     onClick={() => setSelectedCharacter(character.id)}
                   >
                     <div
-                      className={`w-28 h-28 mb-4 rounded-lg flex items-center justify-center overflow-hidden border ${
+                      className={`w-28 h-28 mb-4 flex items-center justify-center overflow-hidden border-2 ${
                         isDarkMode
                           ? "bg-gray-900 border-gray-700"
                           : "bg-white border-gray-200"
@@ -315,12 +319,12 @@ const Avatar = () => {
                       {character.description}
                     </p>
                     <button
-                      className={`mt-3 px-4 py-2 rounded-lg font-bold transition-all w-full ${
+                      className={`pixel-button mt-3 px-4 py-2 w-full text-xs ${
                         selectedCharacter === character.id
                           ? isDarkMode
-                            ? "bg-indigo-700 text-white cursor-not-allowed border border-indigo-400"
-                            : "bg-gray-400 text-white cursor-not-allowed"
-                          : "bg-indigo-500 text-white hover:bg-indigo-600"
+                            ? "pixel-button-gold cursor-not-allowed"
+                            : "pixel-button-gold cursor-not-allowed"
+                          : "pixel-button-red"
                       }`}
                       disabled={selectedCharacter === character.id}
                       onClick={(e) => {
@@ -329,8 +333,8 @@ const Avatar = () => {
                       }}
                     >
                       {selectedCharacter === character.id
-                        ? "Selected"
-                        : "Select"}
+                        ? "SELECTED"
+                        : "SELECT"}
                     </button>
                   </div>
                 ))}
@@ -354,9 +358,9 @@ const Avatar = () => {
                 type: "success",
               });
             }}
-            className="bg-green-600 text-white border-none px-7 py-4 rounded-xl font-bold text-lg cursor-pointer hover:bg-green-700 hover:shadow-xl"
+            className="pixel-button pixel-button-green px-7 py-4 text-xs"
           >
-            Save Character
+            SAVE CHARACTER
           </button>
         </nav>
       </div>

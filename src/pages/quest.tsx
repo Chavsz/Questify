@@ -208,14 +208,14 @@ const Quest = () => {
   };
 
   const getQuestItemClasses = (status: string) => {
-    const baseClasses = "bg-white rounded-xl p-6 mb-4 flex items-center cursor-pointer border-l-4 hover:bg-gray-100 shadow-md";
+    const baseClasses = "p-6 mb-4 flex items-center cursor-pointer";
     switch (status) {
       case 'completed':
-        return `${baseClasses} border-green-500 bg-green-50/30`;
+        return `${baseClasses} border-green-500 ${isDarkMode ? 'bg-green-900/30' : 'bg-green-50/30'}`;
       case 'in-progress':
-        return `${baseClasses} border-orange-500 bg-orange-50/30`;
+        return `${baseClasses} border-orange-500 ${isDarkMode ? 'bg-orange-900/30' : 'bg-orange-50/30'}`;
       case 'not-started':
-        return `${baseClasses} border-gray-400 bg-gray-50/30`;
+        return `${baseClasses} border-gray-400 ${isDarkMode ? 'bg-gray-700/30' : 'bg-gray-50/30'}`;
       default:
         return baseClasses;
     }
@@ -430,16 +430,16 @@ const Quest = () => {
     <div className="min-h-screen" >
       <div className="min-h-screen flex flex-col">
         {/* Header */}
-        <header className={`flex justify-between items-center mb-8 p-6 rounded-2xl ${
+        <header className={`pixel-header pixel-border flex justify-between items-center mb-8 p-6 ${
           isDarkMode 
-            ? 'bg-gray-800 border border-gray-700' 
-            : 'bg-white border border-gray-300'
+            ? 'bg-gray-800' 
+            : 'bg-white'
         }`}>
           <div className="flex items-center gap-8">
             <div className={`px-6 py-4 rounded-xl font-bold text-lg ${
               isDarkMode 
                 ? 'bg-orange-600 text-white' 
-                : 'bg-linear-to-r from-orange-500 to-red-500 text-white'
+                : 'bg-gradient-to-r from-orange-500 to-red-500 text-white'
             }`}>
               Streak: {loadingStreak ? '...' : `${streak ?? 0} day${streak === 1 ? '' : 's'}`}
             </div>
@@ -447,14 +447,14 @@ const Quest = () => {
           <div className="flex items-center gap-4">
             <button
               onClick={toggleDarkMode}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium hover:scale-105 shadow-md ${
+              className={`pixel-button pixel-button-red flex items-center gap-2 px-4 py-2 font-medium text-xs ${
                 isDarkMode 
-                  ? 'bg-gray-700 hover:bg-gray-600 text-white border border-gray-600' 
-                  : 'bg-white hover:bg-gray-50 text-gray-600 border border-gray-300'
+                  ? '' 
+                  : ''
               }`}
             >
               {isDarkMode ? <IoSunnyOutline /> : <FaRegMoon />}
-              <span>{isDarkMode ? 'Light' : 'Dark'}</span>
+              <span>{isDarkMode ? 'LIGHT' : 'DARK'}</span>
             </button>
           </div>
         </header>
@@ -463,10 +463,12 @@ const Quest = () => {
         <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8 flex-1 mb-8">
           {/* Left Sidebar - Avatar */}
           <aside className="flex flex-col">
-            <div className={`${isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-300'} p-5 rounded-2xl text-center font-bold`}>
-              <h3 className="text-xl font-bold mb-4">Avatar Character</h3>
+            <div className={`pixel-card pixel-border ${isDarkMode ? 'bg-gray-800' : 'bg-white'} p-5 text-center font-bold`}>
+              <h3 className={`text-xl font-bold mb-4 pixel-text ${isDarkMode ? 'text-[#ffd700]' : 'text-amber-600'}`}>Avatar Character</h3>
               <div className="relative">
-                <div className="w-64 h-64 bg-indigo-600 rounded-2xl flex items-center justify-center text-8xl shadow-lg">
+                <div className={`w-64 h-64 flex items-center justify-center text-8xl shadow-md ${
+                  isDarkMode ? 'bg-gray-800' : 'bg-white border border-gray-300'
+                }`}>
                   {(() => {
                     const char = miniSwordCrew.find(c => c.id === selectedCharacter) || miniSwordCrew[0];
                     return (
@@ -484,13 +486,13 @@ const Quest = () => {
           </aside>
 
           {/* Quest List Container */}
-          <main className={`${isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-300'} rounded-2xl p-8 flex flex-col`}>
-            <h2 className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} text-2xl text-center mb-4 font-bold`}>Your Study Quests</h2>
+          <main className={`pixel-card pixel-border ${isDarkMode ? 'bg-gray-800' : 'bg-white'} p-8 flex flex-col`}>
+            <h2 className={`text-2xl text-center mb-4 font-bold pixel-text ${isDarkMode ? 'text-[#ffd700]' : 'text-amber-600'}`}>Your Study Quests</h2>
             <div className="flex-1 overflow-y-auto max-h-[600px] space-y-4">
               {quests.map(quest => (
                 <div
                   key={quest.id}
-                  className={getQuestItemClasses(quest.status)}
+                  className={`pixel-card ${getQuestItemClasses(quest.status)}`}
                   onClick={() => viewQuest(quest.id)}
                 >
                   <div className="flex items-center gap-4 flex-1">
@@ -504,11 +506,11 @@ const Quest = () => {
                           <span className="text-green-600 font-semibold text-sm">{quest.coins}</span>
                         )}
                       </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div className="pixel-stat-bar w-full h-2">
                         <div
-                          className={`h-2 rounded-full transition-all duration-500 ${
-                            quest.status === 'completed' ? 'bg-green-500' :
-                            quest.status === 'in-progress' ? 'bg-orange-500' : 'bg-gray-400'
+                          className={`h-2 transition-all duration-500 ${
+                            quest.status === 'completed' ? 'pixel-stat-fill-xp' :
+                            quest.status === 'in-progress' ? 'pixel-stat-fill-health' : 'bg-gray-400'
                           }`}
                           style={{ width: quest.progress }}
                         ></div>
@@ -534,9 +536,9 @@ const Quest = () => {
                             }
                           });
                         }}
-                        className="px-3 py-1 bg-yellow-400 hover:bg-yellow-500 text-white rounded font-bold text-xs shadow"
+                        className="pixel-button pixel-button-gold px-3 py-1 font-bold text-xs"
                       >
-                        Restart
+                        RESTART
                       </button>
                       <button
                         onClick={(e) => {
@@ -552,9 +554,9 @@ const Quest = () => {
                             }
                           });
                         }}
-                        className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded font-bold text-xs shadow"
+                        className="pixel-button pixel-button-red px-3 py-1 font-bold text-xs"
                       >
-                        Delete
+                        DELETE
                       </button>
                     </div>
                   </div>
@@ -568,22 +570,24 @@ const Quest = () => {
         <nav className="flex justify-end gap-4">
           <button 
             onClick={() => setIsUploadModalOpen(true)}
-            className="bg-indigo-600 text-white border-none p-6 rounded-xl font-bold text-base cursor-pointer hover:bg-indigo-700 hover:-translate-y-1"
+            className="pixel-button pixel-button-gold p-6 font-bold text-xs cursor-pointer"
           >
-            <span>Upload Resource</span>
+            <span>UPLOAD RESOURCE</span>
           </button>
           <button 
             onClick={checkInventory}
-            className={`${isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-white border border-gray-700' : 'bg-white hover:bg-gray-50 text-gray-600 border border-gray-300'} p-6 rounded-xl font-bold text-base cursor-pointer hover:-translate-y-1`}
+            className={`pixel-button pixel-button-red p-6 font-bold text-xs cursor-pointer ${
+              isDarkMode ? '' : ''
+            }`}
           >
-            <span>Check Inventory</span>
+            <span>CHECK INVENTORY</span>
           </button>
           {isInventoryModalOpen && renderInventoryModal()}
           <button 
             onClick={embarkOnQuest}
-            className="bg-red-600 hover:bg-red-700  text-white border-none p-6 rounded-xl font-bold text-base cursor-pointer hover:-translate-y-1"
+            className="pixel-button pixel-button-red p-6 font-bold text-xs cursor-pointer"
           >
-            <span>Embark on Quest</span>
+            <span>EMBARK ON QUEST</span>
           </button>
         </nav>
       </div>

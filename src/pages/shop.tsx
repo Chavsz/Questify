@@ -202,16 +202,22 @@ const Shop = () => {
       return (
         <div
           key={item.id}
-          className={`rounded-lg p-5 text-center cursor-pointer hover:-translate-y-1 hover:shadow-lg ${
+          className={`pixel-card p-5 text-center cursor-pointer ${
             isSelected
-              ? "border-indigo-600 border-3"
+              ? isDarkMode
+                ? "border-[#ffd700] ring-2 ring-[#ffd700]"
+                : "border-amber-600 ring-2 ring-amber-400"
               : isDarkMode
-              ? "bg-gray-700 hover:bg-gray-600 border-gray-700 border"
-              : " border-gray-300 hover:bg-gray-50 border"
+              ? "bg-gray-700"
+              : "bg-gray-50"
           }`}
           onClick={() => selectItem(item as ShopItem)}
         >
-          <div className="w-full h-32 bg-gradient-to-br from-indigo-400 to-purple-600 rounded-lg mb-4 flex items-center justify-center text-5xl">
+          <div className={`w-full h-32 mb-4 flex items-center justify-center text-5xl ${
+            isDarkMode 
+              ? "bg-gray-800" 
+              : "bg-gray-100 border border-gray-300"
+          }`}>
             {typeof item.emoji === 'string' && item.emoji.endsWith('.png')
               ? <img src={item.emoji} alt={item.name} className="object-contain w-20 h-20" style={{imageRendering:'pixelated'}} />
               : item.emoji}
@@ -223,7 +229,9 @@ const Shop = () => {
           >
             {item.name}
           </div>
-          <div className="text-white-500 font-bold text-sm">
+          <div className={`font-bold text-sm ${
+            isDarkMode ? "text-yellow-300" : "text-yellow-700"
+          }`}>
             💰 {(item as ShopItem).price} Coins
           </div>
         </div>
@@ -272,10 +280,10 @@ return (
   <div className="min-h-screen">
     {/* === HEADER === */}
     <header
-      className={`flex justify-between items-center mb-6 p-6 rounded-2xl ${
+      className={`pixel-header pixel-border flex justify-between items-center mb-6 p-6 ${
         isDarkMode
-          ? "bg-gray-800 border border-gray-700"
-          : "bg-white border border-gray-300"
+          ? "bg-gray-800"
+          : "bg-white"
       }`}
     >
       {/* Streak */}
@@ -292,24 +300,24 @@ return (
       {/* Toggle Theme */}
       <button
         onClick={toggleDarkMode}
-        className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium hover:scale-105 shadow-md ${
+        className={`pixel-button pixel-button-red flex items-center gap-2 px-4 py-2 font-medium text-xs ${
           isDarkMode
-            ? "bg-gray-700 hover:bg-gray-600 text-white border border-gray-600"
-            : "bg-white hover:bg-gray-50 text-gray-600 border border-gray-300"
+            ? ""
+            : ""
         }`}
       >
         {isDarkMode ? <IoSunnyOutline /> : <FaRegMoon />}
-        <span>{isDarkMode ? "Light" : "Dark"}</span>
+        <span>{isDarkMode ? "LIGHT" : "DARK"}</span>
       </button>
     </header>
 
     {/* === COINS DISPLAY (SEPARATE — not inside header) === */}
     <div className="flex justify-start mb-8">
       <div
-        className={`px-8 py-5 rounded-2xl font-bold text-2xl shadow-md flex items-center gap-3 ${
+        className={`pixel-card pixel-border px-8 py-5 font-bold text-xl shadow-md flex items-center gap-3 ${
           isDarkMode
-            ? "bg-gray-700 text-yellow-300 border border-gray-600"
-            : "bg-yellow-200 text-yellow-800 border border-yellow-300"
+            ? "text-yellow-300"
+            : "text-yellow-800"
         }`}
       >
         🟡 {userCoins} Coins
@@ -318,15 +326,15 @@ return (
 
     {/* === ITEMS SECTION === */}
     <main
-      className={`rounded-2xl p-10 mb-10 min-height-[500px] ${
+      className={`pixel-card pixel-border p-10 mb-10 min-height-[500px] ${
         isDarkMode
-          ? "bg-gray-800 text-white border border-gray-700"
-          : "bg-white text-gray-800 border border-gray-200"
+          ? "bg-gray-800 text-white"
+          : "bg-white text-gray-800"
       }`}
     >
       <h2
-        className={`text-3xl font-bold mb-8 text-center ${
-          isDarkMode ? "text-white" : "text-gray-700"
+        className={`text-3xl font-bold mb-8 text-center pixel-text ${
+          isDarkMode ? "text-[#ffd700]" : "text-amber-600"
         }`}
       >
         Items for Purchase
@@ -341,41 +349,45 @@ return (
     <nav className="flex justify-end gap-5">
       <button
         onClick={openInventoryModal}
-        className={`px-7 py-4 rounded-lg font-bold text-lg cursor-pointer hover:shadow-lg ${
+        className={`pixel-button pixel-button-red px-7 py-4 font-bold text-xs cursor-pointer ${
           isDarkMode
-            ? "bg-gray-600 text-white border border-gray-700 hover:bg-gray-700"
-            : "bg-white text-gray-600 border border-gray-300 hover:bg-gray-50"
+            ? ""
+            : ""
         }`}
       >
-        Inventory
+        INVENTORY
       </button>
 
       {selectedItem && (
         <div className="flex items-center gap-3">
-          <label htmlFor="quantity" className="font-bold text-lg">Qty:</label>
+          <label htmlFor="quantity" className={`font-bold text-lg ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>Qty:</label>
           <input
             id="quantity"
             type="number"
             min={1}
             value={purchaseQuantity}
             onChange={e => setPurchaseQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-            className="w-20 px-2 py-1 rounded border border-gray-400 text-lg text-center"
-            style={{ fontFamily: 'monospace' }}
+            className={`w-20 px-2 py-1 border-2 text-lg text-center ${
+              isDarkMode 
+                ? 'bg-gray-700 border-gray-600 text-white' 
+                : 'bg-white border-gray-400 text-gray-800'
+            }`}
+            style={{ fontFamily: 'Press Start 2P, monospace', fontSize: '10px' }}
           />
         </div>
       )}
       <button
         onClick={handlePurchase}
         disabled={!selectedItem}
-        className={`px-7 py-4 rounded-lg font-bold text-lg cursor-pointer hover:shadow-lg ${
+        className={`pixel-button px-7 py-4 font-bold text-xs cursor-pointer ${
           selectedItem
-            ? "bg-green-500 text-white hover:bg-green-600"
-            : "bg-green-400 text-white opacity-50"
+            ? "pixel-button-green"
+            : "pixel-button-green opacity-50 cursor-not-allowed"
         }`}
       >
         {selectedItem
-          ? `💳 Buy ${selectedItem.name} (${selectedItem.price * purchaseQuantity} coins)`
-          : "Purchase"}
+          ? `💳 BUY ${selectedItem.name.toUpperCase()} (${selectedItem.price * purchaseQuantity} COINS)`
+          : "PURCHASE"}
       </button>
     </nav>
 
