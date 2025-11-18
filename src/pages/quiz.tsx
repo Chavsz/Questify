@@ -60,7 +60,6 @@ const Quiz = () => {
   const [failed, setFailed] = useState(false);
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [isInventoryOpen, setIsInventoryOpen] = useState(false);
-  const [hintUsed, setHintUsed] = useState(false);
   const [hint, setHint] = useState("");
   const [shieldActive, setShieldActive] = useState(false);
   const [luckyActive, setLuckyActive] = useState(false);
@@ -177,7 +176,6 @@ const Quiz = () => {
     if (!quiz) return;
 
     setHint("");
-    setHintUsed(false);
 
     if (currentQuestionIndex < quiz.questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
@@ -259,7 +257,6 @@ const Quiz = () => {
         setUserAnswer("");
         setIsCorrect(null);
         setHint("");
-        setHintUsed(false);
         setCurrentQuestionIndex((idx) => idx + 1);
         closeInventory();
       }

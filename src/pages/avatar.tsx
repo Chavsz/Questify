@@ -16,42 +16,52 @@ interface AvatarItem {
   slot: string;
 }
 
-
 // Move miniSwordCrew above Avatar so it can be used in state initialization
 const miniSwordCrew = [
   {
     id: "idle",
     label: "Mini Swordman",
-    description: "A tiny but fearless warrior who charges into battle with quick slashes. Agile, brave, and always on the front line.",
-    image: MiniSwordManIdle
+    description:
+      "A tiny but fearless warrior who charges into battle with quick slashes. Agile, brave, and always on the front line.",
+    image: MiniSwordManIdle,
   },
   {
     id: "idle1",
     label: "Mini Spearman",
-    description: "A small defender armed with a long spear, keeping enemies at a distance. Steady, disciplined, and great for holding the line.",
-    image: MiniSpear
+    description:
+      "A small defender armed with a long spear, keeping enemies at a distance. Steady, disciplined, and great for holding the line.",
+    image: MiniSpear,
   },
   {
     id: "idle2",
     label: "Mini Archer",
-    description: "A miniature marksman who fires arrows from afar with surprising accuracy. Light, swift, and perfect for ranged support.",
-    image: MiniArcher
-  }
+    description:
+      "A miniature marksman who fires arrows from afar with surprising accuracy. Light, swift, and perfect for ranged support.",
+    image: MiniArcher,
+  },
 ];
 
 const Avatar = () => {
   const { isDarkMode, toggleDarkMode } = useTheme();
   const authContext = useAuth();
   const user = authContext?.currentUser;
-  const [gender, setGender] = useState<'male' | 'female'>('male');
-  const [equippedItems, setEquippedItems] = useState<Map<string, AvatarItem>>(new Map());
-  const [currentCategory, setCurrentCategory] = useState('all');
+  const [equippedItems, setEquippedItems] = useState<Map<string, AvatarItem>>(
+    new Map()
+  );
+  const [currentCategory, setCurrentCategory] = useState("all");
   const [streak, setStreak] = useState<number | null>(null);
   const [loadingStreak, setLoadingStreak] = useState(true);
   const [userCoins, setUserCoins] = useState(0);
-  const [modal, setModal] = useState<{ open: boolean; title: string; message: string; type: 'success' | 'error' | 'info' }>({ open: false, title: '', message: '', type: 'info' });
+  const [modal, setModal] = useState<{
+    open: boolean;
+    title: string;
+    message: string;
+    type: "success" | "error" | "info";
+  }>({ open: false, title: "", message: "", type: "info" });
   // Character selection state
-  const [selectedCharacter, setSelectedCharacter] = useState<string>(miniSwordCrew[0].id);
+  const [selectedCharacter, setSelectedCharacter] = useState<string>(
+    miniSwordCrew[0].id
+  );
 
   // Load selected character from Firestore on mount
   useEffect(() => {
@@ -72,8 +82,14 @@ const Avatar = () => {
     // Save to Firestore (users collection)
     const { updateUser } = await import("../services/users");
     await updateUser(user.uid, { selectedCharacter: charId });
-    setModal({ open: true, title: "Character Selected", message: "Your character has been updated!", type: "success" });
+    setModal({
+      open: true,
+      title: "Character Selected",
+      message: "Your character has been updated!",
+      type: "success",
+    });
   };
+
   // (removed duplicate miniSwordCrew declaration)
   useEffect(() => {
     const fetchStreak = async () => {
@@ -85,7 +101,9 @@ const Avatar = () => {
       }
       try {
         const userData = await getUser(user.uid);
-        setStreak(userData && typeof userData.streak === 'number' ? userData.streak : 0);
+        setStreak(
+          userData && typeof userData.streak === "number" ? userData.streak : 0
+        );
         setUserCoins(userData?.coins ?? 0);
       } catch (e) {
         setStreak(0);
@@ -113,26 +131,48 @@ const Avatar = () => {
 
   // Only show items that are wearable (have a slot)
   const avatarItems: AvatarItem[] = inventory
-    .filter(item => typeof item.slot === "string" && ["head","body","feet","accessory","back","weapon","hands","ring"].includes(item.slot))
-    .map(item => ({
+    .filter(
+      (item) =>
+        typeof item.slot === "string" &&
+        [
+          "head",
+          "body",
+          "feet",
+          "accessory",
+          "back",
+          "weapon",
+          "hands",
+          "ring",
+        ].includes(item.slot)
+    )
+    .map((item) => ({
       id: item.id,
       name: item.name,
       category: getCategoryFromSlot(item.slot ?? ""),
       emoji: item.emoji,
-      slot: item.slot ?? ""
+      slot: item.slot ?? "",
     }));
 
   function getCategoryFromSlot(slot: string) {
     switch (slot) {
-      case "head": return "Headwear";
-      case "body": return "Body";
-      case "feet": return "Footwear";
-      case "accessory": return "Accessory";
-      case "back": return "Accessory";
-      case "weapon": return "Weapon";
-      case "hands": return "Accessory";
-      case "ring": return "Accessory";
-      default: return "Other";
+      case "head":
+        return "Headwear";
+      case "body":
+        return "Body";
+      case "feet":
+        return "Footwear";
+      case "accessory":
+        return "Accessory";
+      case "back":
+        return "Accessory";
+      case "weapon":
+        return "Weapon";
+      case "hands":
+        return "Accessory";
+      case "ring":
+        return "Accessory";
+      default:
+        return "Other";
     }
   }
 
@@ -140,21 +180,27 @@ const Avatar = () => {
     setCurrentCategory(category);
   };
 
-                      {/* Avatar Preview: Show selected character gif */}
-                      {(() => {
-                        const char = miniSwordCrew.find(c => c.id === selectedCharacter) || miniSwordCrew[0];
-                        return (
-                          <img
-                            src={char.image}
-                            alt={char.label}
-                            className="w-32 h-32 object-contain"
-                            style={{ imageRendering: "pixelated" }}
-                          />
-                        );
-                      })()}
+  {
+    /* Avatar Preview: Show selected character gif */
+  }
+  {
+    (() => {
+      const char =
+        miniSwordCrew.find((c) => c.id === selectedCharacter) ||
+        miniSwordCrew[0];
+      return (
+        <img
+          src={char.image}
+          alt={char.label}
+          className="w-32 h-32 object-contain"
+          style={{ imageRendering: "pixelated" }}
+        />
+      );
+    })();
+  }
   const equipItem = (item: AvatarItem) => {
     const currentEquipped = equippedItems.get(item.slot);
-    
+
     if (currentEquipped?.id === item.id) {
       // Unequip if clicking the same item
       const newEquipped = new Map(equippedItems);
@@ -168,56 +214,10 @@ const Avatar = () => {
     }
   };
 
-  const renderItems = () => {
-    const filteredItems = currentCategory === 'all' 
-      ? avatarItems 
-      : avatarItems.filter(item => item.category === currentCategory);
-
-    if (filteredItems.length === 0) {
-      return (
-        <div className="text-center py-16 px-5 text-gray-500">
-          <div className="text-6xl mb-5">📦</div>
-          <p>No items in this category</p>
-        </div>
-      );
-    }
-
-    return filteredItems.map(item => {
-      const isEquipped = equippedItems.get(item.slot)?.id === item.id;
-      return (
-        <div
-          key={item.id}
-          className={`rounded-lg p-6 text-center cursor-pointer hover:-translate-y-1 hover:shadow-lg ${
-            isEquipped 
-              ? 'border-indigo-600 border-3' 
-              : isDarkMode 
-                ? 'bg-gray-700 hover:bg-gray-600 border-gray-600 border' 
-                : 'bg-white hover:bg-gray-50 border-gray-200 border'
-          } shadow-md`}
-          onClick={() => equipItem(item)}
-        >
-          <div className={`w-full h-28 rounded-xl mb-4 flex items-center justify-center text-5xl shadow-inner ${
-            isDarkMode 
-              ? 'bg-gradient-to-br from-indigo-500 to-purple-700' 
-              : 'bg-gradient-to-br from-indigo-400 to-purple-600'
-          }`}>
-            {item.emoji}
-          </div>
-          <div className={`font-bold mb-2 text-sm ${
-            isDarkMode ? 'text-white' : 'text-gray-800'
-          }`}>{item.name}</div>
-          <div className={`text-xs mb-3 ${
-            isDarkMode ? 'text-gray-400' : 'text-gray-600'
-          }`}>{item.category}</div>
-        </div>
-
-      );
-    });
-  };
-
   const updateAvatarPreview = () => {
     // Show selected character gif if selected, else default to first character
-    const char = miniSwordCrew.find(c => c.id === selectedCharacter) || miniSwordCrew[0];
+    const char =
+      miniSwordCrew.find((c) => c.id === selectedCharacter) || miniSwordCrew[0];
     return (
       <img
         src={char.image}
@@ -230,14 +230,12 @@ const Avatar = () => {
 
   const updateEquippedList = () => {
     const equipped = Array.from(equippedItems.values());
-    
+
     if (equipped.length === 0) {
-      return (
-        <div className="text-center text-gray-500">No items equipped</div>
-      );
+      return <div className="text-center text-gray-500">No items equipped</div>;
     }
 
-    return equipped.map(item => (
+    return equipped.map((item) => (
       <div key={item.id} className="p-1 bg-gray-100 my-1 rounded text-xs">
         {item.emoji} {item.name}
       </div>
@@ -249,26 +247,37 @@ const Avatar = () => {
     if (equipped.length === 0) {
       setModal({
         open: true,
-        title: 'No Items Equipped',
-        message: 'Select items to customize your character.',
-        type: 'error'
+        title: "No Items Equipped",
+        message: "Select items to customize your character.",
+        type: "error",
       });
       return;
     }
-    const itemsList = equipped.map(item => `${item.emoji} ${item.name}`).join('\n');
+    const itemsList = equipped
+      .map((item) => `${item.emoji} ${item.name}`)
+      .join("\n");
     setModal({
       open: true,
-      title: 'Equipment Saved!',
+      title: "Equipment Saved!",
       message: `Equipped items:\n${itemsList}`,
-      type: 'success'
+      type: "success",
     });
   };
   // Modal component
-  const renderModal = () => (
+  const renderModal = () =>
     modal.open && (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-        <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md border-4 flex flex-col items-center relative"
-          style={{ borderColor: modal.type === 'success' ? '#22C55E' : modal.type === 'error' ? '#EF4444' : '#F59E42' }}>
+        <div
+          className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md border-4 flex flex-col items-center relative"
+          style={{
+            borderColor:
+              modal.type === "success"
+                ? "#22C55E"
+                : modal.type === "error"
+                ? "#EF4444"
+                : "#F59E42",
+          }}
+        >
           <button
             onClick={() => setModal({ ...modal, open: false })}
             className="absolute top-4 right-4 text-2xl font-bold text-gray-700 hover:text-red-500 bg-white rounded-full w-10 h-10 flex items-center justify-center shadow"
@@ -278,50 +287,67 @@ const Avatar = () => {
           </button>
           <div className="flex items-center gap-3 mb-4">
             <span className="text-3xl">
-              {modal.type === 'success' && '✅'}
-              {modal.type === 'error' && '❌'}
-              {modal.type === 'info' && 'ℹ️'}
+              {modal.type === "success" && "✅"}
+              {modal.type === "error" && "❌"}
+              {modal.type === "info" && "ℹ️"}
             </span>
-            <span className={`text-2xl font-bold ${modal.type === 'success' ? 'text-green-600' : modal.type === 'error' ? 'text-red-600' : 'text-yellow-600'}`}>{modal.title}</span>
+            <span
+              className={`text-2xl font-bold ${
+                modal.type === "success"
+                  ? "text-green-600"
+                  : modal.type === "error"
+                  ? "text-red-600"
+                  : "text-yellow-600"
+              }`}
+            >
+              {modal.title}
+            </span>
           </div>
-          <div className="text-gray-700 text-center whitespace-pre-line mb-2 text-lg">{modal.message}</div>
+          <div className="text-gray-700 text-center whitespace-pre-line mb-2 text-lg">
+            {modal.message}
+          </div>
         </div>
       </div>
-    )
-  );
+    );
 
   return (
     <div>
       {renderModal()}
       <div className="">
         {/* Header */}
-        <header className={`flex justify-between items-center mb-10 p-6 rounded-2xl ${
-          isDarkMode 
-            ? 'bg-gray-800 border border-gray-700' 
-            : 'bg-white border border-gray-300'
-        }`}>
+        <header
+          className={`flex justify-between items-center mb-10 p-6 rounded-2xl ${
+            isDarkMode
+              ? "bg-gray-800 border border-gray-700"
+              : "bg-white border border-gray-300"
+          }`}
+        >
           <div className="flex items-center gap-8">
-            <div className={`px-6 py-4 rounded-xl font-bold text-lg shadow-md ${
-              isDarkMode 
-                ? 'bg-orange-600 text-white' 
-                : 'bg-gradient-to-r from-orange-500 to-red-500 text-white'
-            }`}>
-              Streak: {loadingStreak ? '...' : `${streak ?? 0} day${streak === 1 ? '' : 's'}`}
+            <div
+              className={`px-6 py-4 rounded-xl font-bold text-lg shadow-md ${
+                isDarkMode
+                  ? "bg-orange-600 text-white"
+                  : "bg-gradient-to-r from-orange-500 to-red-500 text-white"
+              }`}
+            >
+              Streak:{" "}
+              {loadingStreak
+                ? "..."
+                : `${streak ?? 0} day${streak === 1 ? "" : "s"}`}
             </div>
           </div>
           <div className="flex items-center gap-4">
             <button
               onClick={toggleDarkMode}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium hover:scale-105 shadow-md ${
-                isDarkMode 
-                  ? 'bg-gray-700 hover:bg-gray-600 text-white border border-gray-600' 
-                  : 'bg-white hover:bg-gray-50 text-gray-600 border border-gray-300'
+                isDarkMode
+                  ? "bg-gray-700 hover:bg-gray-600 text-white border border-gray-600"
+                  : "bg-white hover:bg-gray-50 text-gray-600 border border-gray-300"
               }`}
             >
               {isDarkMode ? <IoSunnyOutline /> : <FaRegMoon />}
-              <span>{isDarkMode ? 'Light' : 'Dark'}</span>
+              <span>{isDarkMode ? "Light" : "Dark"}</span>
             </button>
-
           </div>
         </header>
 
@@ -329,43 +355,59 @@ const Avatar = () => {
         <div className="flex flex-col lg:flex-row gap-10 mb-10">
           {/* Left Sidebar */}
           <aside className="w-full max-w-xs shrink-0 flex flex-col gap-8 mx-auto lg:mx-0">
-            <div className={`p-6 rounded-2xl text-center font-bold text-lg ${
-              isDarkMode 
-                ? 'bg-gray-800 text-white border border-gray-700' 
-                : 'bg-white text-gray-600 border border-gray-300'
-            }`}>
+            <div
+              className={`p-6 rounded-2xl text-center font-bold text-lg ${
+                isDarkMode
+                  ? "bg-gray-800 text-white border border-gray-700"
+                  : "bg-white text-gray-600 border border-gray-300"
+              }`}
+            >
               🟡 {userCoins} Coins
             </div>
-            <div className={`p-6 rounded-2xl text-center font-bold w-full ${
-              isDarkMode 
-                ? 'bg-gray-800 text-white border border-gray-700' 
-                : 'bg-white text-gray-600 border border-gray-300'
-            }`}>
+            <div
+              className={`p-6 rounded-2xl text-center font-bold w-full ${
+                isDarkMode
+                  ? "bg-gray-800 text-white border border-gray-700"
+                  : "bg-white text-gray-600 border border-gray-300"
+              }`}
+            >
               <div className="text-xl mb-2"> Avatar Preview</div>
               <div className="w-full h-56 rounded-2xl mt-2 flex flex-col items-center justify-center text-white text-6xl relative overflow-hidden shadow-inner bg-gradient-to-br from-purple-600 to-indigo-700">
                 {updateAvatarPreview()}
               </div>
-              <div className={`mt-3 text-left text-xs max-h-20 overflow-y-auto p-2 rounded-lg ${
-                isDarkMode 
-                  ? 'bg-gray-700 text-gray-300' 
-                  : 'bg-gray-100 text-gray-600'
-              }`}>
+              <div
+                className={`mt-3 text-left text-xs max-h-20 overflow-y-auto p-2 rounded-lg ${
+                  isDarkMode
+                    ? "bg-gray-700 text-gray-300"
+                    : "bg-gray-100 text-gray-600"
+                }`}
+              >
                 {updateEquippedList()}
               </div>
             </div>
           </aside>
 
           {/* Items Display Area */}
-          <main className={`flex-1 rounded-2xl p-8 min-h-[500px] ${
-            isDarkMode 
-              ? 'bg-gray-800 border border-gray-700' 
-              : 'bg-white border border-gray-300'
-          }`}>
-            <h2 className={`text-2xl font-bold mb-6 text-center ${
-              isDarkMode ? 'text-white' : 'text-gray-600'
-            }`}>Customize Your Character</h2>
+          <main
+            className={`flex-1 rounded-2xl p-8 min-h-[500px] ${
+              isDarkMode
+                ? "bg-gray-800 border border-gray-700"
+                : "bg-white border border-gray-300"
+            }`}
+          >
+            <h2
+              className={`text-2xl font-bold mb-6 text-center ${
+                isDarkMode ? "text-white" : "text-gray-600"
+              }`}
+            >
+              Customize Your Character
+            </h2>
             <section className="mb-8">
-              <h3 className={`text-xl font-semibold mb-4 text-center ${isDarkMode ? 'text-white' : 'text-gray-700'}`}>
+              <h3
+                className={`text-xl font-semibold mb-4 text-center ${
+                  isDarkMode ? "text-white" : "text-gray-700"
+                }`}
+              >
                 Mini Sword Squad
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7">
@@ -375,17 +417,21 @@ const Avatar = () => {
                     className={`rounded-xl p-5 flex flex-col items-center text-center shadow-md border transition-all duration-200 cursor-pointer ${
                       selectedCharacter === character.id
                         ? isDarkMode
-                          ? 'border-indigo-400 ring-2 ring-indigo-300 bg-gray-900'
-                          : 'border-indigo-600 ring-2 ring-indigo-400 bg-indigo-50'
+                          ? "border-indigo-400 ring-2 ring-indigo-300 bg-gray-900"
+                          : "border-indigo-600 ring-2 ring-indigo-400 bg-indigo-50"
                         : isDarkMode
-                        ? 'bg-gray-800 border-gray-700 hover:bg-gray-700'
-                        : 'bg-gray-50 border-gray-200 hover:bg-indigo-100'
+                        ? "bg-gray-800 border-gray-700 hover:bg-gray-700"
+                        : "bg-gray-50 border-gray-200 hover:bg-indigo-100"
                     }`}
                     onClick={() => setSelectedCharacter(character.id)}
                   >
-                    <div className={`w-28 h-28 mb-4 rounded-lg flex items-center justify-center overflow-hidden border ${
-                      isDarkMode ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'
-                    }`}>
+                    <div
+                      className={`w-28 h-28 mb-4 rounded-lg flex items-center justify-center overflow-hidden border ${
+                        isDarkMode
+                          ? "bg-gray-900 border-gray-700"
+                          : "bg-white border-gray-200"
+                      }`}
+                    >
                       <img
                         src={character.image}
                         alt={`${character.label} Mini Sword`}
@@ -393,42 +439,59 @@ const Avatar = () => {
                         style={{ imageRendering: "pixelated" }}
                       />
                     </div>
-                    <p className={`text-lg font-bold mb-1 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+                    <p
+                      className={`text-lg font-bold mb-1 ${
+                        isDarkMode ? "text-white" : "text-gray-800"
+                      }`}
+                    >
                       {character.label}
                     </p>
-                    <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                    <p
+                      className={`text-sm ${
+                        isDarkMode ? "text-gray-300" : "text-gray-600"
+                      }`}
+                    >
                       {character.description}
                     </p>
                     <button
                       className={`mt-3 px-4 py-2 rounded-lg font-bold transition-all w-full ${
                         selectedCharacter === character.id
                           ? isDarkMode
-                            ? 'bg-indigo-700 text-white cursor-not-allowed border border-indigo-400'
-                            : 'bg-gray-400 text-white cursor-not-allowed'
-                          : 'bg-indigo-500 text-white hover:bg-indigo-600'
+                            ? "bg-indigo-700 text-white cursor-not-allowed border border-indigo-400"
+                            : "bg-gray-400 text-white cursor-not-allowed"
+                          : "bg-indigo-500 text-white hover:bg-indigo-600"
                       }`}
                       disabled={selectedCharacter === character.id}
-                      onClick={e => { e.stopPropagation(); setSelectedCharacter(character.id); }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedCharacter(character.id);
+                      }}
                     >
-                      {selectedCharacter === character.id ? 'Selected' : 'Select'}
+                      {selectedCharacter === character.id
+                        ? "Selected"
+                        : "Select"}
                     </button>
                   </div>
                 ))}
               </div>
             </section>
             {/* Category Tabs */}
-            
           </main>
         </div>
 
         {/* Bottom Navigation */}
         <nav className="flex justify-end">
-          <button 
+          <button
             onClick={async () => {
               if (!user) return;
               const { updateUser } = await import("../services/users");
               await updateUser(user.uid, { selectedCharacter });
-              setModal({ open: true, title: "Character Saved", message: "Your character has been saved!", type: "success" });
+              setModal({
+                open: true,
+                title: "Character Saved",
+                message: "Your character has been saved!",
+                type: "success",
+              });
             }}
             className="bg-green-600 text-white border-none px-7 py-4 rounded-xl font-bold text-lg cursor-pointer hover:bg-green-700 hover:shadow-xl"
           >
