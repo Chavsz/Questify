@@ -1,8 +1,8 @@
-import charm from '../assets/Ruby.png';
-import heal from '../assets/HealthPotionMedium.png';
-import clue from '../assets/KeyIron.png';
-import shield from '../assets/ShieldGold1.png';
-import mana from '../assets/ManaPotionMedium.png';
+import charm from '../../public/items/Ruby.png';
+import heal from '../../public/items/HealthPotionMedium.png';
+import clue from '../../public/items/KeyIron.png';
+import shield from '../../public/items/ShieldGold1.png';
+import mana from '../../public/items/ManaPotionMedium.png';
 import { useState, useEffect } from "react";
 import { useTheme } from "../components/theme";
 import { IoSunnyOutline } from "react-icons/io5";
