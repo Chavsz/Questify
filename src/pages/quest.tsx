@@ -208,7 +208,8 @@ const Quest = () => {
   };
 
   const getQuestItemClasses = (status: string) => {
-    const baseClasses = "p-6 mb-4 flex items-center cursor-pointer";
+    const baseClasses =
+      "p-6 mb-4 flex items-center cursor-pointer border-2 rounded-md shadow-sm transition-all duration-200";
     switch (status) {
       case 'completed':
         return `${baseClasses} border-green-500 ${isDarkMode ? 'bg-green-900/30' : 'bg-green-50/30'}`;
@@ -361,7 +362,7 @@ const Quest = () => {
   const renderModal = () => (
     modal.open && (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-        <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md border-4 flex flex-col items-center relative"
+        <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md border-2 flex flex-col items-center relative"
           style={{ borderColor: modal.type === 'success' ? '#22C55E' : modal.type === 'error' ? '#EF4444' : modal.type === 'confirm' ? '#F59E42' : '#3B82F6' }}>
           <button
             onClick={() => setModal({ ...modal, open: false })}
@@ -430,11 +431,13 @@ const Quest = () => {
     <div className="min-h-screen" >
       <div className="min-h-screen flex flex-col">
         {/* Header */}
-        <header className={`pixel-header pixel-border flex justify-between items-center mb-8 p-6 ${
-          isDarkMode 
-            ? 'bg-gray-800' 
-            : 'bg-white'
-        }`}>
+        <header
+          className={`flex justify-between items-center mb-8 p-6 border-2 border-amber-500 shadow-[0_8px_24px_rgba(0,0,0,0.2)] ${
+            isDarkMode
+              ? "bg-gradient-to-b from-gray-800 to-gray-900"
+              : "bg-gradient-to-b from-gray-50 to-gray-100"
+          }`}
+        >
           <div className="flex items-center gap-8">
             <div className={`px-6 py-4 rounded-xl font-bold text-lg ${
               isDarkMode 
@@ -447,11 +450,10 @@ const Quest = () => {
           <div className="flex items-center gap-4">
             <button
               onClick={toggleDarkMode}
-              className={`pixel-button pixel-button-red flex items-center gap-2 px-4 py-2 font-medium text-xs ${
-                isDarkMode 
-                  ? '' 
-                  : ''
-              }`}
+              className="flex items-center gap-2 px-4 py-2 font-medium text-xs
+font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] border-2 rounded-sm
+transition-transform duration-100 active:translate-y-[4px] active:shadow-[0_0_0,0_4px_8px_rgba(0,0,0,0.3)]
+bg-gradient-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white"
             >
               {isDarkMode ? <IoSunnyOutline /> : <FaRegMoon />}
               <span>{isDarkMode ? 'LIGHT' : 'DARK'}</span>
@@ -463,8 +465,18 @@ const Quest = () => {
         <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8 flex-1 mb-8">
           {/* Left Sidebar - Avatar */}
           <aside className="flex flex-col">
-            <div className={`pixel-card pixel-border ${isDarkMode ? 'bg-gray-800' : 'bg-white'} p-5 text-center font-bold`}>
-              <h3 className={`text-xl font-bold mb-4 pixel-text ${isDarkMode ? 'text-[#ffd700]' : 'text-amber-600'}`}>Avatar Character</h3>
+            <div
+              className={`p-5 text-center font-bold border-2 rounded-lg shadow-[0_8px_24px_rgba(0,0,0,0.25)] ${
+                isDarkMode ? "bg-gray-900 border-amber-400" : "bg-white border-amber-500"
+              }`}
+            >
+              <h3
+                className={`text-xl font-bold mb-4 font-['Press_Start_2P',cursive] tracking-[0.12em] ${
+                  isDarkMode ? "text-[#ffd700]" : "text-amber-600"
+                }`}
+              >
+                Avatar Character
+              </h3>
               <div className="relative">
                 <div className={`w-64 h-64 flex items-center justify-center text-8xl shadow-md ${
                   isDarkMode ? 'bg-gray-800' : 'bg-white border border-gray-300'
@@ -486,13 +498,23 @@ const Quest = () => {
           </aside>
 
           {/* Quest List Container */}
-          <main className={`pixel-card pixel-border ${isDarkMode ? 'bg-gray-800' : 'bg-white'} p-8 flex flex-col`}>
-            <h2 className={`text-2xl text-center mb-4 font-bold pixel-text ${isDarkMode ? 'text-[#ffd700]' : 'text-amber-600'}`}>Your Study Quests</h2>
+          <main
+            className={`p-8 flex flex-col border-2 rounded-lg shadow-[0_8px_24px_rgba(0,0,0,0.25)] ${
+              isDarkMode ? "bg-gray-900 border-amber-400" : "bg-white border-amber-500"
+            }`}
+          >
+            <h2
+              className={`text-2xl text-center mb-4 font-bold font-['Press_Start_2P',cursive] tracking-[0.12em] ${
+                isDarkMode ? "text-[#ffd700]" : "text-amber-600"
+              }`}
+            >
+              Your Study Quests
+            </h2>
             <div className="flex-1 overflow-y-auto max-h-[600px] space-y-4">
               {quests.map(quest => (
                 <div
                   key={quest.id}
-                  className={`pixel-card ${getQuestItemClasses(quest.status)}`}
+                  className={getQuestItemClasses(quest.status)}
                   onClick={() => viewQuest(quest.id)}
                 >
                   <div className="flex items-center gap-4 flex-1">
@@ -506,11 +528,20 @@ const Quest = () => {
                           <span className="text-green-600 font-semibold text-sm">{quest.coins}</span>
                         )}
                       </div>
-                      <div className="pixel-stat-bar w-full h-2">
+                      <div
+                        className={`relative w-full h-2 border-2 rounded-sm overflow-hidden ${
+                          isDarkMode
+                            ? "bg-gray-900 border-gray-600"
+                            : "bg-gray-200 border-gray-400"
+                        }`}
+                      >
                         <div
-                          className={`h-2 transition-all duration-500 ${
-                            quest.status === 'completed' ? 'pixel-stat-fill-xp' :
-                            quest.status === 'in-progress' ? 'pixel-stat-fill-health' : 'bg-gray-400'
+                          className={`h-full transition-all duration-500 ${
+                            quest.status === "completed"
+                              ? "bg-gradient-to-r from-[#ffd700] to-[#ffed4e] shadow-[0_0_10px_rgba(255,215,0,0.5)]"
+                              : quest.status === "in-progress"
+                              ? "bg-gradient-to-r from-[#ff4757] to-[#ff6348] shadow-[0_0_10px_rgba(255,71,87,0.5)]"
+                              : "bg-gray-400"
                           }`}
                           style={{ width: quest.progress }}
                         ></div>
@@ -536,7 +567,11 @@ const Quest = () => {
                             }
                           });
                         }}
-                        className="pixel-button pixel-button-gold px-3 py-1 font-bold text-xs"
+                        className="px-3 py-1 font-bold text-xs
+font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] border-2 rounded-sm
+shadow-[0_4px_0_#6b5210,0_8px_16px_rgba(0,0,0,0.4)]
+transition-transform duration-100 active:translate-y-[4px] active:shadow-[0_0_0,0_4px_8px_rgba(0,0,0,0.3)]
+bg-gradient-to-b from-[#ffd700] to-[#ffb700] border-[#8b6914] text-[#1a1a2e]"
                       >
                         RESTART
                       </button>
@@ -554,7 +589,11 @@ const Quest = () => {
                             }
                           });
                         }}
-                        className="pixel-button pixel-button-red px-3 py-1 font-bold text-xs"
+                        className="px-3 py-1 font-bold text-xs
+font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] border-2 rounded-sm
+shadow-[0_4px_0_rgba(0,0,0,0.7),0_8px_16px_rgba(0,0,0,0.35)]
+transition-transform duration-100 active:translate-y-[4px] active:shadow-[0_0_0,0_4px_8px_rgba(0,0,0,0.3)]
+bg-gradient-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white"
                       >
                         DELETE
                       </button>
@@ -570,22 +609,32 @@ const Quest = () => {
         <nav className="flex justify-end gap-4">
           <button 
             onClick={() => setIsUploadModalOpen(true)}
-            className="pixel-button pixel-button-gold p-6 font-bold text-xs cursor-pointer"
+            className="p-6 font-bold text-xs cursor-pointer
+font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] border-2 rounded-sm
+shadow-[0_4px_0_#6b5210,0_8px_16px_rgba(0,0,0,0.4)]
+transition-transform duration-100 active:translate-y-[4px] active:shadow-[0_0_0,0_4px_8px_rgba(0,0,0,0.3)]
+bg-gradient-to-b from-[#ffd700] to-[#ffb700] border-[#8b6914] text-[#1a1a2e]"
           >
             <span>UPLOAD RESOURCE</span>
           </button>
           <button 
             onClick={checkInventory}
-            className={`pixel-button pixel-button-red p-6 font-bold text-xs cursor-pointer ${
-              isDarkMode ? '' : ''
-            }`}
+            className="p-6 font-bold text-xs cursor-pointer
+font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] border-2 rounded-sm
+shadow-[0_4px_0_rgba(0,0,0,0.7),0_8px_16px_rgba(0,0,0,0.35)]
+transition-transform duration-100 active:translate-y-[4px] active:shadow-[0_0_0,0_4px_8px_rgba(0,0,0,0.3)]
+bg-gradient-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white"
           >
             <span>CHECK INVENTORY</span>
           </button>
           {isInventoryModalOpen && renderInventoryModal()}
           <button 
             onClick={embarkOnQuest}
-            className="pixel-button pixel-button-red p-6 font-bold text-xs cursor-pointer"
+            className="p-6 font-bold text-xs cursor-pointer
+font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] border-2 rounded-sm
+shadow-[0_4px_0_rgba(0,0,0,0.7),0_8px_16px_rgba(0,0,0,0.35)]
+transition-transform duration-100 active:translate-y-[4px] active:shadow-[0_0_0,0_4px_8px_rgba(0,0,0,0.3)]
+bg-gradient-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white"
           >
             <span>EMBARK ON QUEST</span>
           </button>

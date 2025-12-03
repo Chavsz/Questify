@@ -138,7 +138,7 @@ const Avatar = () => {
     modal.open && (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
         <div
-          className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md border-4 flex flex-col items-center relative"
+          className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md border-2 flex flex-col items-center relative"
           style={{
             borderColor:
               modal.type === "success"
@@ -186,10 +186,10 @@ const Avatar = () => {
       <div className="">
         {/* Header */}
         <header
-          className={`pixel-header pixel-border flex justify-between items-center mb-10 p-6 ${
+          className={`flex justify-between items-center mb-10 p-6 border-2 rounded-md border-amber-500 shadow-[0_8px_24px_rgba(0,0,0,0.2)] ${
             isDarkMode
-              ? "bg-gray-800"
-              : "bg-white"
+              ? "bg-gradient-to-b from-gray-800 to-gray-900"
+              : "bg-gradient-to-b from-gray-50 to-gray-100"
           }`}
         >
           <div className="flex items-center gap-8">
@@ -209,11 +209,10 @@ const Avatar = () => {
           <div className="flex items-center gap-4">
             <button
               onClick={toggleDarkMode}
-              className={`pixel-button pixel-button-red flex items-center gap-2 px-4 py-2 font-medium text-xs ${
-                isDarkMode
-                  ? ""
-                  : ""
-              }`}
+              className="flex items-center gap-2 px-4 py-2 font-medium text-xs
+font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] border-2 rounded-sm
+transition-transform duration-100 active:translate-y-[4px] active:shadow-[0_0_0,0_4px_8px_rgba(0,0,0,0.3)]
+bg-gradient-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white"
             >
               {isDarkMode ? <IoSunnyOutline /> : <FaRegMoon />}
               <span>{isDarkMode ? "LIGHT" : "DARK"}</span>
@@ -226,22 +225,24 @@ const Avatar = () => {
           {/* Left Sidebar */}
           <aside className="w-full max-w-xs shrink-0 flex flex-col gap-8 mx-auto lg:mx-0">
             <div
-              className={`pixel-card p-6 text-center font-bold text-lg ${
+              className={`p-6 text-center font-bold text-lg border-2 rounded-lg shadow-[0_8px_24px_rgba(0,0,0,0.25)] ${
                 isDarkMode
-                  ? "text-white"
-                  : "text-gray-600"
+                  ? "bg-gray-900 text-white border-amber-400"
+                  : "bg-white text-gray-600 border-amber-500"
               }`}
             >
               🟡 {userCoins} Coins
             </div>
             <div
-              className={`pixel-card p-6 text-center font-bold w-full ${
+              className={`p-6 text-center font-bold w-full border-2 rounded-lg shadow-[0_8px_24px_rgba(0,0,0,0.25)] ${
                 isDarkMode
-                  ? "text-white"
-                  : "text-gray-600"
+                  ? "bg-gray-900 text-white border-amber-400"
+                  : "bg-white text-gray-600 border-amber-500"
               }`}
             >
-              <div className="text-xl mb-2 pixel-text"> Avatar Preview</div>
+              <div className="text-xl mb-2 font-['Press_Start_2P',cursive] tracking-[0.12em]">
+                Avatar Preview
+              </div>
               <div className={`w-full h-56 mt-2 flex flex-col items-center justify-center text-white text-6xl relative overflow-hidden shadow-inner ${
                 isDarkMode 
                   ? "bg-gray-800" 
@@ -254,14 +255,14 @@ const Avatar = () => {
 
           {/* Items Display Area */}
           <main
-            className={`pixel-card pixel-border flex-1 p-8 min-h-[500px] ${
+            className={`flex-1 p-8 min-h-[500px] border-2 rounded-lg shadow-[0_8px_24px_rgba(0,0,0,0.25)] ${
               isDarkMode
-                ? "bg-gray-800"
-                : "bg-white"
+                ? "bg-gray-900 border-amber-400"
+                : "bg-white border-amber-500"
             }`}
           >
             <h2
-              className={`text-2xl font-bold mb-6 text-center pixel-text ${
+              className={`text-2xl font-bold mb-6 text-center font-['Press_Start_2P',cursive] tracking-[0.12em] ${
                 isDarkMode ? "text-[#ffd700]" : "text-amber-600"
               }`}
             >
@@ -269,7 +270,7 @@ const Avatar = () => {
             </h2>
             <section className="mb-8">
               <h3
-                className={`text-xl font-semibold mb-4 text-center pixel-text ${
+                className={`text-xl font-semibold mb-4 text-center font-['Press_Start_2P',cursive] tracking-[0.12em] ${
                   isDarkMode ? "text-[#ffd700]" : "text-amber-700"
                 }`}
               >
@@ -279,14 +280,14 @@ const Avatar = () => {
                 {miniSwordCrew.map((character) => (
                   <div
                     key={character.id}
-                    className={`pixel-card p-5 flex flex-col items-center text-center transition-all duration-200 cursor-pointer ${
+                    className={`p-5 flex flex-col items-center text-center transition-all duration-200 cursor-pointer border-2 rounded-lg shadow-md ${
                       selectedCharacter === character.id
                         ? isDarkMode
                           ? "border-[#ffd700] ring-2 ring-[#ffd700] bg-gray-900"
                           : "border-amber-600 ring-2 ring-amber-400 bg-amber-50"
                         : isDarkMode
-                        ? "bg-gray-800"
-                        : "bg-gray-50"
+                        ? "bg-gray-800 border-gray-700"
+                        : "bg-gray-50 border-gray-300"
                     }`}
                     onClick={() => setSelectedCharacter(character.id)}
                   >
@@ -319,13 +320,15 @@ const Avatar = () => {
                       {character.description}
                     </p>
                     <button
-                      className={`pixel-button mt-3 px-4 py-2 w-full text-xs ${
-                        selectedCharacter === character.id
-                          ? isDarkMode
-                            ? "pixel-button-gold cursor-not-allowed"
-                            : "pixel-button-gold cursor-not-allowed"
-                          : "pixel-button-red"
-                      }`}
+                      className={`mt-3 px-4 py-2 w-full text-xs
+font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] border-2 rounded-sm
+shadow-[0_4px_0_rgba(0,0,0,0.7),0_8px_16px_rgba(0,0,0,0.35)]
+transition-transform duration-100 active:translate-y-[4px] active:shadow-[0_0_0,0_4px_8px_rgba(0,0,0,0.3)]
+${
+  selectedCharacter === character.id
+    ? "bg-gradient-to-b from-[#ffd700] to-[#ffb700] border-[#8b6914] text-[#1a1a2e] cursor-not-allowed shadow-[0_4px_0_#6b5210,0_8px_16px_rgba(0,0,0,0.4)]"
+    : "bg-gradient-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white"
+}`}
                       disabled={selectedCharacter === character.id}
                       onClick={(e) => {
                         e.stopPropagation();
@@ -358,7 +361,11 @@ const Avatar = () => {
                 type: "success",
               });
             }}
-            className="pixel-button pixel-button-green px-7 py-4 text-xs"
+            className="px-7 py-4 text-xs
+font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] border-2 rounded-sm
+shadow-[0_4px_0_#14532d,0_8px_16px_rgba(0,0,0,0.4)]
+transition-transform duration-100 active:translate-y-[4px] active:shadow-[0_0_0,0_4px_8px_rgba(0,0,0,0.3)]
+bg-gradient-to-b from-[#22c55e] to-[#16a34a] border-[#15803d] text-white"
           >
             SAVE CHARACTER
           </button>

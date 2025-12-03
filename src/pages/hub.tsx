@@ -64,13 +64,15 @@ function Hub() {
       <div className="">
         {/* Header */}
         <header
-          className={`pixel-header pixel-border flex justify-between items-center mb-10 p-6 ${
-            isDarkMode ? "bg-gray-800" : "bg-white"
+          className={`flex justify-between items-center mb-10 p-6 border-2 border-amber-500 shadow-[0_8px_24px_rgba(0,0,0,0.2)] ${
+            isDarkMode
+              ? "bg-gradient-to-b from-gray-800 to-gray-900"
+              : "bg-gradient-to-b from-gray-50 to-gray-100"
           }`}
         >
           <div className="flex items-center">
             <div
-              className={`px-6 py-4 rounded-xl font-bold text-lg ${
+              className={`px-6 py-4 rounded-xl font-bold text-lg shadow-md ${
                 isDarkMode
                   ? "bg-orange-600 text-white"
                   : "bg-gradient-to-r from-orange-500 to-red-500 text-white"
@@ -85,9 +87,11 @@ function Hub() {
           <div className="flex items-center gap-4">
             <button
               onClick={toggleDarkMode}
-              className={`pixel-button pixel-button-red flex items-center gap-2 px-4 py-2 font-medium text-xs ${
-                isDarkMode ? "" : ""
-              }`}
+              className={`flex items-center gap-2 px-4 py-2 font-medium text-xs
+font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] border-2 rounded-sm
+shadow-[0_4px_0_rgba(0,0,0,0.7),0_8px_16px_rgba(0,0,0,0.35)]
+transition-transform duration-100 active:translate-y-[4px] active:shadow-[0_0_0,0_4px_8px_rgba(0,0,0,0.3)]
+bg-gradient-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white`}
             >
               {isDarkMode ? <IoSunnyOutline /> : <FaRegMoon />}
               <span>{isDarkMode ? "LIGHT" : "DARK"}</span>
@@ -102,8 +106,10 @@ function Hub() {
             {/* Important Info Cards */}
             <div className="flex flex-col gap-4">
               <div
-                className={`pixel-card p-4 font-bold text-lg text-center ${
-                  isDarkMode ? "text-white" : "text-gray-600"
+                className={`p-4 font-bold text-lg text-center border-2 rounded-md transition-all duration-200 ${
+                  isDarkMode
+                    ? "bg-gray-800 text-white border-amber-400"
+                    : "bg-gray-50 text-gray-600 border-amber-500"
                 }`}
               >
                 Level:{" "}
@@ -114,14 +120,22 @@ function Hub() {
                 </span>
               </div>
               <div
-                className={`pixel-card p-4 font-bold text-lg text-center ${
-                  isDarkMode ? "text-white" : "text-gray-600"
+                className={`p-4 font-bold text-lg text-center border-2 rounded-md transition-all duration-200 ${
+                  isDarkMode
+                    ? "bg-gray-800 text-white border-amber-400"
+                    : "bg-gray-50 text-gray-600 border-amber-500"
                 }`}
               >
                 EXP: {exp} / {expToNext}
-                <div className="pixel-stat-bar w-full mt-2">
+                <div
+                  className={`relative w-full mt-2 h-5 border-2 rounded-sm overflow-hidden ${
+                    isDarkMode
+                      ? "bg-gray-900 border-gray-600"
+                      : "bg-gray-200 border-gray-400"
+                  }`}
+                >
                   <div
-                    className="pixel-stat-fill-xp"
+                    className="h-full bg-gradient-to-r from-[#ffd700] to-[#ffed4e] shadow-[0_0_10px_rgba(255,215,0,0.5)] transition-[width] duration-300"
                     style={{ width: `${expProgress}%` }}
                   ></div>
                   <div
@@ -133,8 +147,10 @@ function Hub() {
                 </div>
               </div>
               <div
-                className={`pixel-card p-4 font-bold text-lg text-center ${
-                  isDarkMode ? "text-white" : "text-gray-600"
+                className={`p-4 font-bold text-lg text-center border-2 rounded-md transition-all duration-200 ${
+                  isDarkMode
+                    ? "bg-gray-800 text-white border-amber-400"
+                    : "bg-gray-50 text-gray-600 border-amber-500"
                 }`}
               >
                 Quests: {questsCompleted}
@@ -143,9 +159,10 @@ function Hub() {
             <div className="flex flex-col items-center gap-6">
               <Link
                 to="/avatar"
-                className={`pixel-button pixel-button-gold px-6 py-4 font-bold cursor-pointer text-center w-full text-xs ${
-                  isDarkMode ? "" : ""
-                }`}
+                className="px-6 py-4 font-bold cursor-pointer text-center w-full text-xs
+                            font-['Press_Start_2P',cursive] tracking-[0.12em] border-2 rounded-sm
+                            transition-transform duration-100
+                            bg-linear-to-b from-[#ffd700] to-[#ffb700] border-[#8b6914] text-[#1a1a2e]"
               >
                 EDIT AVATAR
               </Link>
@@ -154,8 +171,10 @@ function Hub() {
 
           <main className="flex flex-col gap-8">
             <div
-              className={`pixel-card pixel-border p-10 flex justify-center items-center min-h-[400px] relative ${
-                isDarkMode ? "bg-gray-800" : "bg-white"
+              className={`p-10 flex justify-center items-center min-h-[400px] relative border-2 rounded-lg shadow-[0_8px_24px_rgba(0,0,0,0.25)] transition-transform duration-200 ${
+                isDarkMode
+                  ? "bg-gray-900 border-amber-400"
+                  : "bg-white border-amber-500"
               }`}
             >
               {/* === REPLACED SHIELD WITH GIF === */}
@@ -172,12 +191,14 @@ function Hub() {
 
             {/* Weekly quest completion activity */}
             <div
-              className={`pixel-card pixel-border p-8 min-h-[300px] ${
-                isDarkMode ? "bg-gray-800 text-white" : "bg-white text-gray-600"
+              className={`p-8 min-h-[300px] border-2 rounded-lg shadow-[0_8px_24px_rgba(0,0,0,0.25)] ${
+                isDarkMode
+                  ? "bg-gray-900 text-white border-amber-400"
+                  : "bg-white text-gray-600 border-amber-500"
               }`}
             >
               <h3
-                className={`mb-6 text-xl font-bold pixel-text ${
+                className={`mb-6 text-lg font-bold font-['Press_Start_2P',cursive] tracking-[0.12em] ${
                   isDarkMode ? "text-[#ffd700]" : "text-amber-600"
                 }`}
               >
@@ -236,7 +257,11 @@ function Hub() {
         <nav className="flex justify-end">
           <Link
             to="/quest"
-            className="pixel-button pixel-button-red px-7 py-4 font-bold text-xs cursor-pointer text-center"
+            className="px-7 py-4 font-bold text-xs cursor-pointer text-center
+font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] border-2 rounded-sm
+shadow-[0_4px_0_rgba(0,0,0,0.7),0_8px_16px_rgba(0,0,0,0.35)]
+transition-transform duration-100 active:translate-y-[4px] active:shadow-[0_0_0,0_4px_8px_rgba(0,0,0,0.3)]
+bg-gradient-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white"
           >
             ⚔️ GO ON A QUEST!
           </Link>

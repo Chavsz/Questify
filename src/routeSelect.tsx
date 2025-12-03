@@ -16,7 +16,7 @@ const RouteSelect = () => {
   };
 
   return (
-    <div className="space-y-1">
+    <div className="space-y-2">
       <p className={`text-[13px] font-extralight hidden md:block ${
         isDarkMode ? 'text-gray-400' : 'text-[#696969]'
       }`}>
@@ -72,14 +72,14 @@ const Route = ({ to, selected, Icon, title, handleSelect, isDarkMode }: RoutePro
   return (
     <Link
       to={to}
-      className={`pixel-card flex items-center md:justify-start justify-center gap-2 w-full px-2 py-2 md:py-1.5 md:text-sm text-1xl transition-colors duration-300 ${
+      className={`flex items-center md:justify-start justify-center gap-2 w-full px-2 py-2 md:py-1.5 md:text-sm text-1xl transition-all duration-200 border-2 rounded-md ${
         isSelected
           ? isDarkMode 
-            ? "bg-gray-600 text-[#ffd700] shadow-lg" 
-            : "bg-amber-100 text-amber-700 shadow-lg"
+            ? "bg-gray-700 text-[#ffd700] border-amber-400 shadow-lg -translate-y-0.5"
+            : "bg-amber-100 text-amber-700 border-amber-500 shadow-lg -translate-y-0.5"
           : isDarkMode
-            ? "hover:bg-gray-600 text-gray-300"
-            : "hover:bg-amber-50 text-gray-700"
+            ? "bg-gray-900/60 text-gray-300 border-gray-700 hover:bg-gray-700 hover:border-amber-400"
+            : "bg-gray-50 text-gray-700 border-gray-300 hover:bg-amber-50 hover:border-amber-400"
       }`}
       onClick={() => handleSelect(to)}
     >
