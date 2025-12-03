@@ -1,4 +1,4 @@
-import knightWalkGif from '../assets/walking avatar.gif';
+import knightWalkGif from "../assets/walking avatar.gif";
 import { useTheme } from "../components/theme";
 import { IoSunnyOutline } from "react-icons/io5";
 import { FaRegMoon } from "react-icons/fa";
@@ -51,7 +51,7 @@ function Hub() {
     };
     fetchStreakAndStats();
   }, [user]);
-  
+
   // EXP/Level logic
   const exp = userData?.exp ?? 0;
   const level = userData?.level ?? 1;
@@ -60,14 +60,12 @@ function Hub() {
   const questsCompleted = Object.values(questStats).reduce((a, b) => a + b, 0);
 
   return (
-    <div className="min-h-screen" >
+    <div className="min-h-screen">
       <div className="">
         {/* Header */}
         <header
           className={`pixel-header pixel-border flex justify-between items-center mb-10 p-6 ${
-            isDarkMode
-              ? "bg-gray-800"
-              : "bg-white"
+            isDarkMode ? "bg-gray-800" : "bg-white"
           }`}
         >
           <div className="flex items-center">
@@ -88,9 +86,7 @@ function Hub() {
             <button
               onClick={toggleDarkMode}
               className={`pixel-button pixel-button-red flex items-center gap-2 px-4 py-2 font-medium text-xs ${
-                isDarkMode
-                  ? ""
-                  : ""
+                isDarkMode ? "" : ""
               }`}
             >
               {isDarkMode ? <IoSunnyOutline /> : <FaRegMoon />}
@@ -107,18 +103,19 @@ function Hub() {
             <div className="flex flex-col gap-4">
               <div
                 className={`pixel-card p-4 font-bold text-lg text-center ${
-                  isDarkMode
-                    ? "text-white"
-                    : "text-gray-600"
+                  isDarkMode ? "text-white" : "text-gray-600"
                 }`}
               >
-                Level: <span className={isDarkMode ? "text-[#ffd700]" : "text-amber-600"}>{level}</span>
+                Level:{" "}
+                <span
+                  className={isDarkMode ? "text-[#ffd700]" : "text-amber-600"}
+                >
+                  {level}
+                </span>
               </div>
               <div
                 className={`pixel-card p-4 font-bold text-lg text-center ${
-                  isDarkMode
-                    ? "text-white"
-                    : "text-gray-600"
+                  isDarkMode ? "text-white" : "text-gray-600"
                 }`}
               >
                 EXP: {exp} / {expToNext}
@@ -127,29 +124,27 @@ function Hub() {
                     className="pixel-stat-fill-xp"
                     style={{ width: `${expProgress}%` }}
                   ></div>
-                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xs font-bold text-white" style={{ textShadow: '1px 1px 0 black', zIndex: 1 }}>
+                  <div
+                    className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xs font-bold text-white"
+                    style={{ textShadow: "1px 1px 0 black", zIndex: 1 }}
+                  >
                     {expProgress}%
                   </div>
                 </div>
               </div>
               <div
                 className={`pixel-card p-4 font-bold text-lg text-center ${
-                  isDarkMode
-                    ? "text-white"
-                    : "text-gray-600"
+                  isDarkMode ? "text-white" : "text-gray-600"
                 }`}
               >
                 Quests: {questsCompleted}
               </div>
             </div>
             <div className="flex flex-col items-center gap-6">
-           
               <Link
                 to="/avatar"
                 className={`pixel-button pixel-button-gold px-6 py-4 font-bold cursor-pointer text-center w-full text-xs ${
-                  isDarkMode
-                    ? ""
-                    : ""
+                  isDarkMode ? "" : ""
                 }`}
               >
                 EDIT AVATAR
@@ -160,9 +155,7 @@ function Hub() {
           <main className="flex flex-col gap-8">
             <div
               className={`pixel-card pixel-border p-10 flex justify-center items-center min-h-[400px] relative ${
-                isDarkMode
-                  ? "bg-gray-800"
-                  : "bg-white"
+                isDarkMode ? "bg-gray-800" : "bg-white"
               }`}
             >
               {/* === REPLACED SHIELD WITH GIF === */}
@@ -172,7 +165,7 @@ function Hub() {
                   alt="Walking Avatar"
                   className="object-contain w-full h-full"
                   style={{ transform: "scale(5)", imageRendering: "pixelated" }}
-                  />
+                />
               </div>
               {/* === END REPLACEMENT === */}
             </div>
@@ -180,9 +173,7 @@ function Hub() {
             {/* Weekly quest completion activity */}
             <div
               className={`pixel-card pixel-border p-8 min-h-[300px] ${
-                isDarkMode
-                  ? "bg-gray-800 text-white"
-                  : "bg-white text-gray-600"
+                isDarkMode ? "bg-gray-800 text-white" : "bg-white text-gray-600"
               }`}
             >
               <h3
@@ -215,12 +206,17 @@ function Hub() {
                           }`}
                           style={{ height: `${height}px` }}
                         >
-                          <span className={`absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs ${
-                            isDarkMode ? "text-gray-300" : "text-gray-600"
-                          }`}>
+                          <span
+                            className={`absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs ${
+                              isDarkMode ? "text-gray-300" : "text-gray-600"
+                            }`}
+                          >
                             {day}
                           </span>
-                          <span className="absolute top-2 left-1/2 transform -translate-x-1/2 text-xs font-bold text-white" style={{ textShadow: '1px 1px 0 black' }}>
+                          <span
+                            className="absolute top-2 left-1/2 transform -translate-x-1/2 text-xs font-bold text-white"
+                            style={{ textShadow: "1px 1px 0 black" }}
+                          >
                             {loadingStats ? "..." : val}
                           </span>
                         </div>

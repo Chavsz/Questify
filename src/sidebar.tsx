@@ -40,8 +40,8 @@ const Sidebar = () => {
           }`}
           onClick={logout}
         >
-          <fiIcons.FiLogOut />{" "}
-          <p className="text-sm font-semibold hidden md:block">LOG OUT</p>
+          <fiIcons.FiLogOut />
+          <p className="text-sm font-semibold hidden md:block">Log out</p>
         </button>
       </div>
     </div>
