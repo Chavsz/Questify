@@ -1,4 +1,4 @@
-import { db } from "../firebase";
+import { db, auth } from "../firebase";
 import { 
   collection, 
   doc, 
@@ -110,6 +110,10 @@ export const createUser = async (userData: Omit<User, 'createdAt' | 'updatedAt'>
 // Get user by UID
 export const getUser = async (uid: string): Promise<User | null> => {
   try {
+    // Don't log error if UID is empty or undefined
+    if (!uid || uid.trim() === '') {
+      return null;
+    }
     const userRef = doc(db, 'users', uid);
     const userSnap = await getDoc(userRef);
     if (userSnap.exists()) {
@@ -120,7 +124,6 @@ export const getUser = async (uid: string): Promise<User | null> => {
       }
       return data;
     } else {
-      console.log('No user found with UID:', uid);
       return null;
     }
   } catch (error) {
@@ -132,13 +135,53 @@ export const getUser = async (uid: string): Promise<User | null> => {
 // Update user data
 export const updateUser = async (uid: string, updateData: Partial<User>) => {
   try {
+    if (!uid || uid.trim() === '') {
+      throw new Error('Invalid UID provided to updateUser');
+    }
     const userRef = doc(db, 'users', uid);
+    const userSnap = await getDoc(userRef);
+    
     const updateDocData = {
       ...updateData,
       updatedAt: serverTimestamp(),
     };
     
-    await updateDoc(userRef, updateDocData);
+    // If user document doesn't exist, create it with default values
+    if (!userSnap.exists()) {
+      // Try to get user from Firebase Auth to populate initial data
+      const currentUser = auth.currentUser;
+      
+      const newUserData: Omit<User, 'createdAt' | 'updatedAt'> = {
+        uid: uid,
+        email: currentUser?.email || '',
+        displayName: currentUser?.displayName || null,
+        photoURL: currentUser?.photoURL || null,
+        isActive: true,
+        role: 'user',
+        preferences: {
+          theme: 'light',
+          notifications: true,
+        },
+        coins: updateData.coins ?? 1250,
+        exp: updateData.exp ?? 0,
+        level: updateData.level ?? 1,
+        ...updateData, // Override with provided updateData
+      };
+      
+      // Remove undefined values
+      const cleanUserDoc = Object.fromEntries(
+        Object.entries(newUserData).filter(([_, value]) => value !== undefined)
+      );
+      
+      await setDoc(userRef, {
+        ...cleanUserDoc,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      });
+    } else {
+      // User exists, just update
+      await updateDoc(userRef, updateDocData);
+    }
   } catch (error) {
     console.error('Error updating user:', error);
     throw error;
