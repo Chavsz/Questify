@@ -13,6 +13,10 @@ export interface QuizQuestion {
   question: string;
   answer: string;
   id: string;
+  // Optional status of this question for a given playthrough.
+  // We'll default this to "unanswered" when generating quizzes,
+  // and update it at runtime (e.g., to "correct" or "wrong").
+  status?: "unanswered" | "correct" | "wrong";
 }
 
 export interface GeneratedQuiz {
@@ -219,6 +223,7 @@ Generate diverse questions covering key concepts. Make sure all questions are cl
                 question: q.question || `Question ${index + 1}`,
                 answer: q.answer || "",
                 id: `q${index + 1}`,
+                status: "unanswered",
               }))
               .filter((q: QuizQuestion) => q.question && q.answer);
 

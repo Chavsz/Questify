@@ -91,11 +91,27 @@ const Quiz = () => {
           const quizData = data.quiz as GeneratedQuiz;
           if (quizData.id === quizId) {
             setQuiz(quizData);
-            // Start from the first unanswered question
+            // Load how many questions have been answered correctly so far
             const completedCount = data.completedQuestions || 0;
             setCompletedQuestions(completedCount);
-            if (completedCount > 0) {
-              setCurrentQuestionIndex(completedCount);
+
+            // If this is a fresh run (e.g. after pressing "Restart Quest"),
+            // always start from the first question.
+            if (completedCount === 0) {
+              setCurrentQuestionIndex(0);
+            } else {
+              // Otherwise, resume from the first question that is not yet correct.
+              const firstIncompleteIndex = quizData.questions.findIndex(
+                (q) => q.status !== "correct"
+              );
+
+              if (firstIncompleteIndex === -1) {
+                // All questions are marked correct – jump past the end so the
+                // victory / completion screen logic can handle it.
+                setCurrentQuestionIndex(quizData.questions.length);
+              } else {
+                setCurrentQuestionIndex(firstIncompleteIndex);
+              }
             }
           }
         });
@@ -133,6 +149,17 @@ const Quiz = () => {
     setIsCorrect(isAnswerCorrect);
     setShowFeedback(true);
 
+    // Update local question status so we know which ones were correct/wrong
+    setQuiz((prevQuiz) => {
+      if (!prevQuiz) return prevQuiz;
+      const questions = [...prevQuiz.questions];
+      questions[currentQuestionIndex] = {
+        ...questions[currentQuestionIndex],
+        status: isAnswerCorrect ? "correct" : "wrong",
+      };
+      return { ...prevQuiz, questions };
+    });
+
     if (isAnswerCorrect && user) {
       // Increment completed questions count for boss health calculation
       setCompletedQuestions((prev) => prev + 1);
@@ -149,8 +176,20 @@ const Quiz = () => {
             if (quizData.id === quizId) {
               const newCompleted = (data.completedQuestions || 0) + 1;
               const totalQuestions = quizData.questions.length;
+
+              // Persist updated question status for this index
+              const updatedQuestions = quizData.questions.map((q, idx) =>
+                idx === currentQuestionIndex
+                  ? { ...q, status: "correct" }
+                  : q
+              );
+
               await updateDoc(doc(db, "quests", docSnapshot.id), {
                 completedQuestions: newCompleted,
+                quiz: {
+                  ...quizData,
+                  questions: updatedQuestions,
+                },
               });
               // Award EXP for completing a question
               const userData = await getUser(user.uid);
@@ -187,6 +226,37 @@ const Quiz = () => {
         }
         return prev - 1;
       });
+
+      // Persist "wrong" status for this question in Firestore
+      if (user && quizId) {
+        const updateWrongStatus = async () => {
+          try {
+            const questsRef = collection(db, "quests");
+            const q = query(questsRef, where("userId", "==", user.uid));
+            const querySnapshot = await getDocs(q);
+
+            querySnapshot.forEach(async (docSnapshot) => {
+              const data = docSnapshot.data();
+              const quizData = data.quiz as GeneratedQuiz;
+              if (quizData.id === quizId) {
+                const updatedQuestions = quizData.questions.map((q, idx) =>
+                  idx === currentQuestionIndex ? { ...q, status: "wrong" } : q
+                );
+
+                await updateDoc(doc(db, "quests", docSnapshot.id), {
+                  quiz: {
+                    ...quizData,
+                    questions: updatedQuestions,
+                  },
+                });
+              }
+            });
+          } catch (error) {
+            console.error("Error updating question status:", error);
+          }
+        };
+        updateWrongStatus();
+      }
     }
   };
 
@@ -195,14 +265,27 @@ const Quiz = () => {
 
     setHint("");
 
-    if (currentQuestionIndex < quiz.questions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
+    // Find the next question after the current index that is not yet correct.
+    // This ensures that when re-taking a quest with multiple wrong answers,
+    // we jump from one fixed question directly to the next remaining wrong one.
+    let nextIndex = -1;
+    for (let i = currentQuestionIndex + 1; i < quiz.questions.length; i++) {
+      const status = quiz.questions[i].status;
+      if (status !== "correct") {
+        nextIndex = i;
+        break;
+      }
+    }
+
+    if (nextIndex !== -1) {
+      setCurrentQuestionIndex(nextIndex);
       setUserAnswer("");
       setIsCorrect(null);
       setShowFeedback(false);
     } else {
-      // Quiz completed - show victory screen by updating index
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
+      // No more remaining incorrect/unanswered questions – advance past the
+      // last question so that completion/victory screens can be shown.
+      setCurrentQuestionIndex(quiz.questions.length);
     }
   };
   // Inventory modal and item usage
