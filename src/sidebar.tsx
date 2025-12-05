@@ -18,7 +18,7 @@ const Sidebar = () => {
   };
   return (
     <div
-      className={`min-h-screen border-2 rounded-md border-amber-500 ${
+      className={`min-h-screen border-2 border-amber-500 ${
         isDarkMode
           ? "bg-gray-900"
           : "bg-white"
@@ -38,10 +38,9 @@ const Sidebar = () => {
 
         <button
           className={`flex items-center md:justify-start justify-center gap-2 w-full px-2 py-1.5 md:text-sm text-1xl 
-font-['Press_Start_2P',cursive] tracking-[0.12em] border-2 rounded-sm
-shadow-[0_4px_0_rgba(0,0,0,0.7),0_8px_16px_rgba(0,0,0,0.35)]
-transition-transform duration-100 active:translate-y-[4px] ]
-bg-linear-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white`}
+                      font-['Press_Start_2P',cursive] border-2 rounded-sm
+                      transition-transform duration-300 hover:-translate-y-1 ]
+                      bg-linear-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white`}
           onClick={logout}
         >
           <fiIcons.FiLogOut />

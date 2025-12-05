@@ -250,7 +250,7 @@ const Shop = () => {
       return (
         <div
           key={item.id}
-          className={`p-5 text-center cursor-pointer border-2 rounded-lg shadow-md transform transition-transform duration-300 ease-in-out hover:-translate-y-1.5 ${
+          className={`p-5 text-center cursor-pointer border-2 rounded-lg transform transition-transform duration-300 hover:-translate-y-1 ${
             isSelected
               ? isDarkMode
                 ? "bg-gray-900 border-[#ffd700] ring-2 ring-[#ffd700]"
@@ -352,7 +352,7 @@ const Shop = () => {
     <div className="min-h-screen">
       {/* === HEADER === */}
       <header
-        className={`flex justify-between items-center mb-6 p-6 border-2 rounded-md border-amber-500 shadow-[0_8px_24px_rgba(0,0,0,0.2)] ${
+        className={`flex justify-between items-center mb-6 p-6 border-2 rounded-md border-amber-500 ${
           isDarkMode
             ? "bg-gradient-to-b from-gray-800 to-gray-900"
             : "bg-gradient-to-b from-gray-50 to-gray-100"
@@ -377,9 +377,8 @@ const Shop = () => {
           onClick={toggleDarkMode}
           className="flex items-center gap-2 px-4 py-2 font-medium text-xs
 font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] border-2 rounded-sm
-shadow-[0_4px_0_rgba(0,0,0,0.7),0_8px_16px_rgba(0,0,0,0.35)]
-transition-transform duration-100 active:translate-y-[4px] active:shadow-[0_0_0,0_4px_8px_rgba(0,0,0,0.3)]
-bg-gradient-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white"
+transition-transform duration-300 hover:-translate-y-1
+bg-linear-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white"
         >
           {isDarkMode ? <IoSunnyOutline /> : <FaRegMoon />}
           <span>{isDarkMode ? "LIGHT" : "DARK"}</span>
@@ -401,14 +400,14 @@ bg-gradient-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white"
 
       {/* === ITEMS SECTION === */}
       <main
-        className={`p-10 mb-10 min-h-[500px] border-2 rounded-lg shadow-[0_8px_24px_rgba(0,0,0,0.25)] ${
+        className={`p-10 mb-10 border-2 rounded-lg ${
           isDarkMode
             ? "bg-gray-900 text-white border-amber-400"
             : "bg-white text-gray-800 border-amber-500"
         }`}
       >
         <h2
-          className={`text-3xl font-bold mb-8 text-center font-['Press_Start_2P',cursive] tracking-[0.12em] ${
+          className={`text-3xl font-bold mb-8 text-center font-['Press_Start_2P',cursive] ${
             isDarkMode ? "text-[#ffd700]" : "text-amber-600"
           }`}
         >
@@ -426,8 +425,7 @@ bg-gradient-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white"
           onClick={openInventoryModal}
           className="px-7 py-4 font-bold text-xs cursor-pointer
             font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] border-2 rounded-sm
-            shadow-[0_4px_0_rgba(0,0,0,0.7),0_8px_16px_rgba(0,0,0,0.35)]
-            transition-transform duration-100 active:translate-y-[4px] active:shadow-[0_0_0,0_4px_8px_rgba(0,0,0,0.3)]
+            transition-transform duration-300 hover:-translate-y-1
             bg-linear-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white"
         >
           INVENTORY
@@ -467,16 +465,13 @@ bg-gradient-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white"
           onClick={handlePurchase}
           disabled={!selectedItem}
           className={`px-7 py-4 font-bold text-xs cursor-pointer
-font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] border-2 rounded-sm
-shadow-[0_4px_0_#14532d,0_8px_16px_rgba(0,0,0,0.4)]
-transition-transform duration-100 active:translate-y-[4px] active:shadow-[0_0_0,0_4px_8px_rgba(0,0,0,0.3)]
-bg-gradient-to-b from-[#22c55e] to-[#16a34a] border-[#15803d] text-white
+font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] border-2 rounded-md
+transition-transform duration-300 hover:-translate-y-1
+bg-green-600 text-white
 ${selectedItem ? "" : "opacity-50 cursor-not-allowed"}`}
         >
           {selectedItem
-            ? `💳 BUY ${selectedItem.name.toUpperCase()} (${
-                selectedItem.price * purchaseQuantity
-              } COINS)`
+            ? `💳 BUY ${selectedItem.name.toUpperCase()}`
             : "PURCHASE"}
         </button>
       </nav>

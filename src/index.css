@@ -50,11 +50,13 @@ body {
   font-style: normal;
   background-color: var(--bg-primary);
   color: var(--text-primary);
+  transition: background-color 0s, color 0s;
 }
 
 /* Dark mode utility classes */
 .dark-mode-bg {
   background-color: var(--bg-primary);
+  transition: background-color 0s !important;
 }
 
 .dark-mode-card {
@@ -83,5 +85,10 @@ body {
 
 .dark-mode-accent:hover {
   background-color: var(--accent-hover);
+}
+
+/* Ensure background colors change instantly without transitions on main container */
+.app-main-container {
+  transition: background-color 0s !important;
 }
 

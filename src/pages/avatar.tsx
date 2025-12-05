@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getUser, } from "../services/users";
+import { getUser } from "../services/users";
 import { useTheme } from "../components/theme";
 import { IoSunnyOutline } from "react-icons/io5";
 import { FaRegMoon } from "react-icons/fa";
@@ -102,7 +102,7 @@ const Avatar = () => {
     };
     fetchStreak();
   }, [user]);
-  
+
   {
     (() => {
       const char =
@@ -186,18 +186,18 @@ const Avatar = () => {
       <div className="">
         {/* Header */}
         <header
-          className={`flex justify-between items-center mb-10 p-6 border-2 rounded-md border-amber-500 shadow-[0_8px_24px_rgba(0,0,0,0.2)] ${
+          className={`flex justify-between items-center mb-10 p-6 border-2 rounded-md border-amber-500 ${
             isDarkMode
-              ? "bg-gradient-to-b from-gray-800 to-gray-900"
-              : "bg-gradient-to-b from-gray-50 to-gray-100"
+              ? "bg-linear-to-b from-gray-800 to-gray-900"
+              : "bg-linear-to-b from-gray-50 to-gray-100"
           }`}
         >
           <div className="flex items-center gap-8">
             <div
-              className={`px-6 py-4 rounded-xl font-bold text-lg shadow-md ${
+              className={`px-6 py-4 rounded-xl font-bold text-lg ${
                 isDarkMode
                   ? "bg-orange-600 text-white"
-                  : "bg-gradient-to-r from-orange-500 to-red-500 text-white"
+                  : "bg-linear-to-r from-orange-500 to-red-500 text-white"
               }`}
             >
               Streak:{" "}
@@ -210,9 +210,9 @@ const Avatar = () => {
             <button
               onClick={toggleDarkMode}
               className="flex items-center gap-2 px-4 py-2 font-medium text-xs
-font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] border-2 rounded-sm
-transition-transform duration-100 active:translate-y-[4px] active:shadow-[0_0_0,0_4px_8px_rgba(0,0,0,0.3)]
-bg-gradient-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white"
+                        font-['Press_Start_2P',cursive] border-2 rounded-sm
+                        transition-transform duration-300 hover:-translate-y-1
+                        bg-linear-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white"
             >
               {isDarkMode ? <IoSunnyOutline /> : <FaRegMoon />}
               <span>{isDarkMode ? "LIGHT" : "DARK"}</span>
@@ -225,7 +225,7 @@ bg-gradient-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white"
           {/* Left Sidebar */}
           <aside className="w-full max-w-xs shrink-0 flex flex-col gap-8 mx-auto lg:mx-0">
             <div
-              className={`p-6 text-center font-bold text-lg border-2 rounded-lg shadow-[0_8px_24px_rgba(0,0,0,0.25)] ${
+              className={`p-6 text-center font-bold text-lg border-2 rounded-lg ${
                 isDarkMode
                   ? "bg-gray-900 text-white border-amber-400"
                   : "bg-white text-gray-600 border-amber-500"
@@ -234,7 +234,7 @@ bg-gradient-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white"
               🟡 {userCoins} Coins
             </div>
             <div
-              className={`p-6 text-center font-bold w-full border-2 rounded-lg shadow-[0_8px_24px_rgba(0,0,0,0.25)] ${
+              className={`p-6 text-center font-bold w-full border-2 rounded-lg ${
                 isDarkMode
                   ? "bg-gray-900 text-white border-amber-400"
                   : "bg-white text-gray-600 border-amber-500"
@@ -243,11 +243,11 @@ bg-gradient-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white"
               <div className="text-xl mb-2 font-['Press_Start_2P',cursive] tracking-[0.12em]">
                 Avatar Preview
               </div>
-              <div className={`w-full h-56 mt-2 flex flex-col items-center justify-center text-white text-6xl relative overflow-hidden shadow-inner ${
-                isDarkMode 
-                  ? "bg-gray-800" 
-                  : "bg-white border border-gray-300"
-              }`}>
+              <div
+                className={`w-full h-56 mt-2 flex flex-col items-center justify-center text-white text-6xl relative overflow-hidden shadow-inner ${
+                  isDarkMode ? "bg-gray-800" : "bg-white border border-gray-300"
+                }`}
+              >
                 {updateAvatarPreview()}
               </div>
             </div>
@@ -255,7 +255,7 @@ bg-gradient-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white"
 
           {/* Items Display Area */}
           <main
-            className={`flex-1 p-8 min-h-[500px] border-2 rounded-lg shadow-[0_8px_24px_rgba(0,0,0,0.25)] ${
+            className={`flex-1 p-8 min-h-[500px] border-2 rounded-lg ${
               isDarkMode
                 ? "bg-gray-900 border-amber-400"
                 : "bg-white border-amber-500"
@@ -321,13 +321,12 @@ bg-gradient-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white"
                     </p>
                     <button
                       className={`mt-3 px-4 py-2 w-full text-xs
-font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] border-2 rounded-sm
-shadow-[0_4px_0_rgba(0,0,0,0.7),0_8px_16px_rgba(0,0,0,0.35)]
-transition-transform duration-100 active:translate-y-[4px] active:shadow-[0_0_0,0_4px_8px_rgba(0,0,0,0.3)]
+                                font-['Press_Start_2P',cursive] border-2 rounded-sm
+                                transition-transform duration-300 hover:-translate-y-1
 ${
   selectedCharacter === character.id
-    ? "bg-gradient-to-b from-[#ffd700] to-[#ffb700] border-[#8b6914] text-[#1a1a2e] cursor-not-allowed shadow-[0_4px_0_#6b5210,0_8px_16px_rgba(0,0,0,0.4)]"
-    : "bg-gradient-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white"
+    ? "bg-linear-to-b from-[#ffd700] to-[#ffb700] border-[#8b6914] text-[#1a1a2e] cursor-not-allowed"
+    : "bg-linear-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white"
 }`}
                       disabled={selectedCharacter === character.id}
                       onClick={(e) => {
@@ -363,9 +362,8 @@ ${
             }}
             className="px-7 py-4 text-xs
 font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] border-2 rounded-sm
-shadow-[0_4px_0_#14532d,0_8px_16px_rgba(0,0,0,0.4)]
-transition-transform duration-100 active:translate-y-[4px] active:shadow-[0_0_0,0_4px_8px_rgba(0,0,0,0.3)]
-bg-gradient-to-b from-[#22c55e] to-[#16a34a] border-[#15803d] text-white"
+transition-transform duration-300 hover:-translate-y-1
+bg-linear-to-b from-[#22c55e] to-[#16a34a] border-[#15803d] text-white"
           >
             SAVE CHARACTER
           </button>

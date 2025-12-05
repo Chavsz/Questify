@@ -16,8 +16,8 @@ const App = () => {
   const { isDarkMode } = useTheme();
   
   const containerClass = userLoggedIn
-    ? `grid grid-cols-[80px_1fr] md:grid-cols-[240px_1fr] transition-width duration-300 min-h-screen ${isDarkMode ? 'dark-mode-bg' : 'bg-[#fafaff]'}`
-    : `min-h-screen ${isDarkMode ? 'dark-mode-bg' : 'bg-white'}`;
+    ? `grid grid-cols-[80px_1fr] md:grid-cols-[240px_1fr] transition-[width] duration-300 min-h-screen app-main-container ${isDarkMode ? 'dark-mode-bg' : 'bg-[#fafaff]'}`
+    : `min-h-screen app-main-container ${isDarkMode ? 'dark-mode-bg' : 'bg-white'}`;
     
   return (
     <div className={containerClass}>
