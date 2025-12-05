@@ -351,38 +351,58 @@ const Shop = () => {
   return (
     <div className="min-h-screen">
       {/* === HEADER === */}
-      <header
-        className={`flex justify-between items-center mb-6 p-6 border-2 ${
-          isDarkMode
-            ? "bg-gradient-to-b from-gray-800 to-gray-900 border-amber-400"
-            : "bg-gradient-to-b from-gray-50 to-gray-100 border-amber-500"
-        }`}
-      >
-        {/* Streak */}
-        <div
-          className={`px-6 py-4 rounded-xl font-bold text-lg shadow-md ${
-            isDarkMode
-              ? "bg-orange-600 text-white"
-              : "bg-gradient-to-r from-orange-500 to-red-500 text-white"
-          }`}
-        >
-          Streak:{" "}
-          {loadingStreak
-            ? "..."
-            : `${streak ?? 0} day${streak === 1 ? "" : "s"}`}
+      <header className={`flex justify-between items-center mb-6`}>
+        <div>
+          <div
+            className={`font-bold text-lg ml-5 ${
+              isDarkMode ? "text-white" : " text-orange-600"
+            }`}
+          >
+            Streak:{" "}
+            {loadingStreak
+              ? "..."
+              : `${streak ?? 0} day${streak === 1 ? "" : "s"}`}
+          </div>
         </div>
-
-        {/* Toggle Theme */}
-        <button
-          onClick={toggleDarkMode}
-          className="flex items-center gap-2 px-4 py-2 font-medium text-xs
-font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] border-2 rounded-sm
-transition-transform duration-300 hover:-translate-y-1
-bg-linear-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white"
-        >
-          {isDarkMode ? <IoSunnyOutline /> : <FaRegMoon />}
-          <span>{isDarkMode ? "LIGHT" : "DARK"}</span>
-        </button>
+        <div className="flex items-center gap-4">
+          {/* Toggle Theme */}
+          <button
+            onClick={toggleDarkMode}
+            className={`relative w-14 h-7 rounded-full transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+              isDarkMode
+                ? "bg-gray-700 focus:ring-gray-500"
+                : "bg-yellow-400 focus:ring-yellow-500"
+            }`}
+          >
+            <span
+              className={`absolute top-1 left-1 w-5 h-5 rounded-full bg-white shadow-md transform transition-transform duration-300 flex items-center justify-center ${
+                isDarkMode ? "translate-x-8" : "translate-x-0"
+              }`}
+            >
+              {isDarkMode ? (
+                <FaRegMoon className="text-gray-700 text-xs" />
+              ) : (
+                <IoSunnyOutline className="text-yellow-500 text-xs" />
+              )}
+            </span>
+          </button>
+          
+          <span
+            className={`text-2xl ${
+              isDarkMode ? "text-gray-400" : "text-gray-600"
+            }`}
+          >
+            |
+          </span>
+          {/* Profile Picture */}
+          <div
+            className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-xl bg-linear-to-r from-orange-500 to-red-500 ${
+              isDarkMode ? " text-white" : " text-white"
+            }`}
+          >
+            {user?.email ? user.email.charAt(0).toUpperCase() : "?"}
+          </div>
+        </div>
       </header>
 
       {/* === COINS DISPLAY (SEPARATE — not inside header) === */}
