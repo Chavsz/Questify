@@ -43,11 +43,6 @@
   --accent-hover: #4338ca; /* Indigo-700 */
 }
 
-/* Base styles with CSS variables */
-* {
-  @apply transition-colors duration-250;
-}
-
 body {
   font-family: "Pixelify Sans", sans-serif;
   font-optical-sizing: auto;

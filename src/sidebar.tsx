@@ -18,10 +18,10 @@ const Sidebar = () => {
   };
   return (
     <div
-      className={`min-h-screen border-2 rounded-md ${
+      className={`min-h-screen border-2 rounded-md border-amber-500 ${
         isDarkMode
-          ? "bg-gray-900 border-amber-400"
-          : "bg-white border-amber-500"
+          ? "bg-gray-900"
+          : "bg-white"
       }`}
     >
       <div className="sticky top-0 flex h-screen flex-col justify-between p-4">
