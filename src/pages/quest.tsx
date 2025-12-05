@@ -209,7 +209,7 @@ const Quest = () => {
 
   const getQuestItemClasses = (status: string) => {
     const baseClasses =
-      "p-6 mb-4 flex items-center cursor-pointer border-2 rounded-md shadow-sm transition-all duration-200";
+      "p-6 mb-4 flex items-center cursor-pointer border-2 shadow-sm transition-all duration-200";
     switch (status) {
       case 'completed':
         return `${baseClasses} border-green-500 ${isDarkMode ? 'bg-green-900/30' : 'bg-green-50/30'}`;
@@ -432,10 +432,10 @@ const Quest = () => {
       <div className="min-h-screen flex flex-col">
         {/* Header */}
         <header
-          className={`flex justify-between items-center mb-8 p-6 border-2 border-amber-500 rounded-md ${
+          className={`flex justify-between items-center mb-8 p-6 border-2 ${
             isDarkMode
-              ? "bg-linear-to-b from-gray-800 to-gray-900"
-              : "bg-linear-to-b from-gray-50 to-gray-100"
+              ? "bg-linear-to-b from-gray-800 to-gray-900 border-amber-400"
+              : "bg-linear-to-b from-gray-50 to-gray-100 border-amber-500"
           }`}
         >
           <div className="flex items-center gap-8">
@@ -466,7 +466,7 @@ bg-linear-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white"
           {/* Left Sidebar - Avatar */}
           <aside className="flex flex-col">
             <div
-              className={`p-5 text-center font-bold border-2 rounded-md ${
+              className={`p-5 text-center font-bold border-2 ${
                 isDarkMode ? "bg-gray-900 border-amber-400" : "bg-white border-amber-500"
               }`}
             >
@@ -499,7 +499,7 @@ bg-linear-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white"
 
           {/* Quest List Container */}
           <main
-            className={`p-8 flex flex-col border-2 rounded-md ${
+            className={`p-8 flex flex-col border-2 ${
               isDarkMode ? "bg-gray-900 border-amber-400" : "bg-white border-amber-500"
             }`}
           >

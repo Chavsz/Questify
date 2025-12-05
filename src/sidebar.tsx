@@ -18,13 +18,13 @@ const Sidebar = () => {
   };
   return (
     <div
-      className={`min-h-screen border-2 border-amber-500 ${
+      className={`sticky top-0 h-screen border-2 box-border ${
         isDarkMode
-          ? "bg-gray-900"
-          : "bg-white"
+          ? "bg-gray-900 border-amber-400"
+          : "bg-white border-amber-500"
       }`}
     >
-      <div className="sticky top-0 flex h-screen flex-col justify-between p-4">
+      <div className="flex h-full flex-col justify-between p-4">
         <div>
           <h1
             className={`text-xl md:text-xl font-bold text-center mb-9 hidden md:block font-['Press_Start_2P',cursive] tracking-[0.12em] ${

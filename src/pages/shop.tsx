@@ -250,7 +250,7 @@ const Shop = () => {
       return (
         <div
           key={item.id}
-          className={`p-5 text-center cursor-pointer border-2 rounded-lg transform transition-transform duration-300 hover:-translate-y-1 ${
+          className={`p-5 text-center cursor-pointer border-2 transform transition-transform duration-300 hover:-translate-y-1 ${
             isSelected
               ? isDarkMode
                 ? "bg-gray-900 border-[#ffd700] ring-2 ring-[#ffd700]"
@@ -352,10 +352,10 @@ const Shop = () => {
     <div className="min-h-screen">
       {/* === HEADER === */}
       <header
-        className={`flex justify-between items-center mb-6 p-6 border-2 rounded-md border-amber-500 ${
+        className={`flex justify-between items-center mb-6 p-6 border-2 ${
           isDarkMode
-            ? "bg-gradient-to-b from-gray-800 to-gray-900"
-            : "bg-gradient-to-b from-gray-50 to-gray-100"
+            ? "bg-gradient-to-b from-gray-800 to-gray-900 border-amber-400"
+            : "bg-gradient-to-b from-gray-50 to-gray-100 border-amber-500"
         }`}
       >
         {/* Streak */}
@@ -388,7 +388,7 @@ bg-linear-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white"
       {/* === COINS DISPLAY (SEPARATE — not inside header) === */}
       <div className="flex justify-start mb-8">
         <div
-          className={`px-8 py-5 font-bold text-xl shadow-md flex items-center gap-3 border-2 rounded-lg ${
+          className={`px-8 py-5 font-bold text-xl shadow-md flex items-center gap-3 border-2 ${
             isDarkMode
               ? "bg-gray-900 text-yellow-300 border-amber-400"
               : "bg-white text-yellow-800 border-amber-500"
@@ -400,7 +400,7 @@ bg-linear-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white"
 
       {/* === ITEMS SECTION === */}
       <main
-        className={`p-10 mb-10 border-2 rounded-lg ${
+        className={`p-10 mb-10 border-2 ${
           isDarkMode
             ? "bg-gray-900 text-white border-amber-400"
             : "bg-white text-gray-800 border-amber-500"

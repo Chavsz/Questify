@@ -40,33 +40,35 @@ const Login = () => {
     }
   };
 
-  if (userLoggedIn) return <Navigate to={"/Questify"} replace={true} />;
+  if (userLoggedIn) return <Navigate to={"/"} replace={true} />;
 
   return (
-    <div className={`min-h-screen w-full flex items-center justify-center ${isDarkMode ? 'dark-mode-bg' : 'bg-[#fafaff]'}`}>
-      <div className={`w-full max-w-md rounded-xl border p-6 shadow-sm ${
+    <div className={`min-h-screen w-full flex items-center justify-center p-4 ${
+      isDarkMode ? 'bg-gray-900' : 'bg-[#fafaff]'
+    }`}>
+      <div className={`w-full max-w-md border-2 p-6 ${
         isDarkMode 
-          ? 'dark-mode-card dark-mode-border' 
-          : 'bg-white border-[#e8f6e5]'
+          ? 'bg-gray-800 border-amber-400' 
+          : 'bg-white border-amber-500'
       }`}>
-        <h2 className={`text-2xl font-bold text-center mb-6 ${
-          isDarkMode ? 'text-[#4f46e5]' : 'text-indigo-600'
+        <h2 className={`text-xl md:text-2xl font-bold flex items-center justify-center mb-6 font-['Press_Start_2P',cursive] tracking-[0.12em] ${
+          isDarkMode ? 'text-[#ffd700]' : 'text-amber-600'
         }`}>
-          Questify
+          ⚔ QUESTIFY
         </h2>
         <form onSubmit={onSubmit} className="space-y-4">
           <div className="space-y-1">
-            <label className={`block text-sm font-medium ${
-              isDarkMode ? 'dark-mode-text-secondary' : 'text-[#4b5563]'
+            <label className={`block text-sm font-medium font-['Press_Start_2P',cursive] ${
+              isDarkMode ? 'text-gray-300' : 'text-gray-600'
             }`}>
-              Email
+              EMAIL
             </label>
             <input
               type="email"
-              className={`w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+              className={`w-full border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 rounded-sm ${
                 isDarkMode 
-                  ? 'dark-mode-input dark-mode-border dark-mode-text' 
-                  : 'border-gray-300'
+                  ? 'bg-gray-700 border-amber-400 text-white' 
+                  : 'bg-white border-amber-500 text-gray-900'
               }`}
               placeholder="you@example.com"
               value={email}
@@ -75,17 +77,17 @@ const Login = () => {
             />
           </div>
           <div className="space-y-1">
-            <label className={`block text-sm font-medium ${
-              isDarkMode ? 'dark-mode-text-secondary' : 'text-[#4b5563]'
+            <label className={`block text-sm font-medium font-['Press_Start_2P',cursive] ${
+              isDarkMode ? 'text-gray-300' : 'text-gray-600'
             }`}>
-              Password
+              PASSWORD
             </label>
             <input
               type="password"
-              className={`w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+              className={`w-full border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 rounded-sm ${
                 isDarkMode 
-                  ? 'dark-mode-input dark-mode-border dark-mode-text' 
-                  : 'border-gray-300'
+                  ? 'bg-gray-700 border-amber-400 text-white' 
+                  : 'bg-white border-amber-500 text-gray-900'
               }`}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -95,39 +97,47 @@ const Login = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white rounded-md py-2 font-semibold"
+            className="w-full bg-linear-to-b from-[#ff6348] to-[#ff4757] border-2 border-[#c0392b] text-white rounded-sm py-2 font-['Press_Start_2P',cursive] text-xs disabled:opacity-60 transition-transform duration-300 hover:-translate-y-1"
           >
-            {loading ? "Signing in..." : "Sign In"}
+            {loading ? "SIGNING IN..." : "SIGN IN"}
           </button>
         </form>
 
         <div className="my-4 flex items-center gap-3">
-          <div className={`h-px flex-1 ${isDarkMode ? 'bg-gray-600' : 'bg-gray-200'}`} />
-          <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>OR</span>
-          <div className={`h-px flex-1 ${isDarkMode ? 'bg-gray-600' : 'bg-gray-200'}`} />
+          <div className={`h-px flex-1 border-t-2 ${
+            isDarkMode ? 'border-amber-400' : 'border-amber-500'
+          }`} />
+          <span className={`text-xs font-['Press_Start_2P',cursive] ${
+            isDarkMode ? 'text-gray-400' : 'text-gray-600'
+          }`}>OR</span>
+          <div className={`h-px flex-1 border-t-2 ${
+            isDarkMode ? 'border-amber-400' : 'border-amber-500'
+          }`} />
         </div>
 
         <button
           onClick={handleGoogleLogin}
           disabled={loading}
-          className={`w-full border rounded-md py-2 font-medium disabled:opacity-60 ${
+          className={`w-full border rounded-sm py-2 font-['Press_Start_2P',cursive] text-xs disabled:opacity-60 transition-transform duration-300 hover:-translate-y-1 ${
             isDarkMode 
-              ? 'dark-mode-border dark-mode-input hover:bg-gray-600 dark-mode-text' 
-              : 'border-gray-300 hover:bg-gray-50 text-[#374151]'
+              ? 'border-amber-400 bg-gray-700 hover:bg-gray-600 text-white' 
+              : 'border-amber-500 bg-white hover:bg-gray-50 text-gray-900'
           }`}
         >
-          Continue with Google
+          CONTINUE WITH GOOGLE
         </button>
 
-        <p className={`text-sm text-center mt-4 ${
-          isDarkMode ? 'dark-mode-text-secondary' : 'text-[#6b7280]'
+        <p className={`text-sm text-center mt-4 font-['Press_Start_2P',cursive] ${
+          isDarkMode ? 'text-gray-400' : 'text-gray-600'
         }`}>
-          Don&apos;t have an account?{" "}
+          DON&apos;T HAVE AN ACCOUNT?{" "}
           <Link
             to="/register"
-            className="text-indigo-600 hover:underline font-medium"
+            className={`hover:underline font-medium ${
+              isDarkMode ? 'text-[#ffd700]' : 'text-amber-600'
+            }`}
           >
-            Register
+            REGISTER
           </Link>
         </p>
       </div>

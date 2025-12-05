@@ -64,10 +64,10 @@ function Hub() {
       <div className="">
         {/* Header */}
         <header
-          className={`flex justify-between items-center mb-10 p-6 border-2 rounded-md border-amber-500 ${
+          className={`flex justify-between items-center mb-10 p-6 border-2 ${
             isDarkMode
-              ? "bg-linear-to-b from-gray-800 to-gray-900"
-              : "bg-linear-to-b from-gray-50 to-gray-100"
+              ? "bg-linear-to-b from-gray-800 to-gray-900 border-amber-400"
+              : "bg-linear-to-b from-gray-50 to-gray-100 border-amber-500"
           }`}
         >
           <div className="flex items-center">
@@ -105,7 +105,7 @@ function Hub() {
             {/* Important Info Cards */}
             <div className="flex flex-col gap-4">
               <div
-                className={`p-4 font-bold text-lg text-center border-2 rounded-md transition-transform duration-200 ${
+                className={`p-4 font-bold text-lg text-center border-2 transition-transform duration-200 ${
                   isDarkMode
                     ? "bg-gray-800 text-white border-amber-400"
                     : "bg-gray-50 text-gray-600 border-amber-500"
@@ -119,7 +119,7 @@ function Hub() {
                 </span>
               </div>
               <div
-                className={`p-4 font-bold text-lg text-center border-2 rounded-md transition-transform duration-200 ${
+                className={`p-4 font-bold text-lg text-center border-2 transition-transform duration-200 ${
                   isDarkMode
                     ? "bg-gray-800 text-white border-amber-400"
                     : "bg-gray-50 text-gray-600 border-amber-500"
@@ -146,7 +146,7 @@ function Hub() {
                 </div>
               </div>
               <div
-                className={`p-4 font-bold text-lg text-center border-2 rounded-md transition-transform duration-200 ${
+                className={`p-4 font-bold text-lg text-center border-2 transition-transform duration-200 ${
                   isDarkMode
                     ? "bg-gray-800 text-white border-amber-400"
                     : "bg-gray-50 text-gray-600 border-amber-500"
@@ -170,7 +170,7 @@ function Hub() {
 
           <main className="flex flex-col gap-8">
             <div
-              className={`p-10 flex justify-center items-center min-h-[400px] relative border-2 rounded-lg transition-transform duration-200 ${
+              className={`p-10 flex justify-center items-center min-h-[400px] relative border-2 transition-transform duration-200 ${
                 isDarkMode
                   ? "bg-gray-900 border-amber-400"
                   : "bg-white border-amber-500"
@@ -190,7 +190,7 @@ function Hub() {
 
             {/* Weekly quest completion activity */}
             <div
-              className={`p-8 min-h-[300px] border-2 rounded-lg ${
+              className={`p-8 min-h-[300px] border-2 ${
                 isDarkMode
                   ? "bg-gray-900 text-white border-amber-400"
                   : "bg-white text-gray-600 border-amber-500"

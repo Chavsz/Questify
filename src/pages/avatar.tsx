@@ -186,10 +186,10 @@ const Avatar = () => {
       <div className="">
         {/* Header */}
         <header
-          className={`flex justify-between items-center mb-10 p-6 border-2 rounded-md border-amber-500 ${
+          className={`flex justify-between items-center mb-10 p-6 border-2 ${
             isDarkMode
-              ? "bg-linear-to-b from-gray-800 to-gray-900"
-              : "bg-linear-to-b from-gray-50 to-gray-100"
+              ? "bg-linear-to-b from-gray-800 to-gray-900 border-amber-400"
+              : "bg-linear-to-b from-gray-50 to-gray-100 border-amber-500"
           }`}
         >
           <div className="flex items-center gap-8">
@@ -225,7 +225,7 @@ const Avatar = () => {
           {/* Left Sidebar */}
           <aside className="w-full max-w-xs shrink-0 flex flex-col gap-8 mx-auto lg:mx-0">
             <div
-              className={`p-6 text-center font-bold text-lg border-2 rounded-lg ${
+              className={`p-6 text-center font-bold text-lg border-2 ${
                 isDarkMode
                   ? "bg-gray-900 text-white border-amber-400"
                   : "bg-white text-gray-600 border-amber-500"
@@ -234,7 +234,7 @@ const Avatar = () => {
               🟡 {userCoins} Coins
             </div>
             <div
-              className={`p-6 text-center font-bold w-full border-2 rounded-lg ${
+              className={`p-6 text-center font-bold w-full border-2 ${
                 isDarkMode
                   ? "bg-gray-900 text-white border-amber-400"
                   : "bg-white text-gray-600 border-amber-500"
@@ -255,7 +255,7 @@ const Avatar = () => {
 
           {/* Items Display Area */}
           <main
-            className={`flex-1 p-8 min-h-[500px] border-2 rounded-lg ${
+            className={`flex-1 p-8 min-h-[500px] border-2 ${
               isDarkMode
                 ? "bg-gray-900 border-amber-400"
                 : "bg-white border-amber-500"
@@ -280,7 +280,7 @@ const Avatar = () => {
                 {miniSwordCrew.map((character) => (
                   <div
                     key={character.id}
-                    className={`p-5 flex flex-col items-center text-center transition-all duration-200 cursor-pointer border-2 rounded-lg shadow-md ${
+                    className={`p-5 flex flex-col items-center text-center transition-all duration-200 cursor-pointer border-2 shadow-md ${
                       selectedCharacter === character.id
                         ? isDarkMode
                           ? "border-[#ffd700] ring-2 ring-[#ffd700] bg-gray-900"

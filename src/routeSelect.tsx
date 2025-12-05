@@ -72,14 +72,14 @@ const Route = ({ to, selected, Icon, title, handleSelect, isDarkMode }: RoutePro
   return (
     <Link
       to={to}
-      className={`flex items-center md:justify-start justify-center gap-2 w-full px-2 py-2 md:py-1.5 md:text-sm text-1xl transition-transform border-2 rounded-md transform duration-300 hover:-translate-y-0.5 ${
+      className={`flex items-center md:justify-start justify-center gap-2 w-full px-2 py-2 md:py-1.5 md:text-sm text-1xl transition-transform border-2 transform duration-300 hover:-translate-y-0.5 ${
         isSelected
           ? isDarkMode 
             ? "bg-gray-700 text-[#ffd700] border-amber-400"
             : "bg-amber-100 text-amber-700 border-amber-500"
           : isDarkMode
             ? "bg-gray-900/60 text-gray-300 border-gray-700 hover:bg-gray-700 hover:border-amber-400"
-            : "bg-gray-50 text-gray-700 border-gray-300 hover:bg-amber-50 hover:border-amber-400"
+            : "bg-gray-50 text-gray-700 border-gray-300 hover:bg-amber-50 hover:border-amber-500"
       }`}
       onClick={() => handleSelect(to)}
     >
