@@ -7,35 +7,46 @@ const miniSwordCrew = [
   {
     id: "idle",
     label: "Mini Swordman",
-    image: MiniSwordManIdle
+    image: MiniSwordManIdle,
   },
   {
     id: "idle1",
     label: "Mini Spearman",
-    image: MiniSpear
+    image: MiniSpear,
   },
   {
     id: "idle2",
     label: "Mini Archer",
-    image: MiniArcher
-  }
+    image: MiniArcher,
+  },
 ];
 import { useTheme } from "../components/theme";
 import { IoSunnyOutline } from "react-icons/io5";
 import { FaRegMoon } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { 
-  FaLaptop, 
-  FaRuler, 
-  FaGlobe,  
-  FaUpload, 
+import {
+  FaLaptop,
+  FaRuler,
+  FaGlobe,
+  FaUpload,
   FaFire,
-  FaCheckCircle
+  FaCheckCircle,
 } from "react-icons/fa";
 import { generateQuizFromFile } from "../api/generate-quiz/generate_quiz";
 import type { GeneratedQuiz } from "../api/generate-quiz/generate_quiz";
-import { db } from "../firebase";
-import { collection, addDoc, getDocs, query, where, updateDoc, doc, deleteDoc } from "firebase/firestore";
+import { db, storage } from "../firebase";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  where,
+  updateDoc,
+  doc,
+  deleteDoc,
+  getDoc,
+} from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useAuth } from "../contexts/authContexts/auth";
 import { getUser, updateUser, type InventoryItem } from "../services/users";
 
@@ -43,7 +54,7 @@ interface QuestItem {
   id: string;
   name: string;
   details: string;
-  status: 'completed' | 'in-progress' | 'not-started';
+  status: "completed" | "in-progress" | "not-started";
   progress: string;
   progressText: string;
   icon: React.ReactNode;
@@ -56,7 +67,9 @@ const Quest = () => {
   const authContext = useAuth();
   const user = authContext?.currentUser;
   // Avatar state
-  const [selectedCharacter, setSelectedCharacter] = useState<string>(miniSwordCrew[0].id);
+  const [selectedCharacter, setSelectedCharacter] = useState<string>(
+    miniSwordCrew[0].id
+  );
 
   // Load selected character from Firestore
   useEffect(() => {
@@ -82,7 +95,9 @@ const Quest = () => {
       }
       try {
         const userData = await getUser(user.uid);
-        setStreak(userData && typeof userData.streak === 'number' ? userData.streak : 0);
+        setStreak(
+          userData && typeof userData.streak === "number" ? userData.streak : 0
+        );
       } catch (e) {
         setStreak(0);
       } finally {
@@ -94,29 +109,39 @@ const Quest = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [quests, setQuests] = useState<QuestItem[]>([]);
-  const [modal, setModal] = useState<{ open: boolean; title: string; message: string; type: 'success' | 'error' | 'info' | 'confirm'; onConfirm?: () => void }>({ open: false, title: '', message: '', type: 'info' });
-  const [generatedQuizInfo, setGeneratedQuizInfo] = useState<{ title: string; questionCount: number } | null>(null);
+  const [modal, setModal] = useState<{
+    open: boolean;
+    title: string;
+    message: string;
+    type: "success" | "error" | "info" | "confirm";
+    onConfirm?: () => void;
+  }>({ open: false, title: "", message: "", type: "info" });
+  const [generatedQuizInfo, setGeneratedQuizInfo] = useState<{
+    title: string;
+    questionCount: number;
+  } | null>(null);
 
   // Load quests from Firebase
   useEffect(() => {
     const loadQuests = async () => {
       if (!user) return;
       try {
-        const questsRef = collection(db, 'quests');
-        const q = query(questsRef, where('userId', '==', user.uid));
+        const questsRef = collection(db, "quests");
+        const q = query(questsRef, where("userId", "==", user.uid));
         const querySnapshot = await getDocs(q);
         const loadedQuests: QuestItem[] = [];
         let awarded = false;
         for (const docSnap of querySnapshot.docs) {
           const data = docSnap.data();
           const quizData = data.quiz as GeneratedQuiz;
-          let status: 'completed' | 'in-progress' | 'not-started' = 'not-started';
+          let status: "completed" | "in-progress" | "not-started" =
+            "not-started";
           const totalQuestions = quizData.questions.length;
           const completedQuestions = data.completedQuestions || 0;
           if (completedQuestions === 0) {
-            status = 'not-started';
+            status = "not-started";
           } else if (completedQuestions === totalQuestions) {
-            status = 'completed';
+            status = "completed";
             // Award exp and coins if not already awarded (add a field to mark awarded)
             if (!data.rewarded) {
               const userData = await getUser(user.uid);
@@ -134,28 +159,34 @@ const Quest = () => {
                 leveledUp = true;
               }
               await updateUser(user.uid, { exp, level: newLevel, coins });
-              await updateDoc(doc(db, 'quests', docSnap.id), { rewarded: true });
+              await updateDoc(doc(db, "quests", docSnap.id), {
+                rewarded: true,
+              });
               awarded = true;
               if (leveledUp) {
                 setModal({
                   open: true,
-                  title: 'Level Up!',
+                  title: "Level Up!",
                   message: `Congratulations!\nYou reached Level ${newLevel}!`,
-                  type: 'success',
-                  onConfirm: () => setModal((prev) => ({ ...prev, open: false }))
+                  type: "success",
+                  onConfirm: () =>
+                    setModal((prev) => ({ ...prev, open: false })),
                 });
               }
             }
           } else {
-            status = 'in-progress';
+            status = "in-progress";
           }
-          const progress = totalQuestions > 0 ? Math.round((completedQuestions / totalQuestions) * 100) : 0;
+          const progress =
+            totalQuestions > 0
+              ? Math.round((completedQuestions / totalQuestions) * 100)
+              : 0;
           let icon = <FaLaptop className="text-blue-500 text-2xl" />;
-          if (quizData.sourceFile.includes('.pdf')) {
+          if (quizData.sourceFile.includes(".pdf")) {
             icon = <FaLaptop className="text-blue-500 text-2xl" />;
-          } else if (quizData.sourceFile.includes('.pptx')) {
+          } else if (quizData.sourceFile.includes(".pptx")) {
             icon = <FaRuler className="text-gray-500 text-2xl" />;
-          } else if (quizData.sourceFile.includes('.docx')) {
+          } else if (quizData.sourceFile.includes(".docx")) {
             icon = <FaGlobe className="text-blue-500 text-2xl" />;
           }
           loadedQuests.push({
@@ -166,7 +197,7 @@ const Quest = () => {
             progress: `${progress}%`,
             progressText: `${completedQuestions}/${totalQuestions} completed`,
             icon,
-            quizId: quizData.id
+            quizId: quizData.id,
           });
         }
         setQuests(loadedQuests);
@@ -174,7 +205,7 @@ const Quest = () => {
           // Optionally, show a notification or reload to reflect new exp/coins
         }
       } catch (error) {
-        console.error('Error loading quests:', error);
+        console.error("Error loading quests:", error);
       }
     };
     loadQuests();
@@ -182,21 +213,21 @@ const Quest = () => {
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'completed':
+      case "completed":
         return (
           <span className="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
             <FaCheckCircle className="text-xs" />
             COMPLETED
           </span>
         );
-      case 'in-progress':
+      case "in-progress":
         return (
           <span className="bg-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
             <FaFire className="text-xs" />
             IN PROGRESS
           </span>
         );
-      case 'not-started':
+      case "not-started":
         return (
           <span className="bg-gray-500 text-white px-3 py-1 rounded-full text-xs font-bold">
             NOT STARTED
@@ -211,12 +242,18 @@ const Quest = () => {
     const baseClasses =
       "p-6 mb-4 flex items-center cursor-pointer border-2 shadow-sm transition-all duration-200";
     switch (status) {
-      case 'completed':
-        return `${baseClasses} border-green-500 ${isDarkMode ? 'bg-green-900/30' : 'bg-green-50/30'}`;
-      case 'in-progress':
-        return `${baseClasses} border-orange-500 ${isDarkMode ? 'bg-orange-900/30' : 'bg-orange-50/30'}`;
-      case 'not-started':
-        return `${baseClasses} border-gray-400 ${isDarkMode ? 'bg-gray-700/30' : 'bg-gray-50/30'}`;
+      case "completed":
+        return `${baseClasses} border-green-500 ${
+          isDarkMode ? "bg-green-900/30" : "bg-green-50/30"
+        }`;
+      case "in-progress":
+        return `${baseClasses} border-orange-500 ${
+          isDarkMode ? "bg-orange-900/30" : "bg-orange-50/30"
+        }`;
+      case "not-started":
+        return `${baseClasses} border-gray-400 ${
+          isDarkMode ? "bg-gray-700/30" : "bg-gray-50/30"
+        }`;
       default:
         return baseClasses;
     }
@@ -231,51 +268,103 @@ const Quest = () => {
 
   const handleUpload = async () => {
     if (!selectedFile) {
-      alert('Please select a file first');
+      alert("Please select a file first");
       return;
     }
-    
+
     if (!user) {
-      alert('Please log in to generate quizzes');
+      alert("Please log in to generate quizzes");
       return;
     }
-    
+
     setIsGenerating(true);
-    
+
     try {
+      // Store file as base64 in Firestore (avoids CORS issues with Firebase Storage)
+      // Note: This works for files up to ~900KB (Firestore document limit is 1MB)
+      let fileDataBase64: string | null = null;
+      let fileUrl: string | null = null;
+      
+      if (selectedFile.size <= 900000) {
+        // Convert file to base64 for storage in Firestore
+        const reader = new FileReader();
+        fileDataBase64 = await new Promise<string>((resolve, reject) => {
+          reader.onload = () => {
+            const result = reader.result as string;
+            // Remove data URL prefix (e.g., "data:application/pdf;base64,")
+            const base64 = result.split(',')[1] || result;
+            resolve(base64);
+          };
+          reader.onerror = (error) => {
+            console.error("Error reading file:", error);
+            reject(new Error("Failed to read file"));
+          };
+          reader.readAsDataURL(selectedFile);
+        });
+      } else {
+        // For larger files, try Firebase Storage (may fail due to CORS)
+        try {
+          const fileRef = ref(storage, `quests/${user.uid}/${Date.now()}_${selectedFile.name}`);
+          await uploadBytes(fileRef, selectedFile);
+          fileUrl = await getDownloadURL(fileRef);
+        } catch (storageError: any) {
+          console.warn("Firebase Storage upload failed:", storageError);
+          throw new Error(
+            `File is too large (${(selectedFile.size / 1024 / 1024).toFixed(2)}MB). ` +
+            `Please use a file smaller than 900KB, or configure Firebase Storage CORS. ` +
+            `See FIREBASE_STORAGE_CORS_SETUP.md for instructions.`
+          );
+        }
+      }
+
+      // Ensure we have a way to store the file for regeneration
+      if (!fileUrl && !fileDataBase64) {
+        throw new Error("Failed to store file. Cannot proceed without file storage for regeneration.");
+      }
+
       // Generate quiz from file
       const generatedQuiz = await generateQuizFromFile(selectedFile);
-      
+
       // Save to Firebase
-      const questsRef = collection(db, 'quests');
-      await addDoc(questsRef, {
+      const questsRef = collection(db, "quests");
+      const questData: any = {
         userId: user.uid,
         quiz: generatedQuiz,
         completedQuestions: 0,
-        createdAt: new Date()
+        createdAt: new Date(),
+        sourceFileName: selectedFile.name,
+      };
+      
+      if (fileUrl) {
+        questData.sourceFileUrl = fileUrl;
+      } else if (fileDataBase64) {
+        questData.sourceFileData = fileDataBase64;
+        questData.sourceFileType = selectedFile.type;
+      }
+
+      await addDoc(questsRef, questData);
+
+      setIsUploadModalOpen(false);
+      setSelectedFile(null);
+
+      setModal({
+        open: true,
+        title: "",
+        message: "",
+        type: "success",
+        onConfirm: () => {
+          setModal((prev) => ({ ...prev, open: false }));
+          window.location.reload();
+        },
       });
-          
-          setIsUploadModalOpen(false);
-          setSelectedFile(null);
-          
-          setModal({
-            open: true,
-            title: '',
-            message: '',
-            type: 'success',
-            onConfirm: () => {
-              setModal((prev) => ({ ...prev, open: false }));
-              window.location.reload();
-            }
-          });
-          // Store quiz info for modal rendering
-          setGeneratedQuizInfo({
-            title: generatedQuiz.title,
-            questionCount: generatedQuiz.questions.length
-          });
+      // Store quiz info for modal rendering
+      setGeneratedQuizInfo({
+        title: generatedQuiz.title,
+        questionCount: generatedQuiz.questions.length,
+      });
     } catch (error: any) {
-      console.error('Error generating quiz:', error);
-      alert(`Error generating quiz: ${error.message || 'Unknown error'}`);
+      console.error("Error generating quiz:", error);
+      alert(`Error generating quiz: ${error.message || "Unknown error"}`);
     } finally {
       setIsGenerating(false);
     }
@@ -285,7 +374,7 @@ const Quest = () => {
   const closeInventoryModal = () => setIsInventoryModalOpen(false);
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const filterInventoryItems = (items: InventoryItem[] = []) =>
-    items.filter((item) => (item.slot ?? 'inventory') === 'inventory');
+    items.filter((item) => (item.slot ?? "inventory") === "inventory");
 
   const fetchInventory = async () => {
     if (!user) {
@@ -324,15 +413,30 @@ const Quest = () => {
               <p>No items in your backpack</p>
             </div>
           ) : (
-            inventory.map(item => (
-              <div key={item.id} className="flex flex-col items-center bg-white rounded-xl shadow p-4 border-2 border-gray-500">
+            inventory.map((item) => (
+              <div
+                key={item.id}
+                className="flex flex-col items-center bg-white rounded-xl shadow p-4 border-2 border-gray-500"
+              >
                 <div className="text-5xl mb-2">
-                  {typeof item.emoji === 'string' && item.emoji.endsWith('.png')
-                    ? <img src={item.emoji} alt={item.name} className="object-contain w-14 h-14" style={{imageRendering:'pixelated'}} />
-                    : item.emoji}
+                  {typeof item.emoji === "string" &&
+                  item.emoji.endsWith(".png") ? (
+                    <img
+                      src={item.emoji}
+                      alt={item.name}
+                      className="object-contain w-14 h-14"
+                      style={{ imageRendering: "pixelated" }}
+                    />
+                  ) : (
+                    item.emoji
+                  )}
                 </div>
-                <div className="font-bold text-lg text-indigo-600 mb-1">{item.name}</div>
-                <div className="text-gray-600 font-semibold">x{item.quantity}</div>
+                <div className="font-bold text-lg text-indigo-600 mb-1">
+                  {item.name}
+                </div>
+                <div className="text-gray-600 font-semibold">
+                  x{item.quantity}
+                </div>
               </div>
             ))
           )}
@@ -342,28 +446,46 @@ const Quest = () => {
   );
 
   const embarkOnQuest = () => {
-    const inProgressQuest = quests.find(quest => quest.status === 'in-progress');
+    const inProgressQuest = quests.find(
+      (quest) => quest.status === "in-progress"
+    );
     if (inProgressQuest) {
-      alert('Continuing your in-progress quest: Algebra Fundamentals');
+      alert("Continuing your in-progress quest: Algebra Fundamentals");
     } else {
-      alert('Select a quest from the list to begin your adventure!');
+      alert("Select a quest from the list to begin your adventure!");
     }
   };
 
   const viewQuest = (questId: string) => {
-    const quest = quests.find(q => q.id === questId);
+    const quest = quests.find((q) => q.id === questId);
     if (quest && quest.quizId) {
       navigate(`/quiz/${quest.quizId}`);
     } else {
-      setModal({ open: true, title: "Quiz Not Found", message: "Quiz not found.", type: "error" });
+      setModal({
+        open: true,
+        title: "Quiz Not Found",
+        message: "Quiz not found.",
+        type: "error",
+      });
     }
   };
   // Modal component
-  const renderModal = () => (
+  const renderModal = () =>
     modal.open && (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-        <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md border-2 flex flex-col items-center relative"
-          style={{ borderColor: modal.type === 'success' ? '#22C55E' : modal.type === 'error' ? '#EF4444' : modal.type === 'confirm' ? '#F59E42' : '#3B82F6' }}>
+        <div
+          className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md border-2 flex flex-col items-center relative"
+          style={{
+            borderColor:
+              modal.type === "success"
+                ? "#22C55E"
+                : modal.type === "error"
+                ? "#EF4444"
+                : modal.type === "confirm"
+                ? "#F59E42"
+                : "#3B82F6",
+          }}
+        >
           <button
             onClick={() => setModal({ ...modal, open: false })}
             className="absolute top-4 right-4 text-2xl font-bold text-gray-700 hover:text-red-500 bg-white rounded-full w-10 h-10 flex items-center justify-center shadow"
@@ -371,13 +493,18 @@ const Quest = () => {
           >
             ×
           </button>
-          {modal.type === 'success' && generatedQuizInfo ? (
+          {modal.type === "success" && generatedQuizInfo ? (
             <>
               <div className="flex flex-col items-center mb-4">
                 <div className="text-green-500 text-6xl mb-2">✅</div>
-                <div className="text-2xl font-bold text-green-700 mb-1">Quiz Generated!</div>
+                <div className="text-2xl font-bold text-green-700 mb-1">
+                  Quiz Generated!
+                </div>
                 <div className="text-lg text-gray-700 mb-2 text-center">
-                  <span className="font-semibold">{generatedQuizInfo.title}</span><br />
+                  <span className="font-semibold">
+                    {generatedQuizInfo.title}
+                  </span>
+                  <br />
                   <span>Questions: {generatedQuizInfo.questionCount}</span>
                 </div>
               </div>
@@ -396,24 +523,43 @@ const Quest = () => {
             <>
               <div className="flex items-center gap-3 mb-4">
                 <span className="text-3xl">
-                  {modal.type === 'success' && '✅'}
-                  {modal.type === 'error' && '❌'}
-                  {modal.type === 'info' && 'ℹ️'}
-                  {modal.type === 'confirm' && '⚠️'}
+                  {modal.type === "success" && "✅"}
+                  {modal.type === "error" && "❌"}
+                  {modal.type === "info" && "ℹ️"}
+                  {modal.type === "confirm" && "⚠️"}
                 </span>
-                <span className={`text-2xl font-bold ${modal.type === 'success' ? 'text-green-600' : modal.type === 'error' ? 'text-red-600' : modal.type === 'confirm' ? 'text-yellow-600' : 'text-blue-600'}`}>{modal.title}</span>
+                <span
+                  className={`text-2xl font-bold ${
+                    modal.type === "success"
+                      ? "text-green-600"
+                      : modal.type === "error"
+                      ? "text-red-600"
+                      : modal.type === "confirm"
+                      ? "text-yellow-600"
+                      : "text-blue-600"
+                  }`}
+                >
+                  {modal.title}
+                </span>
               </div>
-              <div className="text-gray-700 text-center whitespace-pre-line mb-2 text-lg">{modal.message}</div>
-              {modal.type === 'confirm' && (
+              <div className="text-gray-700 text-center whitespace-pre-line mb-2 text-lg">
+                {modal.message}
+              </div>
+              {modal.type === "confirm" && (
                 <div className="flex gap-4 mt-4">
                   <button
-                    onClick={() => { setModal({ ...modal, open: false }); }}
+                    onClick={() => {
+                      setModal({ ...modal, open: false });
+                    }}
                     className="px-6 py-2 bg-gray-300 text-gray-800 rounded font-bold shadow hover:bg-gray-400"
                   >
                     Cancel
                   </button>
                   <button
-                    onClick={() => { if (modal.onConfirm) modal.onConfirm(); setModal({ ...modal, open: false }); }}
+                    onClick={() => {
+                      if (modal.onConfirm) modal.onConfirm();
+                      setModal({ ...modal, open: false });
+                    }}
                     className="px-6 py-2 bg-red-500 text-white rounded font-bold shadow hover:bg-red-600"
                   >
                     Confirm
@@ -424,11 +570,10 @@ const Quest = () => {
           )}
         </div>
       </div>
-    )
-  );
+    );
 
   return (
-    <div className="min-h-screen" >
+    <div className="min-h-screen">
       <div className="min-h-screen flex flex-col">
         {/* Header */}
         <header className={`flex justify-between items-center mb-6`}>
@@ -466,7 +611,7 @@ const Quest = () => {
                 )}
               </span>
             </button>
-            
+
             <span
               className={`text-2xl ${
                 isDarkMode ? "text-gray-400" : "text-gray-600"
@@ -491,7 +636,9 @@ const Quest = () => {
           <aside className="flex flex-col">
             <div
               className={`p-5 text-center font-bold border-2 ${
-                isDarkMode ? "bg-gray-900 border-amber-400" : "bg-white border-amber-500"
+                isDarkMode
+                  ? "bg-gray-900 border-amber-400"
+                  : "bg-white border-amber-500"
               }`}
             >
               <h3
@@ -502,11 +649,17 @@ const Quest = () => {
                 Avatar Character
               </h3>
               <div className="relative">
-                <div className={` flex items-center justify-center shadow-md ${
-                  isDarkMode ? 'bg-gray-800' : 'bg-white border border-gray-300'
-                }`}>
+                <div
+                  className={` flex items-center justify-center shadow-md ${
+                    isDarkMode
+                      ? "bg-gray-800"
+                      : "bg-white border border-gray-300"
+                  }`}
+                >
                   {(() => {
-                    const char = miniSwordCrew.find(c => c.id === selectedCharacter) || miniSwordCrew[0];
+                    const char =
+                      miniSwordCrew.find((c) => c.id === selectedCharacter) ||
+                      miniSwordCrew[0];
                     return (
                       <img
                         src={char.image}
@@ -524,7 +677,9 @@ const Quest = () => {
           {/* Quest List Container */}
           <main
             className={`p-8 flex flex-col border-2 ${
-              isDarkMode ? "bg-gray-900 border-amber-400" : "bg-white border-amber-500"
+              isDarkMode
+                ? "bg-gray-900 border-amber-400"
+                : "bg-white border-amber-500"
             }`}
           >
             <h2
@@ -535,7 +690,7 @@ const Quest = () => {
               Your Study Quests
             </h2>
             <div className="flex-1 overflow-y-auto max-h-[600px] space-y-4">
-              {quests.map(quest => (
+              {quests.map((quest) => (
                 <div
                   key={quest.id}
                   className={getQuestItemClasses(quest.status)}
@@ -544,12 +699,18 @@ const Quest = () => {
                   <div className="flex items-center gap-4 flex-1">
                     <div className="shrink-0">{quest.icon}</div>
                     <div className="flex-1">
-                      <div className="font-bold text-xl text-gray-600 mb-2">{quest.name}</div>
-                      <div className="text-sm text-gray-600 mb-3">{quest.details}</div>
+                      <div className="font-bold text-xl text-gray-600 mb-2">
+                        {quest.name}
+                      </div>
+                      <div className="text-sm text-gray-600 mb-3">
+                        {quest.details}
+                      </div>
                       <div className="flex items-center gap-3 mb-3">
                         {getStatusBadge(quest.status)}
                         {quest.coins && (
-                          <span className="text-green-600 font-semibold text-sm">{quest.coins}</span>
+                          <span className="text-green-600 font-semibold text-sm">
+                            {quest.coins}
+                          </span>
                         )}
                       </div>
                       <div
@@ -572,9 +733,11 @@ const Quest = () => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="flex flex-col gap-2 items-end text-sm text-gray-600 shrink-0 ml-4 mt-2">
-                    <div className="text-2xl font-bold text-gray-600">{quest.progress}</div>
+                    <div className="text-2xl font-bold text-gray-600">
+                      {quest.progress}
+                    </div>
                     <div className="text-sm">{quest.progressText}</div>
                     <div className="flex gap-2 mt-2">
                       <button
@@ -582,21 +745,68 @@ const Quest = () => {
                           e.stopPropagation();
                           setModal({
                             open: true,
-                            title: "Restart Quest?",
-                            message: "Restart this quest? Progress will be reset.",
+                            title: "Regenerate Quest?",
+                            message:
+                              "Regenerate this quest with different questions? Progress will be reset.",
                             type: "confirm",
                             onConfirm: async () => {
-                              await updateDoc(doc(db, 'quests', quest.id), { completedQuestions: 0 });
-                              window.location.reload();
-                            }
+                              try {
+                                setIsGenerating(true);
+                                // Get quest document to retrieve file URL or base64 data
+                                const questDoc = await getDoc(doc(db, "quests", quest.id));
+                                const questData = questDoc.data();
+                                
+                                let file: File;
+                                const fileName = questData?.sourceFileName || "source_file";
+                                
+                                if (questData?.sourceFileUrl) {
+                                  // Fetch file from Storage URL
+                                  const response = await fetch(questData.sourceFileUrl);
+                                  const blob = await response.blob();
+                                  file = new File([blob], fileName, { type: blob.type });
+                                } else if (questData?.sourceFileData) {
+                                  // Convert base64 data to File
+                                  const base64Data = questData.sourceFileData;
+                                  const fileType = questData.sourceFileType || "application/octet-stream";
+                                  const byteCharacters = atob(base64Data);
+                                  const byteNumbers = new Array(byteCharacters.length);
+                                  for (let i = 0; i < byteCharacters.length; i++) {
+                                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                                  }
+                                  const byteArray = new Uint8Array(byteNumbers);
+                                  const blob = new Blob([byteArray], { type: fileType });
+                                  file = new File([blob], fileName, { type: fileType });
+                                } else {
+                                  alert("Source file not found. Cannot regenerate quest.");
+                                  setIsGenerating(false);
+                                  return;
+                                }
+
+                                // Regenerate quiz from file
+                                const generatedQuiz = await generateQuizFromFile(file);
+
+                                // Update quest with new quiz and reset progress
+                                await updateDoc(doc(db, "quests", quest.id), {
+                                  quiz: generatedQuiz,
+                                  completedQuestions: 0,
+                                  rewarded: false,
+                                });
+
+                                window.location.reload();
+                              } catch (error: any) {
+                                console.error("Error regenerating quiz:", error);
+                                alert(`Error regenerating quiz: ${error.message || "Unknown error"}`);
+                                setIsGenerating(false);
+                              }
+                            },
                           });
                         }}
                         className="px-3 py-1 font-bold text-xs
-font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] border-2 rounded-sm
-transition-transform duration-300 hover:-translate-y-1
-bg-linear-to-b from-[#ffd700] to-[#ffb700] border-[#8b6914] text-[#1a1a2e]"
+                                  font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] border-2 rounded-sm
+                                  transition-transform duration-300 hover:-translate-y-1
+                                  bg-linear-to-b from-[#ffd700] to-[#ffb700] border-[#8b6914] text-[#1a1a2e]"
                       >
-                        RESTART
+                        REGENERATE
                       </button>
                       <button
                         onClick={(e) => {
@@ -604,12 +814,13 @@ bg-linear-to-b from-[#ffd700] to-[#ffb700] border-[#8b6914] text-[#1a1a2e]"
                           setModal({
                             open: true,
                             title: "Delete Quest?",
-                            message: "Delete this quest? This cannot be undone.",
+                            message:
+                              "Delete this quest? This cannot be undone.",
                             type: "confirm",
                             onConfirm: async () => {
-                              await deleteDoc(doc(db, 'quests', quest.id));
+                              await deleteDoc(doc(db, "quests", quest.id));
                               window.location.reload();
-                            }
+                            },
                           });
                         }}
                         className="px-3 py-1 font-bold text-xs
@@ -629,7 +840,7 @@ bg-linear-to-b from-[#ffd700] to-[#ffb700] border-[#8b6914] text-[#1a1a2e]"
 
         {/* Bottom Navigation */}
         <nav className="flex justify-end gap-4">
-          <button 
+          <button
             onClick={() => setIsUploadModalOpen(true)}
             className="p-6 font-bold text-xs cursor-pointer
 font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] border-2 rounded-sm
@@ -638,7 +849,7 @@ bg-linear-to-b from-[#ffd700] to-[#ffb700] border-[#8b6914] text-[#1a1a2e]"
           >
             <span>UPLOAD RESOURCE</span>
           </button>
-          <button 
+          <button
             onClick={checkInventory}
             className="p-6 font-bold text-xs cursor-pointer
 font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] border-2 rounded-sm
@@ -648,7 +859,7 @@ bg-linear-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white"
             <span>CHECK INVENTORY</span>
           </button>
           {isInventoryModalOpen && renderInventoryModal()}
-          <button 
+          <button
             onClick={embarkOnQuest}
             className="p-6 font-bold text-xs cursor-pointer
 font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] border-2 rounded-sm
@@ -664,21 +875,31 @@ bg-linear-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white"
       {renderModal()}
       {isUploadModalOpen && (
         <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-50">
-          <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} text-purple-900 rounded-2xl p-8 max-w-lg w-11/12 shadow-2xl`}>
-            <h2 className="text-3xl font-bold mb-6 text-center text-purple-600">Upload Study Material</h2>
-            <div 
+          <div
+            className={`${
+              isDarkMode ? "bg-gray-800" : "bg-white"
+            } text-purple-900 rounded-2xl border-2 border-amber-500 p-8 max-w-lg w-11/12 shadow-2xl`}
+          >
+            <h2 className="text-3xl font-bold mb-6 text-center text-[#ffd700]">
+              Upload Study Material
+            </h2>
+            <div
               className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center mb-6 cursor-pointer hover:border-purple-500 hover:bg-purple-50/30"
-              onClick={() => document.getElementById('fileInput')?.click()}
+              onClick={() => document.getElementById("fileInput")?.click()}
             >
-              <FaUpload className="text-6xl text-purple-500 mb-4 mx-auto" />
-              <p className="text-lg font-semibold mb-2">Click to upload</p>
-              <p className="text-gray-500 text-sm">PDF, PPTX, DOCX (Max 50MB)</p>
+              <FaUpload className="text-6xl text-[#ffd700] mb-4 mx-auto" />
+              <p className="text-lg font-semibold mb-2 text-[#ffd700]">
+                Click to upload
+              </p>
+              <p className="text-gray-500 text-sm">
+                PDF, PPTX, DOCX (Max 50MB)
+              </p>
             </div>
-            <input 
-              type="file" 
-              id="fileInput" 
-              className="hidden" 
-              accept=".pdf,.pptx,.docx" 
+            <input
+              type="file"
+              id="fileInput"
+              className="hidden"
+              accept=".pdf,.pptx,.docx"
               onChange={handleFileSelect}
             />
             {selectedFile && (
@@ -687,18 +908,18 @@ bg-linear-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white"
               </div>
             )}
             <div className="flex gap-4">
-              <button 
+              <button
                 onClick={() => setIsUploadModalOpen(false)}
                 className="flex-1 p-4 border-none rounded-xl font-bold cursor-pointer hover:-translate-y-1 bg-gray-200 text-gray-600 hover:bg-gray-300"
               >
                 Cancel
               </button>
-              <button 
+              <button
                 onClick={handleUpload}
                 disabled={isGenerating}
                 className="flex-1 p-4 border-none rounded-xl font-bold cursor-pointer hover:-translate-y-1 bg-linear-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isGenerating ? 'Generating...' : 'Generate Quest'}
+                {isGenerating ? "Generating..." : "Generate Quest"}
               </button>
             </div>
           </div>
