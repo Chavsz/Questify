@@ -57,7 +57,6 @@ interface QuestItem {
   status: "completed" | "in-progress" | "not-started";
   progress: string;
   progressText: string;
-  icon: React.ReactNode;
   coins?: string;
   quizId?: string;
 }
@@ -181,14 +180,6 @@ const Quest = () => {
             totalQuestions > 0
               ? Math.round((completedQuestions / totalQuestions) * 100)
               : 0;
-          let icon = <FaLaptop className="text-blue-500 text-2xl" />;
-          if (quizData.sourceFile.includes(".pdf")) {
-            icon = <FaLaptop className="text-blue-500 text-2xl" />;
-          } else if (quizData.sourceFile.includes(".pptx")) {
-            icon = <FaRuler className="text-gray-500 text-2xl" />;
-          } else if (quizData.sourceFile.includes(".docx")) {
-            icon = <FaGlobe className="text-blue-500 text-2xl" />;
-          }
           loadedQuests.push({
             id: docSnap.id,
             name: quizData.title,
@@ -196,7 +187,6 @@ const Quest = () => {
             status,
             progress: `${progress}%`,
             progressText: `${completedQuestions}/${totalQuestions} completed`,
-            icon,
             quizId: quizData.id,
           });
         }
@@ -395,7 +385,7 @@ const Quest = () => {
 
   const renderInventoryModal = () => (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="relative bg-white rounded-3xl shadow-2xl p-8 w-full max-w-2xl border border-gray-500 flex flex-col items-center">
+      <div className={`relative bg-${isDarkMode ? "gray-900" : "white"} rounded-3xl shadow-2xl p-8 w-full max-w-2xl border border-[#ffd700] flex flex-col items-center`}>
         <button
           onClick={closeInventoryModal}
           className="absolute top-4 right-4 text-2xl font-bold text-gray-700 bg-white rounded-full w-10 h-10 flex items-center justify-center shadow"
@@ -404,11 +394,11 @@ const Quest = () => {
           ×
         </button>
         <div className="flex items-center gap-3 mb-6">
-          <span className="text-2xl font-bold text-indigo-600">Backpack</span>
+          <span className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-amber-600"}`}>Backpack</span>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 w-full">
           {inventory.length === 0 ? (
-            <div className="col-span-full text-center text-gray-500">
+            <div className={`col-span-full text-center ${isDarkMode ? "text-white" : "text-gray-500"}`}>
               <div className="text-6xl mb-2">📦</div>
               <p>No items in your backpack</p>
             </div>
@@ -474,11 +464,11 @@ const Quest = () => {
     modal.open && (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
         <div
-          className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md border-2 flex flex-col items-center relative"
+          className="bg-gray-900 rounded-2xl shadow-2xl p-8 w-full max-w-md border-2 flex flex-col items-center relative"
           style={{
             borderColor:
               modal.type === "success"
-                ? "#22C55E"
+                ? "#ffd700"
                 : modal.type === "error"
                 ? "#EF4444"
                 : modal.type === "confirm"
@@ -496,11 +486,10 @@ const Quest = () => {
           {modal.type === "success" && generatedQuizInfo ? (
             <>
               <div className="flex flex-col items-center mb-4">
-                <div className="text-green-500 text-6xl mb-2">✅</div>
-                <div className="text-2xl font-bold text-green-700 mb-1">
+                <div className="text-2xl font-bold text-[#ffd700] mb-1">
                   Quiz Generated!
                 </div>
-                <div className="text-lg text-gray-700 mb-2 text-center">
+                <div className="text-lg text-white mb-2 text-center">
                   <span className="font-semibold">
                     {generatedQuizInfo.title}
                   </span>
@@ -542,7 +531,7 @@ const Quest = () => {
                   {modal.title}
                 </span>
               </div>
-              <div className="text-gray-700 text-center whitespace-pre-line mb-2 text-lg">
+              <div className={`text-${isDarkMode ? "white" : "gray-700"} text-center whitespace-pre-line mb-2 text-lg`}>
                 {modal.message}
               </div>
               {modal.type === "confirm" && (
@@ -621,9 +610,7 @@ const Quest = () => {
             </span>
             {/* Profile Picture */}
             <div
-              className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-xl bg-linear-to-r from-orange-500 to-red-500 ${
-                isDarkMode ? " text-white" : " text-white"
-              }`}
+              className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-xl bg-linear-to-r from-orange-500 to-red-500 text-white`}
             >
               {user?.email ? user.email.charAt(0).toUpperCase() : "?"}
             </div>
@@ -697,12 +684,11 @@ const Quest = () => {
                   onClick={() => viewQuest(quest.id)}
                 >
                   <div className="flex items-center gap-4 flex-1">
-                    <div className="shrink-0">{quest.icon}</div>
                     <div className="flex-1">
-                      <div className="font-bold text-xl text-gray-600 mb-2">
+                      <div className={`font-bold text-xl ${isDarkMode ? "text-white" : "text-gray-600"} mb-2`}>
                         {quest.name}
                       </div>
-                      <div className="text-sm text-gray-600 mb-3">
+                      <div className={`text-sm ${isDarkMode ? "text-white" : "text-gray-600"} mb-3`}>
                         {quest.details}
                       </div>
                       <div className="flex items-center gap-3 mb-3">
@@ -735,10 +721,10 @@ const Quest = () => {
                   </div>
 
                   <div className="flex flex-col gap-2 items-end text-sm text-gray-600 shrink-0 ml-4 mt-2">
-                    <div className="text-2xl font-bold text-gray-600">
+                    <div className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-gray-600"}`}>
                       {quest.progress}
                     </div>
-                    <div className="text-sm">{quest.progressText}</div>
+                    <div className={`text-sm ${isDarkMode ? "text-white" : "text-gray-600"}`}>{quest.progressText}</div>
                     <div className="flex gap-2 mt-2">
                       <button
                         onClick={(e) => {
@@ -884,14 +870,14 @@ bg-linear-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white"
               Upload Study Material
             </h2>
             <div
-              className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center mb-6 cursor-pointer hover:border-purple-500 hover:bg-purple-50/30"
+              className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center mb-6 cursor-pointer hover:border-[#ffd700] hover:bg-purple-50/30"
               onClick={() => document.getElementById("fileInput")?.click()}
             >
               <FaUpload className="text-6xl text-[#ffd700] mb-4 mx-auto" />
               <p className="text-lg font-semibold mb-2 text-[#ffd700]">
                 Click to upload
               </p>
-              <p className="text-gray-500 text-sm">
+              <p className="text-white text-sm">
                 PDF, PPTX, DOCX (Max 50MB)
               </p>
             </div>
