@@ -42,6 +42,7 @@ export interface User {
   level?: number; // User level
   coins?: number; // User coins
   selectedCharacter?: string; // Selected avatar character id
+  unlockedCharacters?: string[]; // Array of unlocked character ids
 }
 
 // Add item to user inventory

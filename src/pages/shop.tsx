@@ -10,6 +10,7 @@ import {
   type InventoryItem,
 } from "../services/users";
 
+
 interface ShopItem {
   id: number;
   name: string;
@@ -18,6 +19,7 @@ interface ShopItem {
   emoji: string; // emoji or image path
   slot: string;
   description: string;
+  characterId?: string; // For character unlocks
 }
 
 const Shop = () => {
@@ -37,6 +39,7 @@ const Shop = () => {
   const [streak, setStreak] = useState<number | null>(null);
   const [loadingStreak, setLoadingStreak] = useState(true);
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
+  const [unlockedCharacters, setUnlockedCharacters] = useState<string[]>(["idle"]);
   const filterInventoryItems = (items: InventoryItem[] = []) =>
     items.filter((item) => (item.slot ?? "inventory") === "inventory");
 
@@ -47,6 +50,7 @@ const Shop = () => {
         setLoadingStreak(false);
         setInventory([]);
         setUserCoins(0);
+        setUnlockedCharacters(["idle"]);
         return;
       }
       try {
@@ -56,10 +60,12 @@ const Shop = () => {
         );
         setInventory(filterInventoryItems(userData?.inventory || []));
         setUserCoins(userData?.coins ?? 0);
+        setUnlockedCharacters(userData?.unlockedCharacters || ["idle"]);
       } catch (e) {
         setStreak(0);
         setInventory([]);
         setUserCoins(0);
+        setUnlockedCharacters(["idle"]);
       } finally {
         setLoadingStreak(false);
       }
@@ -74,7 +80,7 @@ const Shop = () => {
       price: 50,
       category: "consumables",
       emoji: "/items/HealthPotionMedium.png",
-      description: "Restore 50 HP",
+      description: "Restore 1 heart (if not full)",
       slot: "inventory",
     },
     {
@@ -92,7 +98,7 @@ const Shop = () => {
       price: 150,
       category: "consumables",
       emoji: "/items/ShieldGold1.png",
-      description: "+20 Defense",
+      description: "Block next wrong answer",
       slot: "inventory",
     },
     {
@@ -101,7 +107,7 @@ const Shop = () => {
       price: 40,
       category: "consumables",
       emoji: "/items/ManaPotionMedium.png",
-      description: "Bonus points",
+      description: "Skip this question",
       slot: "inventory",
     },
     {
@@ -110,7 +116,7 @@ const Shop = () => {
       price: 120,
       category: "consumables",
       emoji: "/items/Ruby.png",
-      description: "Bonus points",
+      description: "Auto-correct one wrong answer",
       slot: "inventory",
     },
   ];
@@ -133,6 +139,58 @@ const Shop = () => {
       });
       return;
     }
+    
+    // For character unlocks, quantity is always 1
+    if (selectedItem.category === "characters") {
+      if (unlockedCharacters.includes(selectedItem.characterId || "")) {
+        setModal({
+          open: true,
+          title: "Already Unlocked",
+          message: "You already own this character!",
+          type: "error",
+        });
+        return;
+      }
+      const totalCost = selectedItem.price;
+      if (userCoins < totalCost) {
+        setModal({
+          open: true,
+          title: "Not Enough Coins",
+          message: `You need ${totalCost} coins but only have ${userCoins} coins.`,
+          type: "error",
+        });
+        return;
+      }
+      if (!user) {
+        setModal({
+          open: true,
+          title: "Not Logged In",
+          message: "You must be logged in to purchase items.",
+          type: "error",
+        });
+        return;
+      }
+      // Unlock character
+      const newCoins = userCoins - totalCost;
+      const newUnlockedCharacters = [...unlockedCharacters, selectedItem.characterId];
+      await updateUser(user.uid, {
+        coins: newCoins,
+        unlockedCharacters: newUnlockedCharacters,
+      });
+      setUserCoins(newCoins);
+      setUnlockedCharacters(newUnlockedCharacters);
+      setModal({
+        open: true,
+        title: "Character Unlocked!",
+        message: `You've unlocked ${selectedItem.name}!\n\nGo to Avatar to select your new character.`,
+        type: "success",
+      });
+      setSelectedItem(null);
+      setPurchaseQuantity(1);
+      return;
+    }
+
+    // For consumables, handle quantity
     if (purchaseQuantity < 1 || !Number.isInteger(purchaseQuantity)) {
       setModal({
         open: true,
@@ -451,7 +509,7 @@ const Shop = () => {
           INVENTORY
         </button>
 
-        {selectedItem && (
+        {selectedItem && selectedItem.category !== "characters" && (
           <div className="flex items-center gap-3">
             <label
               htmlFor="quantity"
@@ -491,7 +549,9 @@ bg-green-600 text-white
 ${selectedItem ? "" : "opacity-50 cursor-not-allowed"}`}
         >
           {selectedItem
-            ? `💳 BUY ${selectedItem.name.toUpperCase()}`
+            ? selectedItem.category === "characters"
+              ? `🔓 UNLOCK ${selectedItem.name.toUpperCase()} (${selectedItem.price} coins)`
+              : `💳 BUY ${selectedItem.name.toUpperCase()} (${selectedItem.price * purchaseQuantity} coins)`
             : "PURCHASE"}
         </button>
       </nav>

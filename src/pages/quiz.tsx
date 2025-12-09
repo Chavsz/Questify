@@ -2,6 +2,9 @@ import MiniSwordManIdle from "../assets/MiniSwordManIdle.gif";
 import MiniSpear from "../assets/MiniSpearManIdle.gif";
 import MiniArcher from "../assets/MiniArcherIdle.gif";
 import Orc from "../assets/OrcIdle.gif";
+import MiniMage from "../assets/MiniMageIdle.gif";
+import MiniPrince from "../assets/MiniPrinceIdle.gif";
+
 // Avatar character list (sync with avatar.tsx)
 const miniSwordCrew = [
   {
@@ -18,6 +21,22 @@ const miniSwordCrew = [
     id: "idle2",
     label: "Mini Archer",
     image: MiniArcher,
+  },
+  {
+    id: "idle3",
+    label: "Mini Mage",
+    description:
+      "A mystical spellcaster wielding arcane magic. Powerful ranged attacks with elemental fury and crowd control.",
+    requiredLevel: 15,
+    image: MiniMage,
+  },
+  {
+    id: "idle4",
+    label: "Mini Prince",
+    description:
+      "A noble warrior with balanced skills and royal abilities. Master of both offense and defense with inspiring presence.",
+    requiredLevel: 15,
+    image: MiniPrince,
   },
 ];
 import { useState, useEffect } from "react";
@@ -60,6 +79,23 @@ const Quiz = () => {
       const userData = await getUser(user.uid);
       if (userData && userData.selectedCharacter) {
         setSelectedCharacter(userData.selectedCharacter);
+        // Prince starts with 4 hearts instead of 3
+        if (userData.selectedCharacter === "idle4") {
+          setLives(4);
+        }
+        // Initialize passive abilities based on selected character
+        if (userData.selectedCharacter === "idle1") {
+          // Mini Spearman: 2 free damage blocks
+          setSpearmanBlocksRemaining(2);
+        } else {
+          setSpearmanBlocksRemaining(0);
+        }
+        // Archer dodges on wrong answers dynamically
+        setArcherDodgeActive(userData.selectedCharacter === "idle2");
+        // Mage: 3 charges to reveal answer
+        setMageRevealChargesRemaining(userData.selectedCharacter === "idle3" ? 3 : 0);
+        // Prince: Can heal once, and starts with 4 hearts
+        setPrinceHealUsed(false);
       }
     };
     fetchSelectedCharacter();
@@ -73,11 +109,15 @@ const Quiz = () => {
   const [loading, setLoading] = useState(true);
   const [lives, setLives] = useState(INITIAL_LIVES);
   const [failed, setFailed] = useState(false);
+  const [mageRevealChargesRemaining, setMageRevealChargesRemaining] = useState(0);
+  const [princeHealUsed, setPrinceHealUsed] = useState(false);
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [isInventoryOpen, setIsInventoryOpen] = useState(false);
   const [hint, setHint] = useState("");
   const [shieldActive, setShieldActive] = useState(false);
   const [luckyActive, setLuckyActive] = useState(false);
+  const [spearmanBlocksRemaining, setSpearmanBlocksRemaining] = useState(0);
+  const [archerDodgeActive, setArcherDodgeActive] = useState(false);
 
   useEffect(() => {
     const loadQuiz = async () => {
@@ -217,6 +257,15 @@ const Quiz = () => {
       if (shieldActive) {
         setShieldActive(false);
         return;
+      }
+      // Mini Spearman passive: 2 free damage blocks
+      if (spearmanBlocksRemaining > 0) {
+        setSpearmanBlocksRemaining((prev) => prev - 1);
+        return; // Block the damage, prevent life loss
+      }
+      // Mini Archer passive: 30% chance to dodge an attack on wrong answer
+      if (archerDodgeActive && Math.random() < 0.3) {
+        return; // Dodge the damage, prevent life loss
       }
       // Lose a life on wrong answer
       setLives((prev) => {
@@ -826,6 +875,30 @@ const Quiz = () => {
             🍀 Lucky
           </span>
         )}
+        {spearmanBlocksRemaining > 0 && (
+          <span
+            className="ml-2 px-3 py-1 bg-slate-600/80 text-white rounded font-bold border-2 border-slate-400 animate-pulse"
+            style={{
+              fontFamily: "monospace",
+              fontSize: 16,
+              filter: "drop-shadow(0 0 5px rgba(100, 116, 139, 0.5))",
+            }}
+          >
+            🗡️ Blocks: {spearmanBlocksRemaining}
+          </span>
+        )}
+        {archerDodgeActive && (
+          <span
+            className="ml-2 px-3 py-1 bg-purple-500/80 text-white rounded font-bold border-2 border-purple-300 animate-pulse"
+            style={{
+              fontFamily: "monospace",
+              fontSize: 16,
+              filter: "drop-shadow(0 0 5px rgba(168, 85, 247, 0.5))",
+            }}
+          >
+            🏹 Dodge: 30%
+          </span>
+        )}
       </div>
 
       {/* Inventory Modal */}
@@ -952,6 +1025,57 @@ const Quiz = () => {
           >
             {currentQuestion.question}
           </h1>
+        </div>
+
+        {/* Character Ability Buttons */}
+        <div className="w-full max-w-2xl mb-6 flex gap-4 justify-center flex-wrap">
+          {/* Mage: Reveal Answer Ability */}
+          {selectedCharacter === "idle3" && mageRevealChargesRemaining > 0 && (
+            <button
+              onClick={() => {
+                if (!showFeedback && mageRevealChargesRemaining > 0) {
+                  setUserAnswer(currentQuestion.answer.toUpperCase());
+                  setMageRevealChargesRemaining((prev) => prev - 1);
+                }
+              }}
+              disabled={showFeedback || mageRevealChargesRemaining === 0}
+              className="px-4 py-2 bg-blue-600 text-white font-bold rounded-lg shadow-lg hover:bg-blue-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{
+                fontFamily: "monospace",
+                textTransform: "uppercase",
+                fontSize: "12px",
+                letterSpacing: "1px",
+                border: "2px solid #3b82f6",
+                boxShadow: "0 0 10px rgba(59, 130, 246, 0.5)",
+              }}
+            >
+              🧙 Reveal ({mageRevealChargesRemaining})
+            </button>
+          )}
+          
+          {/* Prince: Heal Ability */}
+          {selectedCharacter === "idle4" && !princeHealUsed && (
+            <button
+              onClick={() => {
+                if (lives < 4 && !princeHealUsed) {
+                  setLives(4);
+                  setPrinceHealUsed(true);
+                }
+              }}
+              disabled={lives === 4 || princeHealUsed}
+              className="px-4 py-2 bg-purple-600 text-white font-bold rounded-lg shadow-lg hover:bg-purple-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{
+                fontFamily: "monospace",
+                textTransform: "uppercase",
+                fontSize: "12px",
+                letterSpacing: "1px",
+                border: "2px solid #a855f7",
+                boxShadow: "0 0 10px rgba(168, 85, 247, 0.5)",
+              }}
+            >
+              👑 Heal Once
+            </button>
+          )}
         </div>
 
         {/* Answer Input */}

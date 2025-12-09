@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import MiniSwordManIdle from "../assets/MiniSwordManIdle.gif";
 import MiniSpear from "../assets/MiniSpearManIdle.gif";
 import MiniArcher from "../assets/MiniArcherIdle.gif";
+import MiniMage from "../assets/MiniMageIdle.gif";
+import MiniPrince from "../assets/MiniPrinceIdle.gif";
+
 // Avatar character list (sync with avatar.tsx)
 const miniSwordCrew = [
   {
@@ -18,6 +21,22 @@ const miniSwordCrew = [
     id: "idle2",
     label: "Mini Archer",
     image: MiniArcher,
+  },
+  {
+    id: "idle3",
+    label: "Mini Mage",
+    description:
+      "A mystical spellcaster wielding arcane magic. Powerful ranged attacks with elemental fury and crowd control.",
+    requiredLevel: 15,
+    image: MiniMage,
+  },
+  {
+    id: "idle4",
+    label: "Mini Prince",
+    description:
+      "A noble warrior with balanced skills and royal abilities. Master of both offense and defense with inspiring presence.",
+    requiredLevel: 15,
+    image: MiniPrince,
   },
 ];
 import { useTheme } from "../components/theme";
