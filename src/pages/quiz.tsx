@@ -2,8 +2,20 @@ import MiniSwordManIdle from "../assets/MiniSwordManIdle.gif";
 import MiniSpear from "../assets/MiniSpearManIdle.gif";
 import MiniArcher from "../assets/MiniArcherIdle.gif";
 import Orc from "../assets/OrcIdle.gif";
+import OrcAttack from "../assets/OrcAttack.gif";
+import OrcHurt from "../assets/OrcHurt.gif";
 import MiniMage from "../assets/MiniMageIdle.gif";
 import MiniPrince from "../assets/MiniPrinceIdle.gif";
+import MiniSwordManIdleAttack from "../assets/MiniSwordManIdleAttack.gif";
+import MiniSwordManIdleHit from "../assets/MiniSwordManIdleHit.gif";
+import MiniSpearManAttack from "../assets/MiniSpearManAttack.gif";
+import MiniSpearManHit from "../assets/MiniSpearManHit.gif";
+import MiniArcherAttack from "../assets/MiniArcherAttack.gif";
+import MiniArcherHit from "../assets/MiniArcherHit.gif";
+import MiniMageAttack from "../assets/MiniMageAttack.gif";
+import MiniMageHit from "../assets/MiniMageHit.gif";
+import MiniPrinceAttack from "../assets/MiniPrinceAttack.gif";
+import MiniPrinceHit from "../assets/MiniPrinceHit.gif";
 
 // Avatar character list (sync with avatar.tsx)
 const miniSwordCrew = [
@@ -39,6 +51,41 @@ const miniSwordCrew = [
     image: MiniPrince,
   },
 ];
+
+// Sprite set for player poses; missing states fall back to idle
+const heroSprites: Record<string, { idle: string; attack?: string; hit?: string }> = {
+  idle: {
+    idle: MiniSwordManIdle,
+    attack: MiniSwordManIdleAttack,
+    hit: MiniSwordManIdleHit,
+  },
+  idle1: {
+    idle: MiniSpear,
+    attack: MiniSpearManAttack,
+    hit: MiniSpearManHit,
+  },
+  idle2: {
+    idle: MiniArcher,
+    attack: MiniArcherAttack,
+    hit: MiniArcherHit,
+  },
+  idle3: {
+    idle: MiniMage,
+    attack: MiniMageAttack,
+    hit: MiniMageHit,
+  },
+  idle4: {
+    idle: MiniPrince,
+    attack: MiniPrinceAttack,
+    hit: MiniPrinceHit,
+  },
+};
+
+const bossSprites = {
+  idle: Orc,
+  attack: OrcAttack,
+  hurt: OrcHurt,
+};
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { db } from "../firebase";
@@ -118,6 +165,8 @@ const Quiz = () => {
   const [luckyActive, setLuckyActive] = useState(false);
   const [spearmanBlocksRemaining, setSpearmanBlocksRemaining] = useState(0);
   const [archerDodgeActive, setArcherDodgeActive] = useState(false);
+  const [heroPose, setHeroPose] = useState<"idle" | "attack" | "hit">("idle");
+  const [bossPose, setBossPose] = useState<"idle" | "attack" | "hurt">("idle");
 
   useEffect(() => {
     const loadQuiz = async () => {
@@ -167,6 +216,19 @@ const Quiz = () => {
     loadQuiz();
   }, [quizId, user]);
 
+  // Reset to idle after showing attack/hit briefly
+  useEffect(() => {
+    if (heroPose === "idle") return;
+    const timer = setTimeout(() => setHeroPose("idle"), 1200);
+    return () => clearTimeout(timer);
+  }, [heroPose]);
+
+  useEffect(() => {
+    if (bossPose === "idle") return;
+    const timer = setTimeout(() => setBossPose("idle"), 1200);
+    return () => clearTimeout(timer);
+  }, [bossPose]);
+
   const checkAnswer = () => {
     if (!quiz || !userAnswer.trim() || failed) return;
 
@@ -188,6 +250,8 @@ const Quiz = () => {
 
     setIsCorrect(isAnswerCorrect);
     setShowFeedback(true);
+    setHeroPose(isAnswerCorrect ? "attack" : "hit");
+    setBossPose(isAnswerCorrect ? "hurt" : "attack");
 
     // Update local question status so we know which ones were correct/wrong
     setQuiz((prevQuiz) => {
@@ -331,6 +395,8 @@ const Quiz = () => {
       setUserAnswer("");
       setIsCorrect(null);
       setShowFeedback(false);
+      setHeroPose("idle");
+      setBossPose("idle");
     } else {
       // No more remaining incorrect/unanswered questions – advance past the
       // last question so that completion/victory screens can be shown.
@@ -735,9 +801,11 @@ const Quiz = () => {
             const char =
               miniSwordCrew.find((c) => c.id === selectedCharacter) ||
               miniSwordCrew[0];
+            const heroSet = heroSprites[char.id] || { idle: char.image };
+            const poseSrc = heroSet[heroPose] || heroSet.idle || char.image;
             return (
               <img
-                src={char.image}
+                src={poseSrc}
                 alt={char.label}
                 className="w-40 h-40 object-contain"
                 style={{
@@ -779,7 +847,7 @@ const Quiz = () => {
       >
         <div className="mb-2">
           <img
-            src={Orc}
+            src={bossSprites[bossPose] || bossSprites.idle}
             alt="Orc Boss"
             className="w-80 h-50 object-contain"
             style={{
