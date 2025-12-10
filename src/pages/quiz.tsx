@@ -125,6 +125,8 @@ const skinSpriteMap: Record<string, Record<string, { idle: string; attack?: stri
 import { useState, useEffect, useRef } from "react";
 import BgmThoseWhoFight from "../assets/Final Fantasy VII OST - Those Who FightBattle Theme.mp3";
 import attackSfx from "../assets/Attack.mp3";
+import victoryTheme from "../assets/Final Fantasy VII - Victory Fanfare [HD].mp3";
+import gameOverTheme from "../assets/FINAL FANTASY DEFEAT THEME.MP3";
 import { useParams, useNavigate } from "react-router-dom";
 import { db } from "../firebase";
 import {
@@ -225,6 +227,10 @@ const Quiz = () => {
   const [isMusicMuted, setIsMusicMuted] = useState(false);
   const [musicAvailable, setMusicAvailable] = useState(true);
   const attackSoundRef = useRef<HTMLAudioElement | null>(null);
+  const victoryMusicRef = useRef<HTMLAudioElement | null>(null);
+  const gameOverMusicRef = useRef<HTMLAudioElement | null>(null);
+  const [isVictoryMusicMuted, setIsVictoryMusicMuted] = useState(false);
+  const [isGameOverMusicMuted, setIsGameOverMusicMuted] = useState(false);
 
   // Background music: Final Fantasy "Those Who Fight" (provide audio file at public/audio/those-who-fight.mp3)
   useEffect(() => {
@@ -276,6 +282,71 @@ const Quiz = () => {
       attackSoundRef.current = null;
     };
   }, []);
+
+  // Victory music effect
+  useEffect(() => {
+    const isVictory = quiz && completedQuestions >= quiz.questions.length && quiz.questions.length > 0;
+    if (!isVictory) return;
+    
+    // Stop battle music when victory music starts
+    if (musicRef.current) {
+      musicRef.current.pause();
+    }
+    
+    const audio = new Audio(victoryTheme);
+    audio.volume = 0.4;
+    victoryMusicRef.current = audio;
+    if (!isVictoryMusicMuted) {
+      audio.play().catch(() => {});
+    }
+    return () => {
+      audio.pause();
+      audio.src = "";
+      victoryMusicRef.current = null;
+    };
+  }, [quiz, completedQuestions, isVictoryMusicMuted]);
+
+  // Victory music mute control
+  useEffect(() => {
+    if (!victoryMusicRef.current) return;
+    if (isVictoryMusicMuted) {
+      victoryMusicRef.current.pause();
+    } else {
+      victoryMusicRef.current.play().catch(() => {});
+    }
+  }, [isVictoryMusicMuted]);
+
+  // Game over music effect
+  useEffect(() => {
+    if (!failed) return;
+    
+    // Stop battle music when game over music starts
+    if (musicRef.current) {
+      musicRef.current.pause();
+    }
+    
+    const audio = new Audio(gameOverTheme);
+    audio.volume = 0.4;
+    gameOverMusicRef.current = audio;
+    if (!isGameOverMusicMuted) {
+      audio.play().catch(() => {});
+    }
+    return () => {
+      audio.pause();
+      audio.src = "";
+      gameOverMusicRef.current = null;
+    };
+  }, [failed, isGameOverMusicMuted]);
+
+  // Game over music mute control
+  useEffect(() => {
+    if (!gameOverMusicRef.current) return;
+    if (isGameOverMusicMuted) {
+      gameOverMusicRef.current.pause();
+    } else {
+      gameOverMusicRef.current.play().catch(() => {});
+    }
+  }, [isGameOverMusicMuted]);
 
   useEffect(() => {
     const loadQuiz = async () => {
@@ -779,6 +850,7 @@ const Quiz = () => {
 
   // Defeat Screen
   if (failed) {
+
     return (
       <div
         className="min-h-screen relative overflow-hidden flex flex-col items-center justify-center p-8 z-50"
@@ -816,6 +888,16 @@ const Quiz = () => {
           The boss was too strong.
         </div>
         <button
+          onClick={() => setIsGameOverMusicMuted(m => !m)}
+          className="mb-4 px-6 py-3 bg-gray-700 text-white font-bold rounded-lg z-50"
+          style={{
+            fontFamily: "monospace",
+            border: "2px solid #9ca3af",
+          }}
+        >
+          {isGameOverMusicMuted ? "🔇 Unmute" : "🔊 Mute"}
+        </button>
+        <button
           onClick={() => navigate("/quest")}
           className="px-8 py-4 bg-gray-800 text-white font-bold rounded-lg z-50"
           style={{
@@ -834,6 +916,7 @@ const Quiz = () => {
 
   // Victory Screen (Perfect Quest)
   if (completedQuestions >= quiz.questions.length && quiz.questions.length > 0) {
+
     return (
       <div
         className="min-h-screen relative overflow-hidden flex flex-col items-center justify-center p-8 z-50"
@@ -870,6 +953,16 @@ const Quiz = () => {
         >
           You have defeated the boss!
         </div>
+        <button
+          onClick={() => setIsVictoryMusicMuted(m => !m)}
+          className="mb-4 px-6 py-3 bg-green-700 text-white font-bold rounded-lg z-50"
+          style={{
+            fontFamily: "monospace",
+            border: "2px solid #86efac",
+          }}
+        >
+          {isVictoryMusicMuted ? "🔇 Unmute" : "🔊 Mute"}
+        </button>
         <button
           onClick={() => navigate("/quest")}
           className="px-8 py-4 bg-yellow-500 text-black font-bold rounded-lg z-50"
