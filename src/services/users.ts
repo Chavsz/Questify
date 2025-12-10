@@ -43,6 +43,7 @@ export interface User {
   coins?: number; // User coins
   selectedCharacter?: string; // Selected avatar character id
   unlockedCharacters?: string[]; // Array of unlocked character ids
+  selectedSkins?: Record<string, string>; // Selected skin per character: {charId: skinId}
 }
 
 // Add item to user inventory

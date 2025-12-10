@@ -10,6 +10,12 @@ import {
   type InventoryItem,
 } from "../services/users";
 
+import MiniShieldIdle from "../assets/MiniShieldIdle.gif";
+import MiniHalberdIdle from "../assets/MiniHalberdIdle.gif";
+import MiniCrossBowIdle from "../assets/MiniCrossBowIdle.gif";
+import MiniArchMageIdle from "../assets/MiniArchMageIdle.gif";
+import MiniKingIdle from "../assets/MiniKingIdle.gif";
+
 
 interface ShopItem {
   id: number;
@@ -20,6 +26,7 @@ interface ShopItem {
   slot: string;
   description: string;
   characterId?: string; // For character unlocks
+  skinFor?: string; // character id this skin applies to
 }
 
 const Shop = () => {
@@ -39,6 +46,7 @@ const Shop = () => {
   const [streak, setStreak] = useState<number | null>(null);
   const [loadingStreak, setLoadingStreak] = useState(true);
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
+  const [allInventory, setAllInventory] = useState<InventoryItem[]>([]);
   const [unlockedCharacters, setUnlockedCharacters] = useState<string[]>(["idle"]);
   const filterInventoryItems = (items: InventoryItem[] = []) =>
     items.filter((item) => (item.slot ?? "inventory") === "inventory");
@@ -59,6 +67,7 @@ const Shop = () => {
           userData && typeof userData.streak === "number" ? userData.streak : 0
         );
         setInventory(filterInventoryItems(userData?.inventory || []));
+        setAllInventory(userData?.inventory || []);
         setUserCoins(userData?.coins ?? 0);
         setUnlockedCharacters(userData?.unlockedCharacters || ["idle"]);
       } catch (e) {
@@ -118,6 +127,57 @@ const Shop = () => {
       emoji: "/items/Ruby.png",
       description: "Auto-correct one wrong answer",
       slot: "inventory",
+    },
+    // Skins
+    {
+      id: 101,
+      name: "Mini Shieldman",
+      price: 400,
+      category: "skins",
+      emoji: MiniShieldIdle,
+      description: "Skin for Mini Swordman",
+      slot: "skin",
+      skinFor: "idle",
+    },
+    {
+      id: 102,
+      name: "Mini Halberdman",
+      price: 400,
+      category: "skins",
+      emoji: MiniHalberdIdle,
+      description: "Skin for Mini Spearman",
+      slot: "skin",
+      skinFor: "idle1",
+    },
+    {
+      id: 103,
+      name: "Mini Crossbow",
+      price: 400,
+      category: "skins",
+      emoji: MiniCrossBowIdle,
+      description: "Skin for Mini Archer",
+      slot: "skin",
+      skinFor: "idle2",
+    },
+    {
+      id: 104,
+      name: "Mini Archmage",
+      price: 500,
+      category: "skins",
+      emoji: MiniArchMageIdle,
+      description: "Skin for Mini Mage",
+      slot: "skin",
+      skinFor: "idle3",
+    },
+    {
+      id: 105,
+      name: "Mini King",
+      price: 500,
+      category: "skins",
+      emoji: MiniKingIdle,
+      description: "Skin for Mini Prince",
+      slot: "skin",
+      skinFor: "idle4",
     },
   ];
 
@@ -183,6 +243,61 @@ const Shop = () => {
         open: true,
         title: "Character Unlocked!",
         message: `You've unlocked ${selectedItem.name}!\n\nGo to Avatar to select your new character.`,
+        type: "success",
+      });
+      setSelectedItem(null);
+      setPurchaseQuantity(1);
+      return;
+    }
+
+    // For skins, single purchase, tied to character
+    if (selectedItem.category === "skins") {
+      if (!user) {
+        setModal({
+          open: true,
+          title: "Not Logged In",
+          message: "You must be logged in to purchase items.",
+          type: "error",
+        });
+        return;
+      }
+      const alreadyOwned = allInventory.some((i) => i.id === selectedItem.id);
+      if (alreadyOwned) {
+        setModal({
+          open: true,
+          title: "Already Owned",
+          message: "You already own this skin.",
+          type: "error",
+        });
+        return;
+      }
+      const totalCost = selectedItem.price;
+      if (userCoins < totalCost) {
+        setModal({
+          open: true,
+          title: "Not Enough Coins",
+          message: `You need ${totalCost} coins but only have ${userCoins} coins.`,
+          type: "error",
+        });
+        return;
+      }
+      const newCoins = userCoins - totalCost;
+      await updateUser(user.uid, { coins: newCoins });
+      await addItemToInventory(user.uid, {
+        id: selectedItem.id,
+        name: selectedItem.name,
+        quantity: 1,
+        emoji: selectedItem.emoji,
+        slot: selectedItem.slot,
+      });
+      const userData = await getUser(user.uid);
+      setInventory(filterInventoryItems(userData?.inventory || []));
+      setAllInventory(userData?.inventory || []);
+      setUserCoins(userData?.coins ?? newCoins);
+      setModal({
+        open: true,
+        title: "Skin Purchased!",
+        message: `You bought ${selectedItem.name} for ${totalCost} coins. Equip it in Avatar page.`,
         type: "success",
       });
       setSelectedItem(null);
@@ -324,15 +439,22 @@ const Shop = () => {
               isDarkMode ? "bg-gray-800" : "bg-gray-100 border border-gray-300"
             }`}
           >
-            {typeof item.emoji === "string" && item.emoji.endsWith(".png") ? (
+            {typeof item.emoji === "string" && item.emoji.includes(".") ? (
               <img
                 src={item.emoji}
                 alt={item.name}
                 className="object-contain w-20 h-20"
                 style={{ imageRendering: "pixelated" }}
               />
-            ) : (
+            ) : typeof item.emoji === "string" ? (
               item.emoji
+            ) : (
+              <img
+                src={item.emoji}
+                alt={item.name}
+                className="object-contain w-20 h-20"
+                style={{ imageRendering: "pixelated" }}
+              />
             )}
           </div>
           <div
@@ -509,7 +631,7 @@ const Shop = () => {
           INVENTORY
         </button>
 
-        {selectedItem && selectedItem.category !== "characters" && (
+        {selectedItem && selectedItem.category !== "characters" && selectedItem.category !== "skins" && (
           <div className="flex items-center gap-3">
             <label
               htmlFor="quantity"
@@ -551,6 +673,8 @@ ${selectedItem ? "" : "opacity-50 cursor-not-allowed"}`}
           {selectedItem
             ? selectedItem.category === "characters"
               ? `🔓 UNLOCK ${selectedItem.name.toUpperCase()} (${selectedItem.price} coins)`
+              : selectedItem.category === "skins"
+              ? `💳 BUY ${selectedItem.name.toUpperCase()} (${selectedItem.price} coins)`
               : `💳 BUY ${selectedItem.name.toUpperCase()} (${selectedItem.price * purchaseQuantity} coins)`
             : "PURCHASE"}
         </button>

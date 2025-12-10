@@ -14,8 +14,25 @@ import MiniArcherAttack from "../assets/MiniArcherAttack.gif";
 import MiniArcherHit from "../assets/MiniArcherHit.gif";
 import MiniMageAttack from "../assets/MiniMageAttack.gif";
 import MiniMageHit from "../assets/MiniMageHit.gif";
+import MiniMageSpell from "../assets/MiniMageSpell.gif";
 import MiniPrinceAttack from "../assets/MiniPrinceAttack.gif";
 import MiniPrinceHit from "../assets/MiniPrinceHit.gif";
+import MiniShieldIdle from "../assets/MiniShieldIdle.gif";
+import MiniShieldAttack from "../assets/MiniShieldAttack.gif";
+import MiniShieldHit from "../assets/MiniShieldHit.gif";
+import MiniHalberdIdle from "../assets/MiniHalberdIdle.gif";
+import MiniHalberdAttack from "../assets/MiniHalberdAttack.gif";
+import MiniHalberdHit from "../assets/MiniHalberdHit.gif";
+import MiniCrossBowIdle from "../assets/MiniCrossBowIdle.gif";
+import MiniCrossBowAttack from "../assets/MiniCrossBowAttack.gif";
+import MiniCrossBowHit from "../assets/MiniCrossBowHit.gif";
+import MiniArchMageIdle from "../assets/MiniArchMageIdle.gif";
+import MiniArchMageAttack from "../assets/MiniArchMageAttack.gif";
+import MiniArchMageHit from "../assets/MiniArchMageHit.gif";
+import MiniArchMageSpell from "../assets/MiniArchMageSpell.gif";
+import MiniKingIdle from "../assets/MiniKingIdle.gif";
+import MiniKingAttack from "../assets/MiniKingAttack.gif";
+import MiniKingHit from "../assets/MiniKingHit.gif";
 
 // Avatar character list (sync with avatar.tsx)
 const miniSwordCrew = [
@@ -53,7 +70,7 @@ const miniSwordCrew = [
 ];
 
 // Sprite set for player poses; missing states fall back to idle
-const heroSprites: Record<string, { idle: string; attack?: string; hit?: string }> = {
+const heroSprites: Record<string, { idle: string; attack?: string; hit?: string; spell?: string }> = {
   idle: {
     idle: MiniSwordManIdle,
     attack: MiniSwordManIdleAttack,
@@ -73,6 +90,7 @@ const heroSprites: Record<string, { idle: string; attack?: string; hit?: string 
     idle: MiniMage,
     attack: MiniMageAttack,
     hit: MiniMageHit,
+    spell: MiniMageSpell,
   },
   idle4: {
     idle: MiniPrince,
@@ -85,6 +103,24 @@ const bossSprites = {
   idle: Orc,
   attack: OrcAttack,
   hurt: OrcHurt,
+};
+
+const skinSpriteMap: Record<string, Record<string, { idle: string; attack?: string; hit?: string; spell?: string }>> = {
+  miniShieldman: {
+    idle: { idle: MiniShieldIdle, attack: MiniShieldAttack, hit: MiniShieldHit },
+  },
+  miniHalberdman: {
+    idle1: { idle: MiniHalberdIdle, attack: MiniHalberdAttack, hit: MiniHalberdHit },
+  },
+  miniCrossbow: {
+    idle2: { idle: MiniCrossBowIdle, attack: MiniCrossBowAttack, hit: MiniCrossBowHit },
+  },
+  miniArchmage: {
+    idle3: { idle: MiniArchMageIdle, attack: MiniArchMageAttack, hit: MiniArchMageHit, spell: MiniArchMageSpell },
+  },
+  miniKing: {
+    idle4: { idle: MiniKingIdle, attack: MiniKingAttack, hit: MiniKingHit },
+  },
 };
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
@@ -119,13 +155,16 @@ const Quiz = () => {
     miniSwordCrew[0].id
   );
 
-  // Load selected character from Firestore
+  // Load selected character and skins from Firestore
   useEffect(() => {
     const fetchSelectedCharacter = async () => {
       if (!user) return;
       const userData = await getUser(user.uid);
       if (userData && userData.selectedCharacter) {
         setSelectedCharacter(userData.selectedCharacter);
+        // Load selected skins
+        const savedSkins = (userData as any)?.selectedSkins || {};
+        setSelectedSkins(savedSkins);
         // Prince starts with 4 hearts instead of 3
         if (userData.selectedCharacter === "idle4") {
           setLives(4);
@@ -165,8 +204,11 @@ const Quiz = () => {
   const [luckyActive, setLuckyActive] = useState(false);
   const [spearmanBlocksRemaining, setSpearmanBlocksRemaining] = useState(0);
   const [archerDodgeActive, setArcherDodgeActive] = useState(false);
-  const [heroPose, setHeroPose] = useState<"idle" | "attack" | "hit">("idle");
+  const [heroPose, setHeroPose] = useState<"idle" | "attack" | "hit" | "spell">("idle");
   const [bossPose, setBossPose] = useState<"idle" | "attack" | "hurt">("idle");
+  const [selectedSkins, setSelectedSkins] = useState<Record<string, string>>({});
+  const [reviewMode, setReviewMode] = useState(false);
+  const [reviewIndex, setReviewIndex] = useState(0);
 
   useEffect(() => {
     const loadQuiz = async () => {
@@ -567,6 +609,96 @@ const Quiz = () => {
     );
   }
 
+  // Review mode: show question/answer summary after finishing
+  if (reviewMode && quiz) {
+    const question = quiz.questions[reviewIndex];
+    const isFirst = reviewIndex === 0;
+    const isLast = reviewIndex === quiz.questions.length - 1;
+
+    return (
+      <div
+        className="min-h-screen flex flex-col items-center justify-center p-8"
+        style={{
+          background:
+            "linear-gradient(to bottom, #1a0b2e 0%, #3d1e6d 50%, #1a0b2e 100%)",
+        }}
+      >
+        <div
+          className="w-full max-w-3xl mb-6 text-center p-6 rounded-lg border-2"
+          style={{
+            background: "rgba(255, 255, 255, 0.06)",
+            borderColor: "rgba(168, 85, 247, 0.7)",
+            boxShadow: "0 0 16px rgba(168, 85, 247, 0.35)",
+          }}
+        >
+          <div
+            className="text-sm font-bold mb-2"
+            style={{ color: "#c4b5fd", fontFamily: "monospace" }}
+          >
+            REVIEW MODE
+          </div>
+          <div
+            className="text-2xl font-bold mb-4"
+            style={{ color: "#f0e6ff", fontFamily: "monospace" }}
+          >
+            {question.question}
+          </div>
+          <div
+            className="text-lg font-bold mb-1"
+            style={{ color: "#22c55e", fontFamily: "monospace" }}
+          >
+            Answer: {question.answer}
+          </div>
+          <div
+            className="text-sm"
+            style={{
+              color: question.status === "correct" ? "#34d399" : "#fca5a5",
+              fontFamily: "monospace",
+            }}
+          >
+            Status: {question.status || "unknown"}
+          </div>
+        </div>
+
+        <div className="flex gap-3 mb-4">
+          <button
+            onClick={() => setReviewIndex((i) => Math.max(0, i - 1))}
+            disabled={isFirst}
+            className="px-4 py-2 bg-gray-700 text-white rounded disabled:opacity-40"
+            style={{ fontFamily: "monospace" }}
+          >
+            ⬅️ Prev
+          </button>
+          <button
+            onClick={() => setReviewIndex((i) => Math.min(quiz.questions.length - 1, i + 1))}
+            disabled={isLast}
+            className="px-4 py-2 bg-gray-700 text-white rounded disabled:opacity-40"
+            style={{ fontFamily: "monospace" }}
+          >
+            Next ➡️
+          </button>
+        </div>
+
+        <div className="flex gap-3">
+          <button
+            onClick={() => setReviewMode(false)}
+            className="px-6 py-3 bg-purple-600 text-white font-bold rounded shadow-lg hover:bg-purple-500 transition-all"
+            style={{ fontFamily: "monospace" }}
+          >
+            Back to Results
+          </button>
+          <button
+            onClick={() => navigate("/quest")}
+            className="px-6 py-3 bg-yellow-500 text-black font-bold rounded shadow-lg hover:bg-yellow-400 transition-all"
+            style={{ fontFamily: "monospace" }}
+          >
+            Quest Board
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   // Defeat Screen
   if (failed) {
     return (
@@ -673,6 +805,22 @@ const Quiz = () => {
         >
           Back to Quests
         </button>
+        <button
+          onClick={() => {
+            setReviewMode(true);
+            setReviewIndex(0);
+          }}
+          className="mt-4 px-8 py-4 bg-purple-700 text-white font-bold rounded-lg z-50"
+          style={{
+            fontFamily: "monospace",
+            textTransform: "uppercase",
+            letterSpacing: "2px",
+            border: "2px solid #c084fc",
+            boxShadow: "0 0 15px rgba(168, 85, 247, 0.7)",
+          }}
+        >
+          Review Questions
+        </button>
       </div>
     );
   }
@@ -745,6 +893,22 @@ const Quiz = () => {
         >
           Back to Quests
         </button>
+        <button
+          onClick={() => {
+            setReviewMode(true);
+            setReviewIndex(0);
+          }}
+          className="mt-4 px-8 py-4 bg-purple-700 text-white font-bold rounded-lg z-50 hover:bg-purple-600 transition-all"
+          style={{
+            fontFamily: "monospace",
+            textTransform: "uppercase",
+            letterSpacing: "2px",
+            border: "2px solid #c084fc",
+            boxShadow: "0 0 15px rgba(168, 85, 247, 0.7)",
+          }}
+        >
+          Review Questions
+        </button>
       </div>
     );
   }
@@ -801,7 +965,8 @@ const Quiz = () => {
             const char =
               miniSwordCrew.find((c) => c.id === selectedCharacter) ||
               miniSwordCrew[0];
-            const heroSet = heroSprites[char.id] || { idle: char.image };
+            const skinId = selectedSkins[char.id];
+            const heroSet = (skinId && skinSpriteMap[skinId]?.[char.id]) || heroSprites[char.id] || { idle: char.image };
             const poseSrc = heroSet[heroPose] || heroSet.idle || char.image;
             return (
               <img
@@ -1102,6 +1267,7 @@ const Quiz = () => {
             <button
               onClick={() => {
                 if (!showFeedback && mageRevealChargesRemaining > 0) {
+                  setHeroPose("spell");
                   setUserAnswer(currentQuestion.answer.toUpperCase());
                   setMageRevealChargesRemaining((prev) => prev - 1);
                 }

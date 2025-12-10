@@ -9,6 +9,11 @@ import MiniSpear from "../assets/MiniSpearManIdle.gif";
 import MiniArcher from "../assets/MiniArcherIdle.gif";
 import MiniMage from "../assets/MiniMageIdle.gif";
 import MiniPrince from "../assets/MiniPrinceIdle.gif";
+import MiniShieldIdle from "../assets/MiniShieldIdle.gif";
+import MiniHalberdIdle from "../assets/MiniHalberdIdle.gif";
+import MiniCrossBowIdle from "../assets/MiniCrossBowIdle.gif";
+import MiniArchMageIdle from "../assets/MiniArchMageIdle.gif";
+import MiniKingIdle from "../assets/MiniKingIdle.gif";
 
 // Move miniSwordCrew above Avatar so it can be used in state initialization
 const miniSwordCrew = [
@@ -73,6 +78,16 @@ const Avatar = () => {
     miniSwordCrew[0].id
   );
   const [unlockedCharacters, setUnlockedCharacters] = useState<string[]>(["idle"]); // Mini Swordman always unlocked
+  const [ownedSkins, setOwnedSkins] = useState<string[]>([]);
+  const [selectedSkins, setSelectedSkins] = useState<Record<string, string>>({});
+
+  const skinCatalog: Record<string, { id: string; label: string; for: string; image: string; shopId: number }> = {
+    miniShieldman: { id: "miniShieldman", label: "Mini Shieldman", for: "idle", image: MiniShieldIdle, shopId: 101 },
+    miniHalberdman: { id: "miniHalberdman", label: "Mini Halberdman", for: "idle1", image: MiniHalberdIdle, shopId: 102 },
+    miniCrossbow: { id: "miniCrossbow", label: "Mini Crossbow", for: "idle2", image: MiniCrossBowIdle, shopId: 103 },
+    miniArchmage: { id: "miniArchmage", label: "Mini Archmage", for: "idle3", image: MiniArchMageIdle, shopId: 104 },
+    miniKing: { id: "miniKing", label: "Mini King", for: "idle4", image: MiniKingIdle, shopId: 105 },
+  };
 
   // Load selected character and unlocked characters from Firestore on mount
   useEffect(() => {
@@ -82,6 +97,19 @@ const Avatar = () => {
       if (userData && userData.selectedCharacter) {
         setSelectedCharacter(userData.selectedCharacter);
       }
+      // Load selected skins mapping (per character)
+      const savedSkins = (userData as any)?.selectedSkins || {};
+      setSelectedSkins(savedSkins);
+      // Derive owned skins from inventory
+      const ownedSkinIds: string[] = [];
+      (userData?.inventory || []).forEach((item) => {
+        if (item.slot === "skin") {
+          const found = Object.values(skinCatalog).find((s) => s.shopId === item.id);
+          if (found) ownedSkinIds.push(found.id);
+        }
+      });
+      setOwnedSkins(ownedSkinIds);
+
       // Load unlocked characters and check level-based unlocks
       const unlockedChars = userData?.unlockedCharacters || ["idle"];
       if (!unlockedChars.includes("idle")) {
@@ -189,13 +217,58 @@ const Avatar = () => {
     // Show selected character gif if selected, else default to first character
     const char =
       miniSwordCrew.find((c) => c.id === selectedCharacter) || miniSwordCrew[0];
+    const skinChoice = selectedSkins[char.id];
+    const skinObj = skinChoice
+      ? Object.values(skinCatalog).find((s) => s.id === skinChoice && s.for === char.id)
+      : null;
+    const showSkin = skinObj && ownedSkins.includes(skinObj.id);
+    const imgSrc = showSkin ? skinObj?.image : char.image;
     return (
       <img
-        src={char.image}
+        src={imgSrc}
         alt={char.label}
         className="w-50 h-50 object-contain"
         style={{ imageRendering: "pixelated" }}
       />
+    );
+  };
+
+  const renderSkinToggle = (charId: string) => {
+    const skinForChar = Object.values(skinCatalog).find((s) => s.for === charId);
+    if (!skinForChar) return null;
+    const owned = ownedSkins.includes(skinForChar.id);
+    const currentSkin = selectedSkins[charId] || "default";
+    return (
+      <div className="mt-3 w-full flex gap-2">
+        <button
+          className={`flex-1 px-3 py-2 text-xs font-['Press_Start_2P',cursive] border-2 rounded-sm transition-transform duration-200 hover:-translate-y-1 ${
+            currentSkin === "default"
+              ? "bg-linear-to-b from-[#ffd700] to-[#ffb700] border-[#8b6914] text-[#1a1a2e]"
+              : "bg-gray-200 text-gray-700 border-gray-400"
+          }`}
+          onClick={(e) => {
+            e.stopPropagation();
+            setSelectedSkins((prev) => ({ ...prev, [charId]: "default" }));
+          }}
+        >
+          Default
+        </button>
+        <button
+          className={`flex-1 px-3 py-2 text-xs font-['Press_Start_2P',cursive] border-2 rounded-sm transition-transform duration-200 hover:-translate-y-1 ${
+            currentSkin === skinForChar.id
+              ? "bg-linear-to-b from-[#ffd700] to-[#ffb700] border-[#8b6914] text-[#1a1a2e]"
+              : "bg-linear-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white"
+          } ${!owned ? "opacity-60 cursor-not-allowed" : ""}`}
+          disabled={!owned}
+          onClick={(e) => {
+            e.stopPropagation();
+            if (!owned) return;
+            setSelectedSkins((prev) => ({ ...prev, [charId]: skinForChar.id }));
+          }}
+        >
+          {owned ? skinForChar.label : "Locked"}
+        </button>
+      </div>
     );
   };
 
@@ -444,6 +517,7 @@ ${
                           LOCKED - Reach Level {character.requiredLevel}
                         </div>
                       )}
+                      {isUnlocked && renderSkinToggle(character.id)}
                     </div>
                   );
                 })}
@@ -459,7 +533,7 @@ ${
             onClick={async () => {
               if (!user) return;
               const { updateUser } = await import("../services/users");
-              await updateUser(user.uid, { selectedCharacter });
+              await updateUser(user.uid, { selectedCharacter, selectedSkins });
               setModal({
                 open: true,
                 title: "Character Saved",

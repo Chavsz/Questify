@@ -5,6 +5,13 @@ import MiniArcher from "../assets/MiniArcherIdle.gif";
 import MiniMage from "../assets/MiniMageIdle.gif";
 import MiniPrince from "../assets/MiniPrinceIdle.gif";
 
+// Skin imports (idle animations)
+import MiniShieldIdle from "../assets/MiniShieldIdle.gif";
+import MiniHalberdIdle from "../assets/MiniHalberdIdle.gif";
+import MiniCrossBowIdle from "../assets/MiniCrossBowIdle.gif";
+import MiniArchMageIdle from "../assets/MiniArchMageIdle.gif";
+import MiniKingIdle from "../assets/MiniKingIdle.gif";
+
 // Avatar character list (sync with avatar.tsx)
 const miniSwordCrew = [
   {
@@ -39,14 +46,20 @@ const miniSwordCrew = [
     image: MiniPrince,
   },
 ];
+
+// Skin catalog
+const skinCatalog: Record<string, { id: string; for: string; image: string; shopId: number }> = {
+  miniShieldman: { id: "miniShieldman", for: "idle", image: MiniShieldIdle, shopId: 101 },
+  miniHalberdman: { id: "miniHalberdman", for: "idle1", image: MiniHalberdIdle, shopId: 102 },
+  miniCrossbow: { id: "miniCrossbow", for: "idle2", image: MiniCrossBowIdle, shopId: 103 },
+  miniArchmage: { id: "miniArchmage", for: "idle3", image: MiniArchMageIdle, shopId: 104 },
+  miniKing: { id: "miniKing", for: "idle4", image: MiniKingIdle, shopId: 105 },
+};
 import { useTheme } from "../components/theme";
 import { IoSunnyOutline } from "react-icons/io5";
 import { FaRegMoon } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import {
-  FaLaptop,
-  FaRuler,
-  FaGlobe,
   FaUpload,
   FaFire,
   FaCheckCircle,
@@ -88,6 +101,8 @@ const Quest = () => {
   const [selectedCharacter, setSelectedCharacter] = useState<string>(
     miniSwordCrew[0].id
   );
+  const [selectedSkins, setSelectedSkins] = useState<Record<string, string>>({});
+  const [ownedSkins, setOwnedSkins] = useState<Record<string, boolean>>({});
 
   // Load selected character from Firestore
   useEffect(() => {
@@ -96,6 +111,25 @@ const Quest = () => {
       const userData = await getUser(user.uid);
       if (userData && userData.selectedCharacter) {
         setSelectedCharacter(userData.selectedCharacter);
+      }
+      // Load selected skins and owned skins
+      if (userData) {
+        if (userData.selectedSkins) {
+          setSelectedSkins(userData.selectedSkins);
+        }
+        if (userData.inventory) {
+          const owned: Record<string, boolean> = {};
+          userData.inventory.forEach((item: InventoryItem) => {
+            if (item.slot === "skin") {
+              // Map shop ID (item.id) to skin ID using skinCatalog
+              const skinObj = Object.values(skinCatalog).find((s) => s.shopId === item.id);
+              if (skinObj) {
+                owned[skinObj.id] = true;
+              }
+            }
+          });
+          setOwnedSkins(owned);
+        }
       }
     };
     fetchSelectedCharacter();
@@ -666,9 +700,12 @@ const Quest = () => {
                     const char =
                       miniSwordCrew.find((c) => c.id === selectedCharacter) ||
                       miniSwordCrew[0];
+                    const skinId = selectedSkins[selectedCharacter];
+                    const skinObj = skinId && skinCatalog[skinId] && ownedSkins[skinId] ? skinCatalog[skinId] : null;
+                    const imageToShow = skinObj ? skinObj.image : char.image;
                     return (
                       <img
-                        src={char.image}
+                        src={imageToShow}
                         alt={char.label}
                         className="w-50 h-50 object-contain"
                         style={{ imageRendering: "pixelated" }}
