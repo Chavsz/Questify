@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/authContexts/auth";
 import { useEffect, useState, useRef } from "react";
 import MiniCavalierWalk from "../assets/MiniCavalierWalk.gif";
+import jumpSfx from "../assets/jump.mp3";
 import { getUser, type User } from "../services/users";
 import { getUserQuestStats } from "../services/questStats";
 import type { QuestStats } from "../services/questStats";
@@ -28,6 +29,19 @@ function Hub() {
   const gameLoopRef = useRef<NodeJS.Timeout>();
   const obstacleIdRef = useRef(0);
   const [highScore, setHighScore] = useState(0);
+  const jumpSoundRef = useRef<HTMLAudioElement | null>(null);
+
+  // Jump sound effect setup
+  useEffect(() => {
+    const audio = new Audio(jumpSfx);
+    audio.volume = 0.5;
+    jumpSoundRef.current = audio;
+    return () => {
+      audio.pause();
+      audio.src = "";
+      jumpSoundRef.current = null;
+    };
+  }, []);
 
   useEffect(() => {
     const fetchStreakAndStats = async () => {
@@ -144,6 +158,11 @@ function Hub() {
       obstacleIdRef.current = 0;
     } else if (playerY >= 280 && !gameOver) {
       setPlayerVelocity(-15);
+      // Play jump sound
+      if (jumpSoundRef.current) {
+        jumpSoundRef.current.currentTime = 0;
+        jumpSoundRef.current.play().catch(() => {});
+      }
     }
   };
 
