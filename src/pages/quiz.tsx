@@ -122,7 +122,9 @@ const skinSpriteMap: Record<string, Record<string, { idle: string; attack?: stri
     idle4: { idle: MiniKingIdle, attack: MiniKingAttack, hit: MiniKingHit },
   },
 };
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import BgmThoseWhoFight from "../assets/Final Fantasy VII OST - Those Who FightBattle Theme.mp3";
+import attackSfx from "../assets/Attack.mp3";
 import { useParams, useNavigate } from "react-router-dom";
 import { db } from "../firebase";
 import {
@@ -142,6 +144,7 @@ import {
 import { recordQuestCompletion } from "../services/questStats";
 import type { GeneratedQuiz } from "../api/generate-quiz/generate_quiz";
 import { useAuth } from "../contexts/authContexts/auth";
+import { useMusic } from "../contexts/musicContext";
 
 const INITIAL_LIVES = 3;
 
@@ -150,10 +153,19 @@ const Quiz = () => {
   const navigate = useNavigate();
   const authContext = useAuth();
   const user = authContext?.currentUser;
+  const { pauseMainMusic, resumeMainMusic } = useMusic();
   // Avatar state
   const [selectedCharacter, setSelectedCharacter] = useState<string>(
     miniSwordCrew[0].id
   );
+
+  // Pause main menu music when quiz starts, resume when leaving
+  useEffect(() => {
+    pauseMainMusic();
+    return () => {
+      resumeMainMusic();
+    };
+  }, [pauseMainMusic, resumeMainMusic]);
 
   // Load selected character and skins from Firestore
   useEffect(() => {
@@ -209,6 +221,61 @@ const Quiz = () => {
   const [selectedSkins, setSelectedSkins] = useState<Record<string, string>>({});
   const [reviewMode, setReviewMode] = useState(false);
   const [reviewIndex, setReviewIndex] = useState(0);
+  const musicRef = useRef<HTMLAudioElement | null>(null);
+  const [isMusicMuted, setIsMusicMuted] = useState(false);
+  const [musicAvailable, setMusicAvailable] = useState(true);
+  const attackSoundRef = useRef<HTMLAudioElement | null>(null);
+
+  // Background music: Final Fantasy "Those Who Fight" (provide audio file at public/audio/those-who-fight.mp3)
+  useEffect(() => {
+    const audio = new Audio(BgmThoseWhoFight);
+    audio.loop = true;
+    audio.volume = 0.35;
+    musicRef.current = audio;
+
+    const handleError = () => setMusicAvailable(false);
+    audio.addEventListener("error", handleError);
+
+    const tryPlay = async () => {
+      try {
+        await audio.play();
+      } catch (err) {
+        // Autoplay might be blocked; user can start via the mute toggle
+      }
+    };
+    tryPlay();
+
+    return () => {
+      audio.removeEventListener("error", handleError);
+      audio.pause();
+      audio.src = "";
+      musicRef.current = null;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!musicRef.current) return;
+    musicRef.current.muted = isMusicMuted;
+    if (isMusicMuted) {
+      musicRef.current.pause();
+    } else {
+      musicRef.current.play().catch(() => {
+        /* ignore play errors */
+      });
+    }
+  }, [isMusicMuted]);
+
+  // Attack/Hit sound effect setup
+  useEffect(() => {
+    const audio = new Audio(attackSfx);
+    audio.volume = 0.6;
+    attackSoundRef.current = audio;
+    return () => {
+      audio.pause();
+      audio.src = "";
+      attackSoundRef.current = null;
+    };
+  }, []);
 
   useEffect(() => {
     const loadQuiz = async () => {
@@ -294,6 +361,17 @@ const Quiz = () => {
     setShowFeedback(true);
     setHeroPose(isAnswerCorrect ? "attack" : "hit");
     setBossPose(isAnswerCorrect ? "hurt" : "attack");
+
+    // Play attack/hit sound
+    const atk = attackSoundRef.current;
+    if (atk) {
+      try {
+        atk.currentTime = 0;
+        atk.play();
+      } catch {
+        /* ignore play errors */
+      }
+    }
 
     // Update local question status so we know which ones were correct/wrong
     setQuiz((prevQuiz) => {
@@ -1074,6 +1152,26 @@ const Quiz = () => {
       {/* Controls & Status Effects */}
       <div className="mb-6 flex gap-2 items-center z-20">
         <button
+          onClick={() => setIsMusicMuted((m) => !m)}
+          disabled={!musicAvailable}
+          className={`px-4 py-2 font-bold rounded shadow-lg transition-all duration-200 ${
+            musicAvailable
+              ? "bg-indigo-600 text-white hover:bg-indigo-500"
+              : "bg-gray-500 text-gray-200 cursor-not-allowed"
+          }`}
+          style={{
+            fontFamily: "monospace",
+            filter: "drop-shadow(0 0 6px rgba(99, 102, 241, 0.5))",
+          }}
+        >
+          {musicAvailable
+            ? isMusicMuted
+              ? "🔇 Unmute BGM"
+              : "🔊 Mute BGM"
+            : "🔕 BGM Missing"}
+        </button>
+
+        <button
           onClick={openInventory}
           className="ml-4 px-4 py-2 bg-yellow-400 text-black font-bold rounded shadow-lg hover:bg-yellow-300 transition-all duration-200"
           style={{
@@ -1270,6 +1368,15 @@ const Quiz = () => {
                   setHeroPose("spell");
                   setUserAnswer(currentQuestion.answer.toUpperCase());
                   setMageRevealChargesRemaining((prev) => prev - 1);
+                  const atk = attackSoundRef.current;
+                  if (atk) {
+                    try {
+                      atk.currentTime = 0;
+                      atk.play();
+                    } catch {
+                      /* ignore */
+                    }
+                  }
                 }
               }}
               disabled={showFeedback || mageRevealChargesRemaining === 0}

@@ -4,7 +4,12 @@ import { doSignOut } from "./auth";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "./components/theme";
 
-const Sidebar = () => {
+interface SidebarProps {
+  isBgMusicMuted: boolean;
+  toggleBgMusic: () => void;
+}
+
+const Sidebar = ({ isBgMusicMuted, toggleBgMusic }: SidebarProps) => {
   const navigate = useNavigate();
   const { isDarkMode } = useTheme();
 
@@ -36,16 +41,35 @@ const Sidebar = () => {
           <RouteSelect />
         </div>
 
-        <button
-          className={`flex items-center md:justify-start justify-center gap-2 w-full px-2 py-1.5 md:text-sm text-1xl 
+        <div className="flex flex-col gap-2">
+          <button
+            className="flex items-center md:justify-start justify-center gap-2 w-full px-2 py-1.5 md:text-sm text-1xl 
+                      font-['Press_Start_2P',cursive] border-2 rounded-sm
+                      transition-transform duration-300 hover:-translate-y-1"
+            style={{
+              background: isBgMusicMuted ? "#6b7280" : "#4f46e5",
+              borderColor: isBgMusicMuted ? "#4b5563" : "#4338ca",
+              color: "white",
+            }}
+            onClick={toggleBgMusic}
+          >
+            <span className="text-lg">{isBgMusicMuted ? "🔇" : "🔊"}</span>
+            <p className="text-xs font-semibold hidden md:block">
+              {isBgMusicMuted ? "Unmute" : "Mute"}
+            </p>
+          </button>
+
+          <button
+            className={`flex items-center md:justify-start justify-center gap-2 w-full px-2 py-1.5 md:text-sm text-1xl 
                       font-['Press_Start_2P',cursive] border-2 rounded-sm
                       transition-transform duration-300 hover:-translate-y-1 ]
                       bg-linear-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white`}
-          onClick={logout}
-        >
-          <fiIcons.FiLogOut />
-          <p className="text-sm font-semibold hidden md:block">Log out</p>
-        </button>
+            onClick={logout}
+          >
+            <fiIcons.FiLogOut />
+            <p className="text-sm font-semibold hidden md:block">Log out</p>
+          </button>
+        </div>
       </div>
     </div>
   );

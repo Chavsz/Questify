@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import titleScreenBgm from "../assets/Final Fantasy VII Remake - Title Screen.mp3";
 import { getUser } from "../services/users";
 import { useTheme } from "../components/theme";
 import { IoSunnyOutline } from "react-icons/io5";
