@@ -101,7 +101,6 @@ export const createUser = async (userData: Omit<User, 'createdAt' | 'updatedAt'>
       Object.entries(userDoc).filter(([_, value]) => value !== undefined)
     );
     await setDoc(userRef, cleanUserDoc);
-    console.log('User created successfully:', userData.uid);
     return userData.uid;
   } catch (error) {
     console.error('Error creating user:', error);

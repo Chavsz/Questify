@@ -1,4 +1,3 @@
-import knightWalkGif from "../assets/walking avatar.gif";
 import { useTheme } from "../components/theme";
 import { IoSunnyOutline } from "react-icons/io5";
 import { FaRegMoon } from "react-icons/fa";
@@ -6,6 +5,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/authContexts/auth";
 import { useEffect, useState, useRef } from "react";
 import MiniCavalierWalk from "../assets/MiniCavalierWalk.gif";
+import FireGif from "../assets/Fire.gif";
 import jumpSfx from "../assets/jump.mp3";
 import { getUser, type User } from "../services/users";
 import { getUserQuestStats } from "../services/questStats";
@@ -26,7 +26,7 @@ function Hub() {
   const [gameOver, setGameOver] = useState(false);
   const [score, setScore] = useState(0);
   const [obstacles, setObstacles] = useState<Array<{ id: number; x: number; height: number }>>([]);
-  const gameLoopRef = useRef<NodeJS.Timeout>();
+  const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
   const obstacleIdRef = useRef(0);
   const [highScore, setHighScore] = useState(0);
   const jumpSoundRef = useRef<HTMLAudioElement | null>(null);
@@ -197,10 +197,21 @@ function Hub() {
                 isDarkMode ? "text-white" : " text-orange-600"
               }`}
             >
-              Streak:{" "}
-              {loadingStreak
-                ? "..."
-                : `${streak ?? 0} day${streak === 1 ? "" : "s"}`}
+              <div className="flex items-center">
+                {!loadingStreak && (streak ?? 0) > 0 && (
+                  <img
+                    src={FireGif}
+                    alt="Streak fire"
+                    className="w-7 h-7 object-contain mb-1.5"
+                  />
+                )}
+                <span>
+                  Streak:{" "}
+                  {loadingStreak
+                    ? "..."
+                    : `${streak ?? 0} day${streak === 1 ? "" : "s"}`}
+                </span>
+              </div>
             </div>
           </div>
           <div className="flex items-center gap-4">
@@ -329,7 +340,7 @@ function Hub() {
                 JUMPER GAME
               </h3>
               
-              <div className={`w-full relative overflow-hidden border-4 bg-gradient-to-b ${
+              <div className={`w-full relative overflow-hidden border-4 bg-linear-to-b ${
                 isDarkMode
                   ? "from-sky-900 to-sky-700 border-blue-500"
                   : "from-sky-400 to-sky-200 border-blue-400"
@@ -361,7 +372,7 @@ function Hub() {
                   <div
                     key={obs.id}
                     className={`absolute rounded-sm shadow-lg ${
-                      isDarkMode ? "bg-gradient-to-t from-gray-800 to-gray-700 border-2 border-gray-600" : "bg-gradient-to-t from-gray-700 to-gray-600 border-2 border-gray-500"
+                      isDarkMode ? "bg-linear-to-t from-gray-800 to-gray-700 border-2 border-gray-600" : "bg-linear-to-t from-gray-700 to-gray-600 border-2 border-gray-500"
                     }`}
                     style={{ 
                       left: `${obs.x}px`, 
@@ -426,7 +437,7 @@ function Hub() {
                       : "bg-blue-600 border-blue-400 text-white hover:bg-blue-500"
                   }`}
                 >
-                  {!gameActive ? "🎮 START GAME" : gameOver ? "🔄 PLAY AGAIN" : "⬆️ JUMP (SPACE)"}
+                  {!gameActive ? "START GAME" : gameOver ? "🔄 PLAY AGAIN" : "⬆️ JUMP (SPACE)"}
                 </button>
                 
                 {!gameActive && !gameOver && highScore > 0 && (

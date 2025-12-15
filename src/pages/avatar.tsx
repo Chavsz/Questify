@@ -15,6 +15,7 @@ import MiniHalberdIdle from "../assets/MiniHalberdIdle.gif";
 import MiniCrossBowIdle from "../assets/MiniCrossBowIdle.gif";
 import MiniArchMageIdle from "../assets/MiniArchMageIdle.gif";
 import MiniKingIdle from "../assets/MiniKingIdle.gif";
+import FireGif from "../assets/Fire.gif";
 
 // Move miniSwordCrew above Avatar so it can be used in state initialization
 const miniSwordCrew = [
@@ -332,10 +333,21 @@ const Avatar = () => {
                 isDarkMode ? "text-white" : " text-orange-600"
               }`}
             >
-              Streak:{" "}
-              {loadingStreak
-                ? "..."
-                : `${streak ?? 0} day${streak === 1 ? "" : "s"}`}
+              <div className="flex items-center">
+                {!loadingStreak && (streak ?? 0) > 0 && (
+                  <img
+                    src={FireGif}
+                    alt="Streak fire"
+                    className="w-7 h-7 object-contain mb-1.5"
+                  />
+                )}
+                <span>
+                  Streak:{" "}
+                  {loadingStreak
+                    ? "..."
+                    : `${streak ?? 0} day${streak === 1 ? "" : "s"}`}
+                </span>
+              </div>
             </div>
           </div>
           <div className="flex items-center gap-4">

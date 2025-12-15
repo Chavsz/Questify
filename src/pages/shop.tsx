@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useTheme } from "../components/theme";
 import { IoSunnyOutline } from "react-icons/io5";
 import { FaRegMoon } from "react-icons/fa";
@@ -15,7 +15,7 @@ import MiniHalberdIdle from "../assets/MiniHalberdIdle.gif";
 import MiniCrossBowIdle from "../assets/MiniCrossBowIdle.gif";
 import MiniArchMageIdle from "../assets/MiniArchMageIdle.gif";
 import MiniKingIdle from "../assets/MiniKingIdle.gif";
-
+import FireGif from "../assets/Fire.gif";
 
 interface ShopItem {
   id: number;
@@ -202,7 +202,7 @@ const Shop = () => {
     
     // For character unlocks, quantity is always 1
     if (selectedItem.category === "characters") {
-      if (unlockedCharacters.includes(selectedItem.characterId || "")) {
+      if (selectedItem.characterId && unlockedCharacters.includes(selectedItem.characterId)) {
         setModal({
           open: true,
           title: "Already Unlocked",
@@ -232,7 +232,7 @@ const Shop = () => {
       }
       // Unlock character
       const newCoins = userCoins - totalCost;
-      const newUnlockedCharacters = [...unlockedCharacters, selectedItem.characterId];
+      const newUnlockedCharacters = [...unlockedCharacters, selectedItem.characterId!];
       await updateUser(user.uid, {
         coins: newCoins,
         unlockedCharacters: newUnlockedCharacters,
@@ -478,10 +478,10 @@ const Shop = () => {
 
   const renderInventoryModal = () => (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="relative bg-white rounded-3xl shadow-2xl p-8 w-full max-w-2xl border border-gray-500 flex flex-col items-center">
+      <div className={`relative rounded-3xl shadow-2xl p-8 w-full max-w-2xl border border-gray-500 flex flex-col items-center ${isDarkMode ? "bg-gray-900 border-gray-700" : "bg-white border-gray-500"}`}>
         <button
           onClick={closeInventoryModal}
-          className="absolute top-4 right-4 text-2xl font-bold text-gray-700 bg-white rounded-full w-10 h-10 flex items-center justify-center shadow"
+          className={`absolute top-4 right-4 text-2xl font-bold rounded-full w-10 h-10 flex items-center justify-center shadow ${isDarkMode ? "text-white bg-gray-700" : "text-gray-700 bg-white"}`}
           aria-label="Close Inventory"
         >
           ×
@@ -538,10 +538,21 @@ const Shop = () => {
               isDarkMode ? "text-white" : " text-orange-600"
             }`}
           >
-            Streak:{" "}
-            {loadingStreak
-              ? "..."
-              : `${streak ?? 0} day${streak === 1 ? "" : "s"}`}
+            <div className="flex items-center">
+              {!loadingStreak && (streak ?? 0) > 0 && (
+                <img
+                  src={FireGif}
+                  alt="Streak fire"
+                  className="w-7 h-7 object-contain mb-1.5"
+                />
+              )}
+              <span>
+                Streak:{" "}
+                {loadingStreak
+                  ? "..."
+                  : `${streak ?? 0} day${streak === 1 ? "" : "s"}`}
+              </span>
+            </div>
           </div>
         </div>
         <div className="flex items-center gap-4">

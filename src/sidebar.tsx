@@ -53,8 +53,8 @@ const Sidebar = ({ isBgMusicMuted, toggleBgMusic }: SidebarProps) => {
             }}
             onClick={toggleBgMusic}
           >
-            <span className="text-lg">{isBgMusicMuted ? "🔇" : "🔊"}</span>
-            <p className="text-xs font-semibold hidden md:block">
+            <span className="pb-1">{isBgMusicMuted ? "🔇" : "🔊"}</span>
+            <p className="">
               {isBgMusicMuted ? "Unmute" : "Mute"}
             </p>
           </button>

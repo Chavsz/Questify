@@ -81,6 +81,7 @@ import {
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useAuth } from "../contexts/authContexts/auth";
 import { getUser, updateUser, type InventoryItem } from "../services/users";
+import FireGif from "../assets/Fire.gif";
 
 interface QuestItem {
   id: string;
@@ -625,10 +626,21 @@ const Quest = () => {
                 isDarkMode ? "text-white" : " text-orange-600"
               }`}
             >
-              Streak:{" "}
-              {loadingStreak
-                ? "..."
-                : `${streak ?? 0} day${streak === 1 ? "" : "s"}`}
+              <div className="flex items-center">
+                {!loadingStreak && (streak ?? 0) > 0 && (
+                  <img
+                    src={FireGif}
+                    alt="Streak fire"
+                    className="w-7 h-7 object-contain mb-1.5"
+                  />
+                )}
+                <span>
+                  Streak:{" "}
+                  {loadingStreak
+                    ? "..."
+                    : `${streak ?? 0} day${streak === 1 ? "" : "s"}`}
+                </span>
+              </div>
             </div>
           </div>
           <div className="flex items-center gap-4">
