@@ -34,7 +34,7 @@ function Hub() {
   // Jump sound effect setup
   useEffect(() => {
     const audio = new Audio(jumpSfx);
-    audio.volume = 0.5;
+    audio.volume = 0.2;
     jumpSoundRef.current = audio;
     return () => {
       audio.pause();

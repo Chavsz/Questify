@@ -22,7 +22,7 @@ const AppContent = () => {
 
   useEffect(() => {
     const audio = new Audio(clickSfx);
-    audio.volume = 0.5;
+    audio.volume = 0.3;
     clickSoundRef.current = audio;
 
     const handleClick = (e: MouseEvent) => {
