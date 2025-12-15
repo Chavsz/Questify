@@ -5,12 +5,12 @@ import MiniArcher from "../assets/MiniArcherIdle.gif";
 import MiniMage from "../assets/MiniMageIdle.gif";
 import MiniPrince from "../assets/MiniPrinceIdle.gif";
 
-// Skin imports (idle animations)
-import MiniShieldIdle from "../assets/MiniShieldIdle.gif";
-import MiniHalberdIdle from "../assets/MiniHalberdIdle.gif";
-import MiniCrossBowIdle from "../assets/MiniCrossBowIdle.gif";
-import MiniArchMageIdle from "../assets/MiniArchMageIdle.gif";
-import MiniKingIdle from "../assets/MiniKingIdle.gif";
+// Public asset paths for skin idle sprites (moved to public/assets)
+const MiniShieldIdle = "/assets/MiniShieldIdle.gif";
+const MiniHalberdIdle = "/assets/MiniHalberdIdle.gif";
+const MiniCrossBowIdle = "/assets/MiniCrossBowIdle.gif";
+const MiniArchMageIdle = "/assets/MiniArchMageIdle.gif";
+const MiniKingIdle = "/assets/MiniKingIdle.gif";
 
 // Avatar character list (sync with avatar.tsx)
 const miniSwordCrew = [

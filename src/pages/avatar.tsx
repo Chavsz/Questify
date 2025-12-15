@@ -9,12 +9,14 @@ import MiniSpear from "../assets/MiniSpearManIdle.gif";
 import MiniArcher from "../assets/MiniArcherIdle.gif";
 import MiniMage from "../assets/MiniMageIdle.gif";
 import MiniPrince from "../assets/MiniPrinceIdle.gif";
-import MiniShieldIdle from "../assets/MiniShieldIdle.gif";
-import MiniHalberdIdle from "../assets/MiniHalberdIdle.gif";
-import MiniCrossBowIdle from "../assets/MiniCrossBowIdle.gif";
-import MiniArchMageIdle from "../assets/MiniArchMageIdle.gif";
-import MiniKingIdle from "../assets/MiniKingIdle.gif";
 import FireGif from "../assets/Fire.gif";
+
+// Public asset paths for skin idle sprites (moved to public/assets)
+const MiniShieldIdle = "/assets/MiniShieldIdle.gif";
+const MiniHalberdIdle = "/assets/MiniHalberdIdle.gif";
+const MiniCrossBowIdle = "/assets/MiniCrossBowIdle.gif";
+const MiniArchMageIdle = "/assets/MiniArchMageIdle.gif";
+const MiniKingIdle = "/assets/MiniKingIdle.gif";
 
 // Move miniSwordCrew above Avatar so it can be used in state initialization
 const miniSwordCrew = [

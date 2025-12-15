@@ -10,11 +10,6 @@ import {
   type InventoryItem,
 } from "../services/users";
 
-import MiniShieldIdle from "../assets/MiniShieldIdle.gif";
-import MiniHalberdIdle from "../assets/MiniHalberdIdle.gif";
-import MiniCrossBowIdle from "../assets/MiniCrossBowIdle.gif";
-import MiniArchMageIdle from "../assets/MiniArchMageIdle.gif";
-import MiniKingIdle from "../assets/MiniKingIdle.gif";
 import FireGif from "../assets/Fire.gif";
 
 interface ShopItem {
@@ -134,7 +129,7 @@ const Shop = () => {
       name: "Mini Shieldman",
       price: 400,
       category: "skins",
-      emoji: MiniShieldIdle,
+      emoji: "/assets/MiniShieldIdle.gif",
       description: "Skin for Mini Swordman",
       slot: "skin",
       skinFor: "idle",
@@ -144,7 +139,7 @@ const Shop = () => {
       name: "Mini Halberdman",
       price: 400,
       category: "skins",
-      emoji: MiniHalberdIdle,
+      emoji: "/assets/MiniHalberdIdle.gif",
       description: "Skin for Mini Spearman",
       slot: "skin",
       skinFor: "idle1",
@@ -154,7 +149,7 @@ const Shop = () => {
       name: "Mini Crossbow",
       price: 400,
       category: "skins",
-      emoji: MiniCrossBowIdle,
+      emoji: "/assets/MiniCrossBowIdle.gif",
       description: "Skin for Mini Archer",
       slot: "skin",
       skinFor: "idle2",
@@ -164,7 +159,7 @@ const Shop = () => {
       name: "Mini Archmage",
       price: 500,
       category: "skins",
-      emoji: MiniArchMageIdle,
+      emoji: "/assets/MiniArchMageIdle.gif",
       description: "Skin for Mini Mage",
       slot: "skin",
       skinFor: "idle3",
@@ -174,7 +169,7 @@ const Shop = () => {
       name: "Mini King",
       price: 500,
       category: "skins",
-      emoji: MiniKingIdle,
+      emoji: "/assets/MiniKingIdle.gif",
       description: "Skin for Mini Prince",
       slot: "skin",
       skinFor: "idle4",

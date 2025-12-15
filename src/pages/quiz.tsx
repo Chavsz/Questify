@@ -17,22 +17,24 @@ import MiniMageHit from "../assets/MiniMageHit.gif";
 import MiniMageSpell from "../assets/MiniMageSpell.gif";
 import MiniPrinceAttack from "../assets/MiniPrinceAttack.gif";
 import MiniPrinceHit from "../assets/MiniPrinceHit.gif";
-import MiniShieldIdle from "../assets/MiniShieldIdle.gif";
 import MiniShieldAttack from "../assets/MiniShieldAttack.gif";
 import MiniShieldHit from "../assets/MiniShieldHit.gif";
-import MiniHalberdIdle from "../assets/MiniHalberdIdle.gif";
 import MiniHalberdAttack from "../assets/MiniHalberdAttack.gif";
 import MiniHalberdHit from "../assets/MiniHalberdHit.gif";
-import MiniCrossBowIdle from "../assets/MiniCrossBowIdle.gif";
 import MiniCrossBowAttack from "../assets/MiniCrossBowAttack.gif";
 import MiniCrossBowHit from "../assets/MiniCrossBowHit.gif";
-import MiniArchMageIdle from "../assets/MiniArchMageIdle.gif";
 import MiniArchMageAttack from "../assets/MiniArchMageAttack.gif";
 import MiniArchMageHit from "../assets/MiniArchMageHit.gif";
 import MiniArchMageSpell from "../assets/MiniArchMageSpell.gif";
-import MiniKingIdle from "../assets/MiniKingIdle.gif";
 import MiniKingAttack from "../assets/MiniKingAttack.gif";
 import MiniKingHit from "../assets/MiniKingHit.gif";
+
+// Public asset paths for skin idle sprites (moved to public/assets)
+const MiniShieldIdle = "/assets/MiniShieldIdle.gif";
+const MiniHalberdIdle = "/assets/MiniHalberdIdle.gif";
+const MiniCrossBowIdle = "/assets/MiniCrossBowIdle.gif";
+const MiniArchMageIdle = "/assets/MiniArchMageIdle.gif";
+const MiniKingIdle = "/assets/MiniKingIdle.gif";
 
 // Avatar character list (sync with avatar.tsx)
 const miniSwordCrew = [
