@@ -460,7 +460,7 @@ const Quest = () => {
             inventory.map((item) => (
               <div
                 key={item.id}
-                className="flex flex-col items-center bg-white rounded-xl shadow p-4 border-2 border-gray-500"
+                className={`flex flex-col items-center rounded-xl shadow p-4 border-2 ${isDarkMode ? "bg-gray-900 border-gray-600" : "bg-white border-gray-500"}`}
               >
                 <div className="text-5xl mb-2">
                   {typeof item.emoji === "string" &&
@@ -475,10 +475,10 @@ const Quest = () => {
                     item.emoji
                   )}
                 </div>
-                <div className="font-bold text-lg text-indigo-600 mb-1">
+                <div className={`font-bold text-lg text-center ${isDarkMode ? "text-white" : "text-gray-600"} mb-1`}>
                   {item.name}
                 </div>
-                <div className="text-gray-600 font-semibold">
+                <div className={`${isDarkMode ? "text-white" : "text-gray-600"} font-semibold`}>
                   x{item.quantity}
                 </div>
               </div>
