@@ -126,7 +126,7 @@ import { useState, useEffect, useRef } from "react";
 import BgmThoseWhoFight from "../assets/Final Fantasy VII OST - Those Who FightBattle Theme.mp3";
 import attackSfx from "../assets/Attack.mp3";
 import victoryTheme from "../assets/Final Fantasy VII - Victory Fanfare [HD].mp3";
-import gameOverTheme from "../assets/FINAL FANTASY DEFEAT THEME.MP3";
+import gameOverTheme from "../assets/FINAL FANTASY DEFEAT THEME.mp3";
 import { useParams, useNavigate } from "react-router-dom";
 import { db } from "../firebase";
 import {

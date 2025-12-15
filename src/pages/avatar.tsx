@@ -1,5 +1,4 @@
-import { useState, useEffect, useRef } from "react";
-import titleScreenBgm from "../assets/Final Fantasy VII Remake - Title Screen.mp3";
+import { useState, useEffect} from "react";
 import { getUser } from "../services/users";
 import { useTheme } from "../components/theme";
 import { IoSunnyOutline } from "react-icons/io5";
@@ -90,6 +89,8 @@ const Avatar = () => {
     miniArchmage: { id: "miniArchmage", label: "Mini Archmage", for: "idle3", image: MiniArchMageIdle, shopId: 104 },
     miniKing: { id: "miniKing", label: "Mini King", for: "idle4", image: MiniKingIdle, shopId: 105 },
   };
+
+  userLevel; //unsused usetate -- line 71
 
   // Load selected character and unlocked characters from Firestore on mount
   useEffect(() => {

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect} from "react";
 import MiniSwordManIdle from "../assets/MiniSwordManIdle.gif";
 import MiniSpear from "../assets/MiniSpearManIdle.gif";
 import MiniArcher from "../assets/MiniArcherIdle.gif";
