@@ -6,7 +6,7 @@ import { useAuth } from "../contexts/authContexts/auth";
 import { useEffect, useState, useRef } from "react";
 import MiniCavalierWalk from "../assets/MiniCavalierWalk.gif";
 import FireGif from "../assets/Fire.gif";
-import jumpSfx from "../assets/jump.mp3";
+import jumpSfx from "../assets/Jump.mp3";
 import { getUser, type User } from "../services/users";
 import { getUserQuestStats } from "../services/questStats";
 import type { QuestStats } from "../services/questStats";
