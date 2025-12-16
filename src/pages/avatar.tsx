@@ -183,37 +183,37 @@ const Avatar = () => {
 
   const renderModal = () =>
     modal.open && (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-200 p-4">
         <div
-          className={`${isDarkMode ? "bg-gray-900" : "bg-white"} rounded-2xl shadow-2xl p-8 w-full max-w-md border-4 flex flex-col items-center relative animate-in zoom-in-95 duration-300`}
+          className={`${isDarkMode ? "bg-gray-900" : "bg-white"} rounded-2xl shadow-2xl p-4 sm:p-8 w-full max-w-md border-4 flex flex-col items-center relative animate-in zoom-in-95 duration-300`}
           style={{
             borderColor: modal.type === "success" ? "#22C55E" : modal.type === "error" ? "#EF4444" : "#F59E42",
           }}
         >
           <button
             onClick={() => setModal({ ...modal, open: false })}
-            className={`absolute top-4 right-4 text-2xl font-bold hover:text-red-500 rounded-full w-10 h-10 flex items-center justify-center shadow-lg hover:shadow-xl transition-transform hover:rotate-90 duration-300 ${
+            className={`absolute top-2 right-2 sm:top-4 sm:right-4 text-xl sm:text-2xl font-bold hover:text-red-500 rounded-full w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center shadow-lg hover:shadow-xl transition-transform hover:rotate-90 duration-300 ${
               isDarkMode ? "text-white bg-gray-700 hover:bg-gray-600" : "text-gray-700 bg-white hover:bg-gray-100"
             }`}
             aria-label="Close Modal"
           >
             ×
           </button>
-          <div className="flex items-center gap-3 mb-6">
-            <span className="text-4xl animate-bounce">
+          <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+            <span className="text-2xl sm:text-4xl animate-bounce">
               {modal.type === "success" && "✅"}
               {modal.type === "error" && "❌"}
               {modal.type === "info" && "ℹ️"}
             </span>
             <span
-              className={`text-2xl font-bold ${
+              className={`text-lg sm:text-2xl font-bold ${
                 modal.type === "success" ? "text-green-600" : modal.type === "error" ? "text-red-600" : "text-yellow-600"
               }`}
             >
               {modal.title}
             </span>
           </div>
-          <div className={`text-center whitespace-pre-line mb-2 text-lg ${isDarkMode ? "text-white" : "text-gray-700"}`}>
+          <div className={`text-center whitespace-pre-line mb-2 text-sm sm:text-lg ${isDarkMode ? "text-white" : "text-gray-700"}`}>
             {modal.message}
           </div>
         </div>
@@ -221,82 +221,82 @@ const Avatar = () => {
     );
 
   return (
-    <div className={`px-4 pb-8 min-h-screen ${isDarkMode ? "bg-[#020617]" : "bg-[#fafaff]"}`}>
+    <div className={`px-2 sm:px-4 pb-8 min-h-screen ${isDarkMode ? "bg-[#020617]" : "bg-[#fafaff]"}`}>
       {renderModal()}
       
       {/* Header */}
-      <header className="flex justify-between items-center mb-6">
-        <div className="flex items-center gap-3 group">
+      <header className="flex justify-between items-center mb-4 sm:mb-6">
+        <div className="flex items-center gap-2 sm:gap-3 group">
           {!loadingStreak && (streak ?? 0) > 0 && (
             <img
               src={FireGif}
               alt="Streak fire"
-              className="w-7 h-7 object-contain mb-1.5"
+              className="w-5 h-5 sm:w-7 sm:h-7 object-contain mb-1.5"
             />
           )}
-          <div className={`font-bold text-lg transition-colors duration-200 ${isDarkMode ? "text-white" : "text-orange-600"}`}>
+          <div className={`font-bold text-sm sm:text-lg transition-colors duration-200 ${isDarkMode ? "text-white" : "text-orange-600"}`}>
             <span className="group-hover:scale-110 inline-block transition-transform">
               Streak: {loadingStreak ? "..." : `${streak ?? 0} day${streak === 1 ? "" : "s"}`}
             </span>
           </div>
         </div>
         
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-4">
           <button
             onClick={toggleDarkMode}
-            className={`relative w-14 h-7 rounded-full transition-transform duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 shadow-lg hover:shadow-xl ${
+            className={`relative w-12 h-6 sm:w-14 sm:h-7 rounded-full transition-transform duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 shadow-lg hover:shadow-xl ${
               isDarkMode ? "bg-gray-700 focus:ring-gray-500" : "bg-yellow-400 focus:ring-yellow-500"
             }`}
           >
             <span
-              className={`absolute top-1 left-1 w-5 h-5 rounded-full bg-white shadow-md transform transition-transform duration-300 flex items-center justify-center ${
-                isDarkMode ? "translate-x-7" : "translate-x-0"
+              className={`absolute top-0.5 left-0.5 sm:top-1 sm:left-1 w-5 h-5 rounded-full bg-white shadow-md transform transition-transform duration-300 flex items-center justify-center ${
+                isDarkMode ? "translate-x-6 sm:translate-x-7" : "translate-x-0"
               }`}
             >
               {isDarkMode ? <FaRegMoon className="text-gray-700 text-xs" /> : <IoSunnyOutline className="text-yellow-500 text-xs" />}
             </span>
           </button>
           
-          <span className={`text-2xl ${isDarkMode ? "text-gray-600" : "text-gray-300"}`}>|</span>
+          <span className={`text-xl sm:text-2xl ${isDarkMode ? "text-gray-600" : "text-gray-300"}`}>|</span>
           
-          <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-xl bg-linear-to-r from-orange-500 to-red-500 text-white shadow-lg hover:shadow-xl transition-transform hover:scale-110 cursor-pointer`}>
+          <div className={`w-7 h-7 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-bold text-base sm:text-xl bg-linear-to-r from-orange-500 to-red-500 text-white shadow-lg hover:shadow-xl transition-transform hover:scale-110 cursor-pointer`}>
             {user?.email ? user.email.charAt(0).toUpperCase() : "?"}
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <div className="flex flex-col lg:flex-row gap-8 mb-10">
+      <div className="flex flex-col lg:flex-row gap-4 sm:gap-8 mb-10">
         {/* Left Sidebar */}
-        <aside className="w-full max-w-xs shrink-0 flex flex-col gap-6 mx-auto lg:mx-0">
+        <aside className="w-full max-w-xs shrink-0 flex flex-col gap-4 sm:gap-6 mx-auto lg:mx-0">
           <div
-            className={`p-6 text-center font-bold text-xl border-2 rounded-lg shadow-md transition-transform duration-300 hover:-translate-y-1 ${
+            className={`p-4 sm:p-6 text-center font-bold text-base sm:text-xl border-2 rounded-lg shadow-md transition-transform duration-300 hover:-translate-y-1 ${
               isDarkMode ? "bg-gray-900 text-white border-amber-400" : "bg-white text-gray-600 border-amber-500"
             }`}
           >
             <div className="flex items-center justify-center gap-2">
-              <span className="text-2xl">🟡</span>
+              <span className="text-xl sm:text-2xl">🟡</span>
               <span>{userCoins}</span>
-              <span className="text-sm">Coins</span>
+              <span className="text-xs sm:text-sm">Coins</span>
             </div>
           </div>
           
           <div
-            className={`p-6 border-2 rounded-lg shadow-md transition-transform duration-300 ${
+            className={`p-4 sm:p-6 border-2 rounded-lg shadow-md transition-transform duration-300 ${
               isDarkMode ? "bg-gray-900 text-white border-amber-400" : "bg-white text-gray-600 border-amber-500"
             }`}
           >
-            <div className="text-xl mb-4 font-['Press_Start_2P',cursive] tracking-[0.12em] text-center">
+            <div className="text-sm sm:text-xl mb-3 sm:mb-4 font-['Press_Start_2P',cursive] tracking-[0.12em] text-center">
               Avatar Preview
             </div>
             <div
-              className={`mt-2 p-6 flex flex-col items-center justify-center relative overflow-hidden rounded-lg ${
+              className={`mt-2 p-4 sm:p-6 flex flex-col items-center justify-center relative overflow-hidden rounded-lg ${
                 isDarkMode ? "bg-gray-800" : "bg-gray-50 border-2 border-gray-200"
               }`}
             >
               {updateAvatarPreview()}
             </div>
-            <div className={`mt-4 text-center text-sm ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
+            <div className={`mt-3 sm:mt-4 text-center text-xs sm:text-sm ${isDarkMode ? "text-gray-400" : "text-gray-500"}`}>
               {miniSwordCrew.find((c) => c.id === selectedCharacter)?.label}
             </div>
           </div>
@@ -304,12 +304,12 @@ const Avatar = () => {
 
         {/* Items Display Area */}
         <main
-          className={`flex-1 p-8 min-h-[500px] border-2 rounded-lg shadow-md transition-transform duration-300 ${
+          className={`flex-1 p-4 sm:p-8 min-h-[400px] sm:min-h-[500px] border-2 rounded-lg shadow-md transition-transform duration-300 ${
             isDarkMode ? "bg-gray-900 border-amber-400" : "bg-white border-amber-500"
           }`}
         >
           <h2
-            className={`text-2xl font-bold mb-8 text-center font-['Press_Start_2P',cursive] tracking-[0.12em] ${
+            className={`text-lg sm:text-2xl font-bold mb-4 sm:mb-8 text-center font-['Press_Start_2P',cursive] tracking-[0.12em] ${
               isDarkMode ? "text-[#ffd700]" : "text-amber-600"
             }`}
           >
@@ -318,14 +318,14 @@ const Avatar = () => {
           
           <section>
             <h3
-              className={`text-xl font-semibold mb-6 text-center font-['Press_Start_2P',cursive] tracking-[0.12em] ${
+              className={`text-base sm:text-xl font-semibold mb-4 sm:mb-6 text-center font-['Press_Start_2P',cursive] tracking-[0.12em] ${
                 isDarkMode ? "text-[#ffd700]" : "text-amber-700"
               }`}
             >
               Mini Sword Squad
             </h3>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {miniSwordCrew.map((character) => {
                 const isUnlocked = unlockedCharacters.includes(character.id);
                 const isSelected = selectedCharacter === character.id;
@@ -333,7 +333,7 @@ const Avatar = () => {
                 return (
                   <div
                     key={character.id}
-                    className={`relative p-6 flex flex-col items-center text-center transition-transform duration-300 cursor-pointer border-2 rounded-lg shadow-md  ${
+                    className={`relative p-3 sm:p-6 flex flex-col items-center text-center transition-transform duration-300 cursor-pointer border-2 rounded-lg shadow-md active:scale-95 ${
                       isUnlocked
                         ? isSelected
                           ? isDarkMode
@@ -349,13 +349,13 @@ const Avatar = () => {
                     onClick={() => isUnlocked && setSelectedCharacter(character.id)}
                   >
                     {isSelected && (
-                      <div className="absolute -top-3 -right-3 bg-green-500 text-white rounded-full p-2 shadow-lg animate-bounce">
-                        <Check className="w-4 h-4" />
+                      <div className="absolute -top-2 -right-2 sm:-top-3 sm:-right-3 bg-green-500 text-white rounded-full p-1.5 sm:p-2 shadow-lg animate-bounce">
+                        <Check className="w-3 h-3 sm:w-4 sm:h-4" />
                       </div>
                     )}
                     
                     <div
-                      className={`w-32 h-32 mb-4 flex items-center justify-center overflow-hidden rounded-lg border-2 transition-transform duration-300 ${
+                      className={`w-24 h-24 sm:w-32 sm:h-32 mb-3 sm:mb-4 flex items-center justify-center overflow-hidden rounded-lg border-2 transition-transform duration-300 ${
                         isDarkMode ? "bg-gray-900 border-gray-700" : "bg-white border-gray-200"
                       } ${!isUnlocked ? "opacity-50" : "hover:scale-110"}`}
                     >
@@ -369,21 +369,21 @@ const Avatar = () => {
                     
                     {!isUnlocked && (
                       <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-lg backdrop-blur-sm pointer-events-none">
-                        <Lock className="w-12 h-12 text-white" />
+                        <Lock className="w-8 h-8 sm:w-12 sm:h-12 text-white" />
                       </div>
                     )}
                     
-                    <p className={`text-lg font-bold mb-2 ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+                    <p className={`text-sm sm:text-lg font-bold mb-1 sm:mb-2 ${isDarkMode ? "text-white" : "text-gray-800"}`}>
                       {character.label}
                     </p>
                     
-                    <p className={`text-xs mb-4 line-clamp-3 ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
+                    <p className={`text-[10px] sm:text-xs mb-3 sm:mb-4 line-clamp-3 ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
                       {character.description}
                     </p>
                     
                     {isUnlocked ? (
                       <button
-                        className={`mt-auto px-4 py-2.5 w-full text-xs font-['Press_Start_2P',cursive] border-2 rounded transition-transform duration-200 hover:shadow-lg active:scale-95 ${
+                        className={`mt-auto px-3 sm:px-4 py-2 sm:py-2.5 w-full text-[10px] sm:text-xs font-['Press_Start_2P',cursive] border-2 rounded transition-transform duration-200 hover:shadow-lg active:scale-95 ${
                           isSelected
                             ? "bg-linear-to-b from-[#ffd700] to-[#ffb700] border-[#8b6914] text-[#1a1a2e] cursor-default shadow-md"
                             : "bg-linear-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white hover:-translate-y-1"

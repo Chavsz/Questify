@@ -286,7 +286,7 @@ const Quest = () => {
 
   const getQuestItemClasses = (status: string) => {
     const baseClasses =
-      "p-6 mb-4 flex items-center cursor-pointer border-2 rounded-md shadow-md hover:translate-y-[-3px] transition-transform duration-400 mt-1";
+      "p-3 sm:p-6 mb-3 sm:mb-4 flex flex-col sm:flex-row sm:items-center cursor-pointer border-2 rounded-md shadow-md hover:translate-y-[-3px] transition-transform duration-400 mt-1 active:scale-95";
     switch (status) {
       case "completed":
         return `${baseClasses} border-green-500 ${
@@ -440,19 +440,19 @@ const Quest = () => {
   };
 
   const renderInventoryModal = () => (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className={`relative bg-${isDarkMode ? "gray-900" : "white"} rounded-3xl shadow-2xl p-8 w-full max-w-2xl border border-[#ffd700] flex flex-col items-center`}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className={`relative ${isDarkMode ? "bg-gray-900" : "bg-white"} rounded-3xl shadow-2xl p-4 sm:p-8 w-full max-w-2xl border border-[#ffd700] flex flex-col items-center`}>
         <button
           onClick={closeInventoryModal}
-          className="absolute top-4 right-4 text-2xl font-bold text-gray-700 bg-white rounded-full w-10 h-10 flex items-center justify-center shadow"
+          className={`absolute top-2 right-2 sm:top-4 sm:right-4 text-xl sm:text-2xl font-bold ${isDarkMode ? "text-white" : "text-gray-700"} ${isDarkMode ? "bg-gray-700" : "bg-white"} rounded-full w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center shadow`}
           aria-label="Close Inventory"
         >
           ×
         </button>
-        <div className="flex items-center gap-3 mb-6">
-          <span className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-amber-600"}`}>Backpack</span>
+        <div className="flex items-center gap-3 mb-4 sm:mb-6">
+          <span className={`text-lg sm:text-2xl font-bold ${isDarkMode ? "text-white" : "text-amber-600"}`}>Backpack</span>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 w-full">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-6 w-full">
           {inventory.length === 0 ? (
             <div className={`col-span-full text-center ${isDarkMode ? "text-white" : "text-gray-500"}`}>
               <div className="text-6xl mb-2">📦</div>
@@ -518,9 +518,9 @@ const Quest = () => {
   // Modal component
   const renderModal = () =>
     modal.open && (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
         <div
-          className="bg-gray-900 rounded-2xl shadow-2xl p-8 w-full max-w-md border-2 flex flex-col items-center relative"
+          className="bg-gray-900 rounded-2xl shadow-2xl p-4 sm:p-8 w-full max-w-md border-2 flex flex-col items-center relative"
           style={{
             borderColor:
               modal.type === "success"
@@ -534,7 +534,7 @@ const Quest = () => {
         >
           <button
             onClick={() => setModal({ ...modal, open: false })}
-            className="absolute top-4 right-4 text-2xl font-bold text-gray-700 hover:text-red-500 bg-white rounded-full w-10 h-10 flex items-center justify-center shadow"
+            className="absolute top-2 right-2 sm:top-4 sm:right-4 text-xl sm:text-2xl font-bold text-gray-700 hover:text-red-500 bg-white rounded-full w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center shadow"
             aria-label="Close Modal"
           >
             ×
@@ -618,13 +618,13 @@ const Quest = () => {
     );
 
   return (
-    <div className={`px-4 pb-8  ${isDarkMode ? "min-h-screen bg-[#020617]" : "min-h-screen bg-[#fafaff]"}`}>
+    <div className={`px-2 sm:px-4 pb-8  ${isDarkMode ? "min-h-screen bg-[#020617]" : "min-h-screen bg-[#fafaff]"}`}>
       <div className="min-h-screen flex flex-col">
         {/* Header */}
-        <header className={`flex justify-between items-center mb-6`}>
+        <header className={`flex justify-between items-center mb-4 sm:mb-6`}>
           <div>
             <div
-              className={`font-bold text-lg ${
+              className={`font-bold text-sm sm:text-lg ${
                 isDarkMode ? "text-white" : " text-orange-600"
               }`}
             >
@@ -633,7 +633,7 @@ const Quest = () => {
                   <img
                     src={FireGif}
                     alt="Streak fire"
-                    className="w-7 h-7 object-contain mb-1.5"
+                    className="w-5 h-5 sm:w-7 sm:h-7 object-contain mb-1.5"
                   />
                 )}
                 <span>
@@ -645,19 +645,19 @@ const Quest = () => {
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             {/* Toggle Theme */}
             <button
               onClick={toggleDarkMode}
-              className={`relative w-14 h-7 rounded-full transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+              className={`relative w-12 h-6 sm:w-14 sm:h-7 rounded-full transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                 isDarkMode
                   ? "bg-gray-700 focus:ring-gray-500"
                   : "bg-yellow-400 focus:ring-yellow-500"
               }`}
             >
               <span
-                className={`absolute top-1 left-1 w-5 h-5 rounded-full bg-white shadow-md transform transition-transform duration-300 flex items-center justify-center ${
-                  isDarkMode ? "translate-x-8" : "translate-x-0"
+                className={`absolute top-0.5 left-0.5 sm:top-1 sm:left-1 w-5 h-5 rounded-full bg-white shadow-md transform transition-transform duration-300 flex items-center justify-center ${
+                  isDarkMode ? "translate-x-6 sm:translate-x-8" : "translate-x-0"
                 }`}
               >
                 {isDarkMode ? (
@@ -669,7 +669,7 @@ const Quest = () => {
             </button>
 
             <span
-              className={`text-2xl ${
+              className={`text-xl sm:text-2xl ${
                 isDarkMode ? "text-gray-400" : "text-gray-600"
               }`}
             >
@@ -677,7 +677,7 @@ const Quest = () => {
             </span>
             {/* Profile Picture */}
             <div
-              className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-xl bg-linear-to-r from-orange-500 to-red-500 text-white`}
+              className={`w-7 h-7 sm:w-9 sm:h-9 rounded-full flex items-center justify-center font-bold text-base sm:text-xl bg-linear-to-r from-orange-500 to-red-500 text-white`}
             >
               {user?.email ? user.email.charAt(0).toUpperCase() : "?"}
             </div>
@@ -685,18 +685,18 @@ const Quest = () => {
         </header>
 
         {/* Main Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8 flex-1 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-4 sm:gap-8 flex-1 mb-8">
           {/* Left Sidebar - Avatar */}
           <aside className="flex flex-col">
             <div
-              className={`p-5 text-center font-bold border-2 rounded-md shadow-md hover:translate-y-[-3px] transition-transform duration-300 ${
+              className={`p-3 sm:p-5 text-center font-bold border-2 rounded-md shadow-md hover:translate-y-[-3px] transition-transform duration-300 ${
                 isDarkMode
                   ? "bg-gray-900 border-amber-400"
                   : "bg-white border-amber-500"
               }`}
             >
               <h3
-                className={`text-xl font-bold mb-4 font-['Press_Start_2P',cursive] tracking-[0.12em] ${
+                className={`text-sm sm:text-xl font-bold mb-3 sm:mb-4 font-['Press_Start_2P',cursive] tracking-[0.12em] ${
                   isDarkMode ? "text-[#ffd700]" : "text-amber-600"
                 }`}
               >
@@ -721,7 +721,7 @@ const Quest = () => {
                       <img
                         src={imageToShow}
                         alt={char.label}
-                        className="w-50 h-50 object-contain"
+                        className="w-32 h-32 sm:w-50 sm:h-50 object-contain"
                         style={{ imageRendering: "pixelated" }}
                       />
                     );
@@ -733,38 +733,38 @@ const Quest = () => {
 
           {/* Quest List Container */}
           <main
-            className={`p-8 flex flex-col border-2 rounded-md shadow-md ${
+            className={`p-4 sm:p-8 flex flex-col border-2 rounded-md shadow-md ${
               isDarkMode
                 ? "bg-gray-900 border-amber-400"
                 : "bg-white border-amber-500"
             }`}
           >
             <h2
-              className={`text-2xl text-center mb-4 font-bold font-['Press_Start_2P',cursive] ${
+              className={`text-lg sm:text-2xl text-center mb-3 sm:mb-4 font-bold font-['Press_Start_2P',cursive] ${
                 isDarkMode ? "text-[#ffd700]" : "text-amber-600"
               }`}
             >
               Your Study Quests
             </h2>
-            <div className="flex-1 overflow-y-auto max-h-[600px] space-y-4">
+            <div className="flex-1 overflow-y-auto max-h-[400px] sm:max-h-[600px] space-y-3 sm:space-y-4">
               {quests.map((quest) => (
                 <div
                   key={quest.id}
                   className={getQuestItemClasses(quest.status)}
                   onClick={() => viewQuest(quest.id)}
                 >
-                  <div className="flex items-center gap-4 flex-1">
-                    <div className="flex-1">
-                      <div className={`font-bold text-xl ${isDarkMode ? "text-white" : "text-gray-600"} mb-2`}>
+                  <div className="flex items-center gap-3 sm:gap-4 flex-1 w-full">
+                    <div className="flex-1 min-w-0">
+                      <div className={`font-bold text-base sm:text-xl ${isDarkMode ? "text-white" : "text-gray-600"} mb-1 sm:mb-2`}>
                         {quest.name}
                       </div>
-                      <div className={`text-sm ${isDarkMode ? "text-white" : "text-gray-600"} mb-3`}>
+                      <div className={`text-xs sm:text-sm ${isDarkMode ? "text-white" : "text-gray-600"} mb-2 sm:mb-3`}>
                         {quest.details}
                       </div>
-                      <div className="flex items-center gap-3 mb-3">
+                      <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
                         {getStatusBadge(quest.status)}
                         {quest.coins && (
-                          <span className="text-green-600 font-semibold text-sm">
+                          <span className="text-green-600 font-semibold text-xs sm:text-sm">
                             {quest.coins}
                           </span>
                         )}
@@ -790,12 +790,12 @@ const Quest = () => {
                     </div>
                   </div>
 
-                  <div className="flex flex-col gap-2 items-end text-sm text-gray-600 shrink-0 ml-4 mt-2">
-                    <div className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-gray-600"}`}>
+                  <div className="flex flex-col gap-1 sm:gap-2 items-end sm:items-end text-xs sm:text-sm text-gray-600 shrink-0 sm:ml-4 mt-2">
+                    <div className={`text-lg sm:text-2xl font-bold ${isDarkMode ? "text-white" : "text-gray-600"}`}>
                       {quest.progress}
                     </div>
-                    <div className={`text-sm ${isDarkMode ? "text-white" : "text-gray-600"}`}>{quest.progressText}</div>
-                    <div className="flex gap-2 mt-2">
+                    <div className={`text-xs sm:text-sm ${isDarkMode ? "text-white" : "text-gray-600"}`}>{quest.progressText}</div>
+                    <div className="flex gap-1 sm:gap-2 mt-1 sm:mt-2">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();

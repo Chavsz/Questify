@@ -16,45 +16,84 @@ const RouteSelect = () => {
   };
 
   return (
-    <div className="space-y-2">
-      <p className={`text-[13px] font-extralight hidden md:block ${
-        isDarkMode ? 'text-gray-400' : 'text-[#696969]'
-      }`}>
-        MENU
-      </p>
-      <Route
-        to="/"
-        selected={selected}
-        Icon={mdIcons.MdOutlineDashboard}
-        title="Hub"
-        handleSelect={handleSelect}
-        isDarkMode={isDarkMode}
-      />
-      <Route
-        to="/quest"
-        selected={selected}
-        Icon={GiIcons.GiCrossedSwords}
-        title="Quest"
-        handleSelect={handleSelect}
-        isDarkMode={isDarkMode}
-      />
-      <Route
-        to="/shop"
-        selected={selected}
-        Icon={FaIcons.FaShoppingCart}
-        title="Shop"
-        handleSelect={handleSelect}
-        isDarkMode={isDarkMode}
-      />
-      <Route
-        to="/avatar"
-        selected={selected}
-        Icon={RxIcons.RxAvatar}
-        title="Avatar"
-        handleSelect={handleSelect}
-        isDarkMode={isDarkMode}
-      />
-    </div>
+    <>
+      {/* Desktop Menu */}
+      <div className="hidden md:block space-y-2">
+        <p className={`text-[13px] font-extralight ${
+          isDarkMode ? 'text-gray-400' : 'text-[#696969]'
+        }`}>
+          MENU
+        </p>
+        <Route
+          to="/"
+          selected={selected}
+          Icon={mdIcons.MdOutlineDashboard}
+          title="Hub"
+          handleSelect={handleSelect}
+          isDarkMode={isDarkMode}
+        />
+        <Route
+          to="/quest"
+          selected={selected}
+          Icon={GiIcons.GiCrossedSwords}
+          title="Quest"
+          handleSelect={handleSelect}
+          isDarkMode={isDarkMode}
+        />
+        <Route
+          to="/shop"
+          selected={selected}
+          Icon={FaIcons.FaShoppingCart}
+          title="Shop"
+          handleSelect={handleSelect}
+          isDarkMode={isDarkMode}
+        />
+        <Route
+          to="/avatar"
+          selected={selected}
+          Icon={RxIcons.RxAvatar}
+          title="Avatar"
+          handleSelect={handleSelect}
+          isDarkMode={isDarkMode}
+        />
+      </div>
+
+      {/* Mobile Bottom Navigation */}
+      <div className="md:hidden flex items-center gap-1">
+        <Route
+          to="/"
+          selected={selected}
+          Icon={mdIcons.MdOutlineDashboard}
+          title="Hub"
+          handleSelect={handleSelect}
+          isDarkMode={isDarkMode}
+        />
+        <Route
+          to="/quest"
+          selected={selected}
+          Icon={GiIcons.GiCrossedSwords}
+          title="Quest"
+          handleSelect={handleSelect}
+          isDarkMode={isDarkMode}
+        />
+        <Route
+          to="/shop"
+          selected={selected}
+          Icon={FaIcons.FaShoppingCart}
+          title="Shop"
+          handleSelect={handleSelect}
+          isDarkMode={isDarkMode}
+        />
+        <Route
+          to="/avatar"
+          selected={selected}
+          Icon={RxIcons.RxAvatar}
+          title="Avatar"
+          handleSelect={handleSelect}
+          isDarkMode={isDarkMode}
+        />
+      </div>
+    </>
   );
 };
 
@@ -72,7 +111,7 @@ const Route = ({ to, selected, Icon, title, handleSelect, isDarkMode }: RoutePro
   return (
     <Link
       to={to}
-      className={`flex items-center md:justify-start justify-center gap-2 w-full px-2 py-2 md:py-1.5 md:text-sm text-1xl transition-transform border-2 transform duration-300 hover:-translate-y-0.5 ${
+      className={`flex items-center justify-center md:justify-start gap-2 w-full md:w-auto px-2 py-2 md:py-1.5 text-sm md:text-sm transition-transform border-2 transform duration-300 hover:-translate-y-0.5 active:scale-95 md:active:scale-100 ${
         isSelected
           ? isDarkMode 
             ? "bg-gray-700 text-[#ffd700] border-amber-400"
@@ -83,8 +122,8 @@ const Route = ({ to, selected, Icon, title, handleSelect, isDarkMode }: RoutePro
       }`}
       onClick={() => handleSelect(to)}
     >
-      <Icon className={`${isSelected ? (isDarkMode ? "text-[#ffd700]" : "text-amber-700") : ""}`} />
-      <p className="text-md font-semibold hidden md:block">{title}</p>
+      <Icon className={`text-lg md:text-base ${isSelected ? (isDarkMode ? "text-[#ffd700]" : "text-amber-700") : ""}`} />
+      <p className="text-xs md:text-sm font-semibold hidden md:block">{title}</p>
     </Link>
   );
 };

@@ -54,13 +54,13 @@ const AppContent = () => {
   }, []);
   
   const containerClass = userLoggedIn
-    ? `grid grid-cols-[80px_1fr] md:grid-cols-[240px_1fr] transition-[width] duration-300 min-h-screen app-main-container ${isDarkMode ? 'dark-mode-bg' : 'bg-[#fafaff]'}`
+    ? `grid grid-cols-1 md:grid-cols-[240px_1fr] transition-[width] duration-300 min-h-screen app-main-container ${isDarkMode ? 'dark-mode-bg' : 'bg-[#fafaff]'}`
     : `min-h-screen app-main-container ${isDarkMode ? 'dark-mode-bg' : 'bg-white'}`;
     
   return (
     <div className={containerClass}>
       {userLoggedIn && <Sidebar isBgMusicMuted={isMuted} toggleBgMusic={toggleMute} />}
-      <div className="p-4">
+      <div className="p-2 sm:p-4 pb-20 md:pb-4">
         <Routes>
           <Route path="/" element={userLoggedIn ? <Hub /> : <Login />} />
           <Route path="/quest" element={userLoggedIn ? <Quest /> : <Login />} />

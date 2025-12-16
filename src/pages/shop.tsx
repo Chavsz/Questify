@@ -360,9 +360,9 @@ const Shop = () => {
   // Modal component
   const renderModal = () =>
     modal.open && (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
         <div
-          className={`rounded-2xl shadow-2xl p-8 w-full max-w-md border-2 flex flex-col items-center relative ${isDarkMode ? "bg-gray-900 border-gray-700" : "bg-white border-gray-500"}`}
+          className={`rounded-2xl shadow-2xl p-4 sm:p-8 w-full max-w-md border-2 flex flex-col items-center relative ${isDarkMode ? "bg-gray-900 border-gray-700" : "bg-white border-gray-500"}`}
           style={{
             borderColor:
               modal.type === "success"
@@ -374,19 +374,19 @@ const Shop = () => {
         >
           <button
             onClick={() => setModal({ ...modal, open: false })}
-            className="absolute top-4 right-4 text-2xl font-bold text-gray-700 hover:text-red-500 bg-white rounded-full w-10 h-10 flex items-center justify-center shadow"
+            className="absolute top-2 right-2 sm:top-4 sm:right-4 text-xl sm:text-2xl font-bold text-gray-700 hover:text-red-500 bg-white rounded-full w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center shadow"
             aria-label="Close Modal"
           >
             ×
           </button>
-          <div className="flex items-center gap-3 mb-4">
-            <span className="text-3xl">
+          <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+            <span className="text-2xl sm:text-3xl">
               {modal.type === "success" && "✅"}
               {modal.type === "error" && "❌"}
               {modal.type === "info" && "ℹ️"}
             </span>
             <span
-              className={`text-2xl font-bold ${
+              className={`text-lg sm:text-2xl font-bold ${
                 modal.type === "success"
                   ? "text-green-600"
                   : modal.type === "error"
@@ -397,7 +397,7 @@ const Shop = () => {
               {modal.title}
             </span>
           </div>
-          <div className={`text-center whitespace-pre-line mb-2 text-lg ${isDarkMode ? "text-white" : "text-gray-700"}`}>
+          <div className={`text-center whitespace-pre-line mb-2 text-sm sm:text-lg ${isDarkMode ? "text-white" : "text-gray-700"}`}>
             {modal.message}
           </div>
         </div>
@@ -419,7 +419,7 @@ const Shop = () => {
       return (
         <div
           key={item.id}
-          className={`p-5 text-center cursor-pointer border-2 transform transition-transform duration-300 hover:-translate-y-1 ${
+          className={`p-2 sm:p-5 text-center cursor-pointer border-2 transform transition-transform duration-300 hover:-translate-y-1 active:scale-95 ${
             isSelected
               ? isDarkMode
                 ? "bg-gray-900 border-[#ffd700] ring-2 ring-[#ffd700]"
@@ -431,7 +431,7 @@ const Shop = () => {
           onClick={() => selectItem(item as ShopItem)}
         >
           <div
-            className={`w-full ${item.category === "skins" ? "h-40" : "h-32"} mb-4 flex items-center justify-center text-5xl ${
+            className={`w-full ${item.category === "skins" ? "h-24 sm:h-40" : "h-20 sm:h-32"} mb-2 sm:mb-4 flex items-center justify-center text-3xl sm:text-5xl ${
               isDarkMode ? "bg-gray-800" : "bg-gray-100 border border-gray-300"
             }`}
           >
@@ -439,21 +439,21 @@ const Shop = () => {
               <img
                 src={item.emoji}
                 alt={item.name}
-                className={`object-contain ${item.category === "skins" ? "w-32 h-32" : "w-20 h-20"} ${!isSkin ? "float-animation" : ""}`}
+                className={`object-contain ${item.category === "skins" ? "w-20 h-20 sm:w-32 sm:h-32" : "w-16 h-16 sm:w-20 sm:h-20"} ${!isSkin ? "float-animation" : ""}`}
                 style={{ 
                   imageRendering: "pixelated",
                   ...(!isSkin ? { animationDelay: `${index * 0.2}s` } : {})
                 }}
               />
             ) : typeof item.emoji === "string" ? (
-              <span className={!isSkin ? "float-animation" : ""} style={!isSkin ? { animationDelay: `${index * 0.2}s` } : {}}>
+              <span className={`text-2xl sm:text-4xl ${!isSkin ? "float-animation" : ""}`} style={!isSkin ? { animationDelay: `${index * 0.2}s` } : {}}>
                 {item.emoji}
               </span>
             ) : (
               <img
                 src={item.emoji}
                 alt={item.name}
-                className={`object-contain ${item.category === "skins" ? "w-32 h-32" : "w-20 h-20"} ${!isSkin ? "float-animation" : ""}`}
+                className={`object-contain ${item.category === "skins" ? "w-20 h-20 sm:w-32 sm:h-32" : "w-16 h-16 sm:w-20 sm:h-20"} ${!isSkin ? "float-animation" : ""}`}
                 style={{ 
                   imageRendering: "pixelated",
                   ...(!isSkin ? { animationDelay: `${index * 0.2}s` } : {})
@@ -462,14 +462,14 @@ const Shop = () => {
             )}
           </div>
           <div
-            className={`font-bold mb-3 text-base ${
+            className={`font-bold mb-1 sm:mb-3 text-xs sm:text-base ${
               isDarkMode ? "text-white" : "text-gray-800"
             }`}
           >
             {item.name}
           </div>
           <div
-            className={`font-bold text-sm ${
+            className={`font-bold text-xs sm:text-sm ${
               isDarkMode ? "text-yellow-300" : "text-yellow-700"
             }`}
           >
@@ -481,19 +481,19 @@ const Shop = () => {
   };
 
   const renderInventoryModal = () => (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className={`relative rounded-3xl shadow-2xl p-8 w-full max-w-2xl border border-[#ffd700] flex flex-col items-center ${isDarkMode ? "bg-gray-900 border-gray-700" : "bg-white border-gray-500"}`}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className={`relative rounded-3xl shadow-2xl p-4 sm:p-8 w-full max-w-2xl border border-[#ffd700] flex flex-col items-center ${isDarkMode ? "bg-gray-900 border-gray-700" : "bg-white border-gray-500"}`}>
         <button
           onClick={closeInventoryModal}
-          className={`absolute top-4 right-4 text-2xl font-bold rounded-full w-10 h-10 flex items-center justify-center shadow ${isDarkMode ? "text-white bg-gray-700" : "text-gray-700 bg-white"}`}
+          className={`absolute top-2 right-2 sm:top-4 sm:right-4 text-xl sm:text-2xl font-bold rounded-full w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center shadow ${isDarkMode ? "text-white bg-gray-700" : "text-gray-700 bg-white"}`}
           aria-label="Close Inventory"
         >
           ×
         </button>
-        <div className="flex items-center gap-3 mb-6">
-          <span className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-amber-600"}`}>Backpack</span>
+        <div className="flex items-center gap-3 mb-4 sm:mb-6">
+          <span className={`text-lg sm:text-2xl font-bold ${isDarkMode ? "text-white" : "text-amber-600"}`}>Backpack</span>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 w-full">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-6 w-full">
           {inventory.length === 0 ? (
             <div className="col-span-full text-center text-gray-500">
               <div className="text-6xl mb-2">📦</div>
@@ -557,12 +557,12 @@ const Shop = () => {
           animation-play-state: paused;
         }
       `}</style>
-      <div className=" px-4 pb-8 space-y-8">
+      <div className="px-2 sm:px-4 pb-8 space-y-4 sm:space-y-8">
         {/* === HEADER === */}
         <header className="flex justify-between items-center">
           <div>
             <div
-              className={`font-bold text-lg ${
+              className={`font-bold text-sm sm:text-lg ${
                 isDarkMode ? "text-white" : "text-orange-700"
               }`}
             >
@@ -571,7 +571,7 @@ const Shop = () => {
                   <img
                     src={FireGif}
                     alt="Streak fire"
-                    className="w-7 h-7 object-contain mb-1.5"
+                    className="w-5 h-5 sm:w-7 sm:h-7 object-contain mb-1.5"
                   />
                 )}
                 <span>
@@ -583,19 +583,19 @@ const Shop = () => {
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             {/* Toggle Theme */}
             <button
               onClick={toggleDarkMode}
-              className={`relative w-14 h-7 rounded-full transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+              className={`relative w-12 h-6 sm:w-14 sm:h-7 rounded-full transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                 isDarkMode
                   ? "bg-gray-700 focus:ring-gray-500"
                   : "bg-yellow-400 focus:ring-yellow-500"
               }`}
             >
               <span
-                className={`absolute top-1 left-1 w-5 h-5 rounded-full bg-white shadow-md transform transition-transform duration-300 flex items-center justify-center ${
-                  isDarkMode ? "translate-x-8" : "translate-x-0"
+                className={`absolute top-0.5 left-0.5 sm:top-1 sm:left-1 w-5 h-5 rounded-full bg-white shadow-md transform transition-transform duration-300 flex items-center justify-center ${
+                  isDarkMode ? "translate-x-6 sm:translate-x-8" : "translate-x-0"
                 }`}
               >
                 {isDarkMode ? (
@@ -607,7 +607,7 @@ const Shop = () => {
             </button>
 
             <span
-              className={`text-2xl ${
+              className={`text-xl sm:text-2xl ${
                 isDarkMode ? "text-gray-400" : "text-gray-500"
               }`}
             >
@@ -615,7 +615,7 @@ const Shop = () => {
             </span>
             {/* Profile Picture */}
             <div
-              className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-xl bg-linear-to-br from-orange-500 to-red-500 text-white shadow-lg`}
+              className={`w-7 h-7 sm:w-9 sm:h-9 rounded-full flex items-center justify-center font-bold text-base sm:text-xl bg-linear-to-br from-orange-500 to-red-500 text-white shadow-lg`}
             >
               {user?.email ? user.email.charAt(0).toUpperCase() : "?"}
             </div>
@@ -623,24 +623,24 @@ const Shop = () => {
         </header>
 
         {/* === COINS + SELECTED ITEM SUMMARY === */}
-        <section className="flex justify-between items-center">
+        <section className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4">
           <div
-            className={`px-6 py-4 rounded-sm font-bold text-lg shadow-md flex items-center justify-between gap-3 border-2 ${
+            className={`px-4 sm:px-6 py-3 sm:py-4 rounded-sm font-bold text-sm sm:text-lg shadow-md flex items-center justify-between gap-3 border-2 ${
               isDarkMode
                 ? "bg-gray-900 text-yellow-300 border-amber-400"
                 : "bg-white text-yellow-800 border-amber-300"
             }`}
           >
             <span className="flex items-center gap-2">
-              <span className="text-2xl">🪙</span>
+              <span className="text-xl sm:text-2xl">🪙</span>
               <span>Coins</span>
             </span>
-            <span className="text-2xl tracking-wide">{userCoins}</span>
+            <span className="text-xl sm:text-2xl tracking-wide">{userCoins}</span>
           </div>
 
           {/* Selected item detail card */}
           <div
-            className={`px-16 py-4 rounded-sm border-2 shadow-sm flex items-center gap-4 ${
+            className={`px-4 sm:px-16 py-3 sm:py-4 rounded-sm border-2 shadow-sm flex items-center gap-3 sm:gap-4 ${
               isDarkMode
                 ? "bg-gray-900 border-amber-400 text-gray-100"
                 : "bg-white border-amber-200 text-gray-800"
@@ -648,26 +648,26 @@ const Shop = () => {
           >
             {selectedItem ? (
               <>
-                <div className="flex items-center justify-center w-16 h-16 rounded-xl bg-black/5">
+                <div className="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-black/5 flex-shrink-0">
                   {typeof selectedItem.emoji === "string" &&
                   selectedItem.emoji.includes(".") ? (
                     <img
                       src={selectedItem.emoji}
                       alt={selectedItem.name}
-                      className="object-contain w-12 h-12"
+                      className="object-contain w-10 h-10 sm:w-12 sm:h-12"
                       style={{ imageRendering: "pixelated" }}
                     />
                   ) : (
-                    <span className="text-3xl">{selectedItem.emoji}</span>
+                    <span className="text-2xl sm:text-3xl">{selectedItem.emoji}</span>
                   )}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-center justify-between gap-2 mb-1">
-                    <h3 className="font-semibold truncate">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2 mb-1">
+                    <h3 className="font-semibold truncate text-sm sm:text-base">
                       {selectedItem.name}
                     </h3>
                     <span
-                      className={`text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide ${
+                      className={`text-[10px] sm:text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide self-start sm:self-auto ${
                         isDarkMode
                           ? "bg-gray-800 text-amber-300"
                           : "bg-amber-100 text-amber-700"
@@ -676,10 +676,10 @@ const Shop = () => {
                       {selectedItem.category}
                     </span>
                   </div>
-                  <p className="text-xs line-clamp-2 opacity-80">
+                  <p className="text-[10px] sm:text-xs line-clamp-2 opacity-80">
                     {selectedItem.description}
                   </p>
-                  <div className="mt-2 text-sm font-bold flex items-center gap-2">
+                  <div className="mt-1 sm:mt-2 text-xs sm:text-sm font-bold flex items-center gap-2">
                     <span>💰</span>
                     <span>
                       {selectedItem.category === "characters" ||
@@ -693,7 +693,7 @@ const Shop = () => {
                 </div>
               </>
             ) : (
-              <p className="text-sm opacity-70">
+              <p className="text-xs sm:text-sm opacity-70">
                 Select an item from the shop to see its details and cost here.
               </p>
             )}
@@ -702,32 +702,32 @@ const Shop = () => {
 
         {/* === ITEMS SECTION === */}
         <main
-          className={`p-6 md:p-8 border-2 rounded-sm shadow-lg ${
+          className={`p-3 sm:p-6 md:p-8 border-2 rounded-sm shadow-lg ${
             isDarkMode
               ? "bg-gray-900 text-white border-amber-400"
               : "bg-white text-gray-800 border-amber-400/70"
           }`}
         >
           <h2
-            className={`text-2xl md:text-3xl font-bold mb-8 text-center font-['Press_Start_2P',cursive] ${
+            className={`text-lg sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-8 text-center font-['Press_Start_2P',cursive] ${
               isDarkMode ? "text-[#ffd700]" : "text-amber-600"
             }`}
           >
             Items for Purchase
           </h2>
 
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-6 md:gap-7">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-6 md:gap-7">
             {renderItems()}
           </div>
         </main>
 
         {/* === BOTTOM ACTION BAR === */}
-        <nav className="flex flex-col md:flex-row md:items-center justify-end gap-4 md:gap-5">
+        <nav className="flex flex-col sm:flex-row sm:items-center justify-end gap-3 sm:gap-4 md:gap-5">
           <button
             onClick={openInventoryModal}
-            className="px-7 py-4 font-bold text-xs cursor-pointer
+            className="px-4 sm:px-7 py-3 sm:py-4 font-bold text-[10px] sm:text-xs cursor-pointer
               font-['Press_Start_2P',cursive] uppercase tracking-[0.12em]  rounded-md
-              transition-transform duration-300 hover:-translate-y-1 shadow-md
+              transition-transform duration-300 hover:-translate-y-1 active:scale-95 shadow-md
               bg-linear-to-b from-[#ff7f50] to-[#ff4757] text-white"
           >
             INVENTORY
@@ -737,10 +737,10 @@ const Shop = () => {
           {selectedItem &&
             selectedItem.category !== "characters" &&
             selectedItem.category !== "skins" && (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 sm:gap-3">
                 <label
                   htmlFor="quantity"
-                  className={`font-bold text-sm md:text-base ${
+                  className={`font-bold text-xs sm:text-sm md:text-base ${
                     isDarkMode ? "text-white" : "text-gray-800"
                   }`}
                 >
@@ -756,7 +756,7 @@ const Shop = () => {
                       Math.max(1, parseInt(e.target.value) || 1)
                     )
                   }
-                  className={`w-24 px-2 py-1 border-2 text-center rounded-md ${
+                  className={`w-20 sm:w-24 px-2 py-1 border-2 text-center rounded-md ${
                     isDarkMode
                       ? "bg-gray-800 border-gray-600 text-white"
                       : "bg-white border-gray-400 text-gray-800"
@@ -771,20 +771,20 @@ const Shop = () => {
           <button
             onClick={handlePurchase}
             disabled={!selectedItem}
-            className={`px-7 py-4 font-bold text-xs cursor-pointer
+            className={`px-4 sm:px-7 py-3 sm:py-4 font-bold text-[10px] sm:text-xs cursor-pointer
 font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] rounded-md
-transition-transform duration-300 hover:-translate-y-1 shadow-md
+transition-transform duration-300 hover:-translate-y-1 active:scale-95 shadow-md
 bg-green-600 text-white
 ${selectedItem ? "" : "opacity-50 cursor-not-allowed"}`}
           >
             {selectedItem
               ? selectedItem.category === "characters"
-                ? `🔓 UNLOCK ${selectedItem.name.toUpperCase()} (${selectedItem.price} coins)`
+                ? `🔓 UNLOCK ${selectedItem.name.toUpperCase().slice(0, 10)}${selectedItem.name.length > 10 ? '...' : ''} (${selectedItem.price})`
                 : selectedItem.category === "skins"
-                ? `BUY ${selectedItem.name.toUpperCase()} (${selectedItem.price} coins)`
-                : `BUY ${selectedItem.name.toUpperCase()} (${
+                ? `BUY ${selectedItem.name.toUpperCase().slice(0, 10)}${selectedItem.name.length > 10 ? '...' : ''} (${selectedItem.price})`
+                : `BUY ${selectedItem.name.toUpperCase().slice(0, 8)}${selectedItem.name.length > 8 ? '...' : ''} (${
                     selectedItem.price * purchaseQuantity
-                  } coins)`
+                  })`
               : "PURCHASE"}
           </button>
         </nav>
