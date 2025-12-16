@@ -5,6 +5,7 @@ import { Navigate, Link } from "react-router-dom";
 import { type AuthContextType } from "../contexts/authContexts/auth";
 import { useTheme } from "../components/theme";
 import toast from "react-hot-toast";
+import { useMusic } from "../contexts/musicContext";
 
 const Login = () => {
   const { userLoggedIn } = useAuth() as AuthContextType;
@@ -12,6 +13,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const { resumeMainMusic } = useMusic();
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -20,6 +22,8 @@ const Login = () => {
     try {
       await doSignInWithEmailAndPassword(email, password);
       toast.success("Logged in successfully");
+      // Start background music right after a successful login (user gesture).
+      resumeMainMusic();
     } catch (err: unknown) {
       toast.error("Failed to login. Check your credentials.");
     } finally {
@@ -33,6 +37,8 @@ const Login = () => {
     try {
       await doSignInWithGoogle();
       toast.success("Logged in with Google");
+      // Start background music right after a successful login with Google.
+      resumeMainMusic();
     } catch (err: unknown) {
       toast.error("Google sign-in failed");
     } finally {

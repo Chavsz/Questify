@@ -12,6 +12,8 @@ const MiniCrossBowIdle = "/assets/MiniCrossBowIdle.gif";
 const MiniArchMageIdle = "/assets/MiniArchMageIdle.gif";
 const MiniKingIdle = "/assets/MiniKingIdle.gif";
 
+import { MdDelete } from "react-icons/md";
+
 // Avatar character list (sync with avatar.tsx)
 const miniSwordCrew = [
   {
@@ -284,7 +286,7 @@ const Quest = () => {
 
   const getQuestItemClasses = (status: string) => {
     const baseClasses =
-      "p-6 mb-4 flex items-center cursor-pointer border-2 shadow-sm transition-all duration-200";
+      "p-6 mb-4 flex items-center cursor-pointer border-2 rounded-md shadow-md hover:translate-y-[-3px] transition-transform duration-400 mt-1";
     switch (status) {
       case "completed":
         return `${baseClasses} border-green-500 ${
@@ -616,13 +618,13 @@ const Quest = () => {
     );
 
   return (
-    <div className="min-h-screen">
+    <div className={`px-4 pb-8  ${isDarkMode ? "min-h-screen bg-[#020617]" : "min-h-screen bg-[#fafaff]"}`}>
       <div className="min-h-screen flex flex-col">
         {/* Header */}
         <header className={`flex justify-between items-center mb-6`}>
           <div>
             <div
-              className={`font-bold text-lg ml-5 ${
+              className={`font-bold text-lg ${
                 isDarkMode ? "text-white" : " text-orange-600"
               }`}
             >
@@ -687,7 +689,7 @@ const Quest = () => {
           {/* Left Sidebar - Avatar */}
           <aside className="flex flex-col">
             <div
-              className={`p-5 text-center font-bold border-2 ${
+              className={`p-5 text-center font-bold border-2 rounded-md shadow-md hover:translate-y-[-3px] transition-transform duration-300 ${
                 isDarkMode
                   ? "bg-gray-900 border-amber-400"
                   : "bg-white border-amber-500"
@@ -731,7 +733,7 @@ const Quest = () => {
 
           {/* Quest List Container */}
           <main
-            className={`p-8 flex flex-col border-2 ${
+            className={`p-8 flex flex-col border-2 rounded-md shadow-md ${
               isDarkMode
                 ? "bg-gray-900 border-amber-400"
                 : "bg-white border-amber-500"
@@ -855,10 +857,9 @@ const Quest = () => {
                             },
                           });
                         }}
-                        className="px-3 py-1 font-bold text-xs
-                                  font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] border-2 rounded-sm
-                                  transition-transform duration-300 hover:-translate-y-1
-                                  bg-linear-to-b from-[#ffd700] to-[#ffb700] border-[#8b6914] text-[#1a1a2e]"
+                        className="px-3 py-1 font-bold text-xs cursor-pointer
+                                  font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] rounded-s
+                                  bg-linear-to-b from-[#ffd700] to-[#ffb700] text-gray-700"
                       >
                         REGENERATE
                       </button>
@@ -877,12 +878,11 @@ const Quest = () => {
                             },
                           });
                         }}
-                        className="px-3 py-1 font-bold text-xs
-                                  font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] border-2 rounded-sm
-                                  transition-transform duration-300 hover:-translate-y-1
-                                  bg-linear-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white"
+                        className="px-1.5 py-1 font-bold text-md cursor-pointer
+                                  font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] rounded-sm
+                                  bg-linear-to-b from-[#ff6348] to-[#ff4757] text-white"
                       >
-                        DELETE
+                        <MdDelete/>
                       </button>
                     </div>
                   </div>
@@ -896,29 +896,29 @@ const Quest = () => {
         <nav className="flex justify-end gap-4">
           <button
             onClick={() => setIsUploadModalOpen(true)}
-            className="p-6 font-bold text-xs cursor-pointer
-font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] border-2 rounded-sm
+            className="px-7 py-4 font-bold text-xs cursor-pointer
+font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] rounded-md
 transition-transform duration-300 hover:-translate-y-1
-bg-linear-to-b from-[#ffd700] to-[#ffb700] border-[#8b6914] text-[#1a1a2e]"
+bg-linear-to-b from-[#ffd700] to-[#ffb700]  text-[#1a1a2e]"
           >
             <span>UPLOAD RESOURCE</span>
           </button>
           <button
             onClick={checkInventory}
-            className="p-6 font-bold text-xs cursor-pointer
-font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] border-2 rounded-sm
+            className="px-7 py-4 font-bold text-xs cursor-pointer
+font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] rounded-md
 transition-transform duration-300 hover:-translate-y-1
-bg-linear-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white"
+bg-linear-to-b from-[#ff6348] to-[#ff4757]  text-white"
           >
             <span>CHECK INVENTORY</span>
           </button>
           {isInventoryModalOpen && renderInventoryModal()}
           <button
             onClick={embarkOnQuest}
-            className="p-6 font-bold text-xs cursor-pointer
-font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] border-2 rounded-sm
+            className="px-7 py-4 font-bold text-xs cursor-pointer
+font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] rounded-md
 transition-transform duration-300 hover:-translate-y-1
-bg-linear-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white"
+bg-linear-to-b from-[#ff6348] to-[#ff4757]  text-white"
           >
             <span>EMBARK ON QUEST</span>
           </button>

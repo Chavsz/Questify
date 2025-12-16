@@ -187,13 +187,13 @@ function Hub() {
   }, [gameActive, gameOver, playerY]);
 
   return (
-    <div className="min-h-screen">
+    <div className={`px-4 pb-8  ${isDarkMode ? "min-h-screen bg-[#020617]" : "min-h-screen bg-[#fafaff]"}`}>
       <div className="">
         {/* Header */}
         <header className={`flex justify-between items-center mb-6`}>
           <div>
             <div
-              className={`font-bold text-lg ml-5 ${
+              className={`font-bold text-lg ${
                 isDarkMode ? "text-white" : " text-orange-600"
               }`}
             >
@@ -256,7 +256,7 @@ function Hub() {
         </header>
 
         {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-[250px_1fr] gap-8 mb-10">
+        <div className="grid grid-cols-1 lg:grid-cols-[250px_1fr] gap-8 mb-6">
           {/* Left Sidebar */}
           <aside className="flex flex-col gap-6">
             {/* Important Info Cards */}
@@ -264,7 +264,7 @@ function Hub() {
               <div
                 className={`p-4 font-bold text-lg text-center border-2 transition-transform duration-200 ${
                   isDarkMode
-                    ? "bg-gray-800 text-white border-amber-400"
+                    ? "bg-gray-900 text-white border-amber-400"
                     : "bg-gray-50 text-gray-600 border-amber-500"
                 }`}
               >
@@ -278,7 +278,7 @@ function Hub() {
               <div
                 className={`p-4 font-bold text-lg text-center border-2 transition-transform duration-200 ${
                   isDarkMode
-                    ? "bg-gray-800 text-white border-amber-400"
+                    ? "bg-gray-900 text-white border-amber-400"
                     : "bg-gray-50 text-gray-600 border-amber-500"
                 }`}
               >
@@ -305,7 +305,7 @@ function Hub() {
               <div
                 className={`p-4 font-bold text-lg text-center border-2 transition-transform duration-200 ${
                   isDarkMode
-                    ? "bg-gray-800 text-white border-amber-400"
+                    ? "bg-gray-900 text-white border-amber-400"
                     : "bg-gray-50 text-gray-600 border-amber-500"
                 }`}
               >
@@ -327,7 +327,7 @@ function Hub() {
 
           <main className="flex flex-col gap-8">
             <div
-              className={`p-10 flex flex-col justify-center items-center min-h-[400px] relative border-2 transition-transform duration-200 ${
+              className={`p-10 flex flex-col rounded-md justify-center items-center min-h-[400px] relative border-2 transition-transform duration-200 shadow-md ${
                 isDarkMode
                   ? "bg-gray-900 border-amber-400"
                   : "bg-white border-amber-500"
@@ -340,11 +340,14 @@ function Hub() {
                 JUMPER GAME
               </h3>
               
-              <div className={`w-full relative overflow-hidden border-4 bg-linear-to-b ${
-                isDarkMode
-                  ? "from-sky-900 to-sky-700 border-blue-500"
-                  : "from-sky-400 to-sky-200 border-blue-400"
-              }`} style={{ height: "380px" }}>
+              <div
+                className={`w-full relative overflow-hidden border-2 ${
+                  isDarkMode
+                    ? "bg-sky-900 border-blue-500"
+                    : "bg-linear-to-b from-sky-400 to-sky-200 border-blue-400"
+                }`}
+                style={{ height: "380px" }}
+              >
                 {/* Clouds */}
                 <div className="absolute top-8 left-10 text-2xl opacity-50">☁️</div>
                 <div className="absolute top-16 left-40 text-xl opacity-40">☁️</div>
@@ -427,17 +430,17 @@ function Hub() {
               <div className="flex flex-col items-center gap-4 mt-6">
                 <button
                   onClick={handleJump}
-                  className={`px-8 py-3 text-sm font-bold font-['Press_Start_2P',cursive] border-2 rounded-sm transition-all duration-200 hover:-translate-y-1 active:scale-95 ${
+                  className={`px-8 py-3 text-sm font-['Press_Start_2P',cursive] rounded-sm transition-all duration-200 hover:-translate-y-1 active:scale-95 border ${
                     gameActive && !gameOver
                       ? isDarkMode
-                        ? "bg-green-700 border-green-500 text-white hover:bg-green-600"
-                        : "bg-green-600 border-green-400 text-white hover:bg-green-500"
+                        ? "bg-green-700  text-white hover:bg-green-600"
+                        : "bg-green-600  text-white hover:bg-green-500"
                       : isDarkMode
-                      ? "bg-blue-700 border-blue-500 text-white hover:bg-blue-600"
-                      : "bg-blue-600 border-blue-400 text-white hover:bg-blue-500"
+                      ? "bg-blue-700  text-white hover:bg-blue-600 border-0 shadow-[0_4px_8px_rgba(37,99,235,0.5),4px_0_8px_rgba(37,99,235,0.5),-4px_0_8px_rgba(37,99,235,0.5)]"
+                      : "bg-blue-600  text-white hover:bg-blue-500"
                   }`}
                 >
-                  {!gameActive ? "START GAME" : gameOver ? "🔄 PLAY AGAIN" : "⬆️ JUMP (SPACE)"}
+                  {!gameActive ? "START GAME" : gameOver ? "PLAY AGAIN" : "JUMP (SPACE)"}
                 </button>
                 
                 {!gameActive && !gameOver && highScore > 0 && (
@@ -452,7 +455,7 @@ function Hub() {
 
             {/* Weekly quest completion activity */}
             <div
-              className={`p-8 min-h-[300px] border-2 ${
+              className={`p-8 min-h-[300px] border-2 rounded-md shadow-md ${
                 isDarkMode
                   ? "bg-gray-900 text-white border-amber-400"
                   : "bg-white text-gray-600 border-amber-500"
@@ -519,11 +522,11 @@ function Hub() {
           <Link
             to="/quest"
             className="px-7 py-4 font-bold text-xs cursor-pointer text-center
-font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] border-2 rounded-sm
-transition-transform duration-300 hover:-translate-y-1
-bg-linear-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white"
+            font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] rounded-md
+            transition-transform duration-300 hover:-translate-y-1
+            bg-linear-to-b from-[#ff6348] to-[#ff4757]  text-white"
           >
-            ⚔️ GO ON A QUEST!
+            GO ON A QUEST!
           </Link>
         </nav>
       </div>

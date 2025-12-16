@@ -362,7 +362,7 @@ const Shop = () => {
     modal.open && (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
         <div
-          className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md border-2 flex flex-col items-center relative"
+          className={`rounded-2xl shadow-2xl p-8 w-full max-w-md border-2 flex flex-col items-center relative ${isDarkMode ? "bg-gray-900 border-gray-700" : "bg-white border-gray-500"}`}
           style={{
             borderColor:
               modal.type === "success"
@@ -397,7 +397,7 @@ const Shop = () => {
               {modal.title}
             </span>
           </div>
-          <div className="text-gray-700 text-center whitespace-pre-line mb-2 text-lg">
+          <div className={`text-center whitespace-pre-line mb-2 text-lg ${isDarkMode ? "text-white" : "text-gray-700"}`}>
             {modal.message}
           </div>
         </div>
@@ -430,7 +430,7 @@ const Shop = () => {
           onClick={() => selectItem(item as ShopItem)}
         >
           <div
-            className={`w-full h-32 mb-4 flex items-center justify-center text-5xl ${
+            className={`w-full ${item.category === "skins" ? "h-40" : "h-32"} mb-4 flex items-center justify-center text-5xl ${
               isDarkMode ? "bg-gray-800" : "bg-gray-100 border border-gray-300"
             }`}
           >
@@ -438,7 +438,7 @@ const Shop = () => {
               <img
                 src={item.emoji}
                 alt={item.name}
-                className="object-contain w-20 h-20"
+                className={`object-contain ${item.category === "skins" ? "w-32 h-32" : "w-20 h-20"}`}
                 style={{ imageRendering: "pixelated" }}
               />
             ) : typeof item.emoji === "string" ? (
@@ -447,7 +447,7 @@ const Shop = () => {
               <img
                 src={item.emoji}
                 alt={item.name}
-                className="object-contain w-20 h-20"
+                className={`object-contain ${item.category === "skins" ? "w-32 h-32" : "w-20 h-20"}`}
                 style={{ imageRendering: "pixelated" }}
               />
             )}
@@ -524,170 +524,249 @@ const Shop = () => {
   );
 
   return (
-    <div className="min-h-screen">
-      {/* === HEADER === */}
-      <header className={`flex justify-between items-center mb-6`}>
-        <div>
-          <div
-            className={`font-bold text-lg ml-5 ${
-              isDarkMode ? "text-white" : " text-orange-600"
-            }`}
-          >
-            <div className="flex items-center">
-              {!loadingStreak && (streak ?? 0) > 0 && (
-                <img
-                  src={FireGif}
-                  alt="Streak fire"
-                  className="w-7 h-7 object-contain mb-1.5"
-                />
-              )}
-              <span>
-                Streak:{" "}
-                {loadingStreak
-                  ? "..."
-                  : `${streak ?? 0} day${streak === 1 ? "" : "s"}`}
-              </span>
+    <div
+      className={
+        isDarkMode
+          ? "min-h-screen bg-[#020617]"
+          : "min-h-screen bg-[#fafaff]"
+      }
+    >
+      <div className=" px-4 pb-8 space-y-8">
+        {/* === HEADER === */}
+        <header className="flex justify-between items-center">
+          <div>
+            <div
+              className={`font-bold text-lg ${
+                isDarkMode ? "text-white" : "text-orange-700"
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                {!loadingStreak && (streak ?? 0) > 0 && (
+                  <img
+                    src={FireGif}
+                    alt="Streak fire"
+                    className="w-7 h-7 object-contain mb-1.5"
+                  />
+                )}
+                <span>
+                  Streak:{" "}
+                  {loadingStreak
+                    ? "..."
+                    : `${streak ?? 0} day${streak === 1 ? "" : "s"}`}
+                </span>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="flex items-center gap-4">
-          {/* Toggle Theme */}
-          <button
-            onClick={toggleDarkMode}
-            className={`relative w-14 h-7 rounded-full transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-              isDarkMode
-                ? "bg-gray-700 focus:ring-gray-500"
-                : "bg-yellow-400 focus:ring-yellow-500"
-            }`}
-          >
-            <span
-              className={`absolute top-1 left-1 w-5 h-5 rounded-full bg-white shadow-md transform transition-transform duration-300 flex items-center justify-center ${
-                isDarkMode ? "translate-x-8" : "translate-x-0"
-              }`}
-            >
-              {isDarkMode ? (
-                <FaRegMoon className="text-gray-700 text-xs" />
-              ) : (
-                <IoSunnyOutline className="text-yellow-500 text-xs" />
-              )}
-            </span>
-          </button>
-          
-          <span
-            className={`text-2xl ${
-              isDarkMode ? "text-gray-400" : "text-gray-600"
-            }`}
-          >
-            |
-          </span>
-          {/* Profile Picture */}
-          <div
-            className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-xl bg-linear-to-r from-orange-500 to-red-500 ${
-              isDarkMode ? " text-white" : " text-white"
-            }`}
-          >
-            {user?.email ? user.email.charAt(0).toUpperCase() : "?"}
-          </div>
-        </div>
-      </header>
-
-      {/* === COINS DISPLAY (SEPARATE — not inside header) === */}
-      <div className="flex justify-start mb-8">
-        <div
-          className={`px-8 py-5 font-bold text-xl shadow-md flex items-center gap-3 border-2 ${
-            isDarkMode
-              ? "bg-gray-900 text-yellow-300 border-amber-400"
-              : "bg-white text-yellow-800 border-amber-500"
-          }`}
-        >
-          🟡 {userCoins} Coins
-        </div>
-      </div>
-
-      {/* === ITEMS SECTION === */}
-      <main
-        className={`p-10 mb-10 border-2 ${
-          isDarkMode
-            ? "bg-gray-900 text-white border-amber-400"
-            : "bg-white text-gray-800 border-amber-500"
-        }`}
-      >
-        <h2
-          className={`text-3xl font-bold mb-8 text-center font-['Press_Start_2P',cursive] ${
-            isDarkMode ? "text-[#ffd700]" : "text-amber-600"
-          }`}
-        >
-          Items for Purchase
-        </h2>
-
-        <div className="grid sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-7">
-          {renderItems()}
-        </div>
-      </main>
-
-      {/* === BOTTOM BUTTONS === */}
-      <nav className="flex justify-end gap-5">
-        <button
-          onClick={openInventoryModal}
-          className="px-7 py-4 font-bold text-xs cursor-pointer
-            font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] border-2 rounded-sm
-            transition-transform duration-300 hover:-translate-y-1
-            bg-linear-to-b from-[#ff6348] to-[#ff4757] border-[#c0392b] text-white"
-        >
-          INVENTORY
-        </button>
-
-        {selectedItem && selectedItem.category !== "characters" && selectedItem.category !== "skins" && (
-          <div className="flex items-center gap-3">
-            <label
-              htmlFor="quantity"
-              className={`font-bold text-lg ${
-                isDarkMode ? "text-white" : "text-gray-800"
-              }`}
-            >
-              Qty:
-            </label>
-            <input
-              id="quantity"
-              type="number"
-              min={1}
-              value={purchaseQuantity}
-              onChange={(e) =>
-                setPurchaseQuantity(Math.max(1, parseInt(e.target.value) || 1))
-              }
-              className={`w-20 px-2 py-1 border-2 text-lg text-center ${
+          <div className="flex items-center gap-4">
+            {/* Toggle Theme */}
+            <button
+              onClick={toggleDarkMode}
+              className={`relative w-14 h-7 rounded-full transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                 isDarkMode
-                  ? "bg-gray-700 border-gray-600 text-white"
-                  : "bg-white border-gray-400 text-gray-800"
+                  ? "bg-gray-700 focus:ring-gray-500"
+                  : "bg-yellow-400 focus:ring-yellow-500"
               }`}
-              style={{
-                fontFamily: "Press Start 2P, monospace",
-                fontSize: "10px",
-              }}
-            />
+            >
+              <span
+                className={`absolute top-1 left-1 w-5 h-5 rounded-full bg-white shadow-md transform transition-transform duration-300 flex items-center justify-center ${
+                  isDarkMode ? "translate-x-8" : "translate-x-0"
+                }`}
+              >
+                {isDarkMode ? (
+                  <FaRegMoon className="text-gray-700 text-xs" />
+                ) : (
+                  <IoSunnyOutline className="text-yellow-500 text-xs" />
+                )}
+              </span>
+            </button>
+
+            <span
+              className={`text-2xl ${
+                isDarkMode ? "text-gray-400" : "text-gray-500"
+              }`}
+            >
+              |
+            </span>
+            {/* Profile Picture */}
+            <div
+              className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-xl bg-linear-to-br from-orange-500 to-red-500 text-white shadow-lg`}
+            >
+              {user?.email ? user.email.charAt(0).toUpperCase() : "?"}
+            </div>
           </div>
-        )}
-        <button
-          onClick={handlePurchase}
-          disabled={!selectedItem}
-          className={`px-7 py-4 font-bold text-xs cursor-pointer
-font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] border-2 rounded-md
-transition-transform duration-300 hover:-translate-y-1
+        </header>
+
+        {/* === COINS + SELECTED ITEM SUMMARY === */}
+        <section className="flex justify-between items-center">
+          <div
+            className={`px-6 py-4 rounded-sm font-bold text-lg shadow-md flex items-center justify-between gap-3 border-2 ${
+              isDarkMode
+                ? "bg-gray-900 text-yellow-300 border-amber-400"
+                : "bg-white text-yellow-800 border-amber-300"
+            }`}
+          >
+            <span className="flex items-center gap-2">
+              <span className="text-2xl">🪙</span>
+              <span>Coins</span>
+            </span>
+            <span className="text-2xl tracking-wide">{userCoins}</span>
+          </div>
+
+          {/* Selected item detail card */}
+          <div
+            className={`px-16 py-4 rounded-sm border-2 shadow-sm flex items-center gap-4 ${
+              isDarkMode
+                ? "bg-gray-900 border-amber-400 text-gray-100"
+                : "bg-white border-amber-200 text-gray-800"
+            }`}
+          >
+            {selectedItem ? (
+              <>
+                <div className="flex items-center justify-center w-16 h-16 rounded-xl bg-black/5">
+                  {typeof selectedItem.emoji === "string" &&
+                  selectedItem.emoji.includes(".") ? (
+                    <img
+                      src={selectedItem.emoji}
+                      alt={selectedItem.name}
+                      className="object-contain w-12 h-12"
+                      style={{ imageRendering: "pixelated" }}
+                    />
+                  ) : (
+                    <span className="text-3xl">{selectedItem.emoji}</span>
+                  )}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center justify-between gap-2 mb-1">
+                    <h3 className="font-semibold truncate">
+                      {selectedItem.name}
+                    </h3>
+                    <span
+                      className={`text-xs font-semibold px-2 py-1 rounded-full uppercase tracking-wide ${
+                        isDarkMode
+                          ? "bg-gray-800 text-amber-300"
+                          : "bg-amber-100 text-amber-700"
+                      }`}
+                    >
+                      {selectedItem.category}
+                    </span>
+                  </div>
+                  <p className="text-xs line-clamp-2 opacity-80">
+                    {selectedItem.description}
+                  </p>
+                  <div className="mt-2 text-sm font-bold flex items-center gap-2">
+                    <span>💰</span>
+                    <span>
+                      {selectedItem.category === "characters" ||
+                      selectedItem.category === "skins"
+                        ? `${selectedItem.price} coins`
+                        : `${selectedItem.price} x ${purchaseQuantity} = ${
+                            selectedItem.price * purchaseQuantity
+                          } coins`}
+                    </span>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <p className="text-sm opacity-70">
+                Select an item from the shop to see its details and cost here.
+              </p>
+            )}
+          </div>
+        </section>
+
+        {/* === ITEMS SECTION === */}
+        <main
+          className={`p-6 md:p-8 border-2 rounded-sm shadow-lg ${
+            isDarkMode
+              ? "bg-gray-900 text-white border-amber-400"
+              : "bg-white text-gray-800 border-amber-400/70"
+          }`}
+        >
+          <h2
+            className={`text-2xl md:text-3xl font-bold mb-8 text-center font-['Press_Start_2P',cursive] ${
+              isDarkMode ? "text-[#ffd700]" : "text-amber-600"
+            }`}
+          >
+            Items for Purchase
+          </h2>
+
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-6 md:gap-7">
+            {renderItems()}
+          </div>
+        </main>
+
+        {/* === BOTTOM ACTION BAR === */}
+        <nav className="flex flex-col md:flex-row md:items-center justify-end gap-4 md:gap-5">
+          {!selectedItem && (
+            <button
+              onClick={openInventoryModal}
+              className="px-7 py-4 font-bold text-xs cursor-pointer
+                font-['Press_Start_2P',cursive] uppercase tracking-[0.12em]  rounded-md
+                transition-transform duration-300 hover:-translate-y-1 shadow-md
+                bg-linear-to-b from-[#ff7f50] to-[#ff4757] text-white"
+            >
+              INVENTORY
+            </button>
+          )}
+
+          {selectedItem &&
+            selectedItem.category !== "characters" &&
+            selectedItem.category !== "skins" && (
+              <div className="flex items-center gap-3">
+                <label
+                  htmlFor="quantity"
+                  className={`font-bold text-sm md:text-base ${
+                    isDarkMode ? "text-white" : "text-gray-800"
+                  }`}
+                >
+                  Qty:
+                </label>
+                <input
+                  id="quantity"
+                  type="number"
+                  min={1}
+                  value={purchaseQuantity}
+                  onChange={(e) =>
+                    setPurchaseQuantity(
+                      Math.max(1, parseInt(e.target.value) || 1)
+                    )
+                  }
+                  className={`w-24 px-2 py-1 border-2 text-center rounded-md ${
+                    isDarkMode
+                      ? "bg-gray-800 border-gray-600 text-white"
+                      : "bg-white border-gray-400 text-gray-800"
+                  }`}
+                  style={{
+                    fontFamily: "Press Start 2P, monospace",
+                    fontSize: "10px",
+                  }}
+                />
+              </div>
+            )}
+          <button
+            onClick={handlePurchase}
+            disabled={!selectedItem}
+            className={`px-7 py-4 font-bold text-xs cursor-pointer
+font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] rounded-md
+transition-transform duration-300 hover:-translate-y-1 shadow-md
 bg-green-600 text-white
 ${selectedItem ? "" : "opacity-50 cursor-not-allowed"}`}
-        >
-          {selectedItem
-            ? selectedItem.category === "characters"
-              ? `🔓 UNLOCK ${selectedItem.name.toUpperCase()} (${selectedItem.price} coins)`
-              : selectedItem.category === "skins"
-              ? `💳 BUY ${selectedItem.name.toUpperCase()} (${selectedItem.price} coins)`
-              : `💳 BUY ${selectedItem.name.toUpperCase()} (${selectedItem.price * purchaseQuantity} coins)`
-            : "PURCHASE"}
-        </button>
-      </nav>
+          >
+            {selectedItem
+              ? selectedItem.category === "characters"
+                ? `🔓 UNLOCK ${selectedItem.name.toUpperCase()} (${selectedItem.price} coins)`
+                : selectedItem.category === "skins"
+                ? `BUY ${selectedItem.name.toUpperCase()} (${selectedItem.price} coins)`
+                : `BUY ${selectedItem.name.toUpperCase()} (${
+                    selectedItem.price * purchaseQuantity
+                  } coins)`
+              : "PURCHASE"}
+          </button>
+        </nav>
 
-      {isInventoryModalOpen && renderInventoryModal()}
-      {renderModal()}
+        {isInventoryModalOpen && renderInventoryModal()}
+        {renderModal()}
+      </div>
     </div>
   );
 };

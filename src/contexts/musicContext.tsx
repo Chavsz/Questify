@@ -18,7 +18,7 @@ export const MusicProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const audio = new Audio(titleScreenBgm);
     audio.loop = true;
-    audio.volume = 0.5;
+    audio.volume = 0.7;
     musicRef.current = audio;
     audio.play().catch(() => {/* autoplay blocked */});
     
@@ -52,7 +52,30 @@ export const MusicProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const toggleMute = () => {
-    setIsMuted(m => !m);
+    setIsMuted(prev => {
+      const next = !prev;
+
+      // Make sure this user interaction directly controls the audio element.
+      // This helps bypass browser autoplay restrictions after refresh / login.
+      const audio = musicRef.current;
+      if (audio) {
+        audio.muted = next;
+
+        if (next) {
+          // Muted – pause to save resources.
+          audio.pause();
+        } else {
+          // Unmuted – try to start playback immediately on this click.
+          audio
+            .play()
+            .catch(() => {
+              // If play still fails, the user can try again.
+            });
+        }
+      }
+
+      return next;
+    });
   };
 
   return (

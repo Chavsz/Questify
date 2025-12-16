@@ -31,16 +31,16 @@
 }
 
 .dark {
-  /* Dark mode colors */
-  --bg-primary: #111827; /* Gray-900 */
-  --bg-secondary: #1f2937; /* Gray-800 */
-  --bg-card: #1f2937; /* Gray-800 */
-  --bg-input: #374151; /* Gray-700 */
-  --text-primary: #f3f4f6; /* Gray-100 */
-  --text-secondary: #9ca3af; /* Gray-400 */
-  --border-color: #374151; /* Gray-700 */
-  --accent-primary: #4f46e5; /* Indigo-600 */
-  --accent-hover: #4338ca; /* Indigo-700 */
+  /* Dark mode colors – tuned for better contrast */
+  --bg-primary: #020617; /* slate-950 */
+  --bg-secondary: #020617; /* page background */
+  --bg-card: #020617; /* main containers */
+  --bg-input: #020617; /* inputs and subtle cards */
+  --text-primary: #e5e7eb; /* gray-200 */
+  --text-secondary: #9ca3af; /* gray-400 */
+  --border-color: #1f2937; /* gray-800 */
+  --accent-primary: #4f46e5; /* indigo-600 */
+  --accent-hover: #4338ca; /* indigo-700 */
 }
 
 body {
