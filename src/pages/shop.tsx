@@ -413,8 +413,9 @@ const Shop = () => {
         </div>
       );
     }
-    return shopItems.map((item) => {
+    return shopItems.map((item, index) => {
       const isSelected = selectedItem?.id === item.id;
+      const isSkin = item.category === "skins";
       return (
         <div
           key={item.id}
@@ -438,17 +439,25 @@ const Shop = () => {
               <img
                 src={item.emoji}
                 alt={item.name}
-                className={`object-contain ${item.category === "skins" ? "w-32 h-32" : "w-20 h-20"}`}
-                style={{ imageRendering: "pixelated" }}
+                className={`object-contain ${item.category === "skins" ? "w-32 h-32" : "w-20 h-20"} ${!isSkin ? "float-animation" : ""}`}
+                style={{ 
+                  imageRendering: "pixelated",
+                  ...(!isSkin ? { animationDelay: `${index * 0.2}s` } : {})
+                }}
               />
             ) : typeof item.emoji === "string" ? (
-              item.emoji
+              <span className={!isSkin ? "float-animation" : ""} style={!isSkin ? { animationDelay: `${index * 0.2}s` } : {}}>
+                {item.emoji}
+              </span>
             ) : (
               <img
                 src={item.emoji}
                 alt={item.name}
-                className={`object-contain ${item.category === "skins" ? "w-32 h-32" : "w-20 h-20"}`}
-                style={{ imageRendering: "pixelated" }}
+                className={`object-contain ${item.category === "skins" ? "w-32 h-32" : "w-20 h-20"} ${!isSkin ? "float-animation" : ""}`}
+                style={{ 
+                  imageRendering: "pixelated",
+                  ...(!isSkin ? { animationDelay: `${index * 0.2}s` } : {})
+                }}
               />
             )}
           </div>
@@ -531,6 +540,23 @@ const Shop = () => {
           : "min-h-screen bg-[#fafaff]"
       }
     >
+      <style>{`
+        @keyframes floatUpDown {
+          0%, 100% {
+            transform: translateY(0);
+          }
+          50% {
+            transform: translateY(-3.5px);
+          }
+        }
+        .float-animation {
+          animation: floatUpDown 2s ease-in-out infinite;
+          will-change: transform;
+        }
+        .float-animation:hover {
+          animation-play-state: paused;
+        }
+      `}</style>
       <div className=" px-4 pb-8 space-y-8">
         {/* === HEADER === */}
         <header className="flex justify-between items-center">
@@ -697,17 +723,16 @@ const Shop = () => {
 
         {/* === BOTTOM ACTION BAR === */}
         <nav className="flex flex-col md:flex-row md:items-center justify-end gap-4 md:gap-5">
-          {!selectedItem && (
-            <button
-              onClick={openInventoryModal}
-              className="px-7 py-4 font-bold text-xs cursor-pointer
-                font-['Press_Start_2P',cursive] uppercase tracking-[0.12em]  rounded-md
-                transition-transform duration-300 hover:-translate-y-1 shadow-md
-                bg-linear-to-b from-[#ff7f50] to-[#ff4757] text-white"
-            >
-              INVENTORY
-            </button>
-          )}
+          <button
+            onClick={openInventoryModal}
+            className="px-7 py-4 font-bold text-xs cursor-pointer
+              font-['Press_Start_2P',cursive] uppercase tracking-[0.12em]  rounded-md
+              transition-transform duration-300 hover:-translate-y-1 shadow-md
+              bg-linear-to-b from-[#ff7f50] to-[#ff4757] text-white"
+          >
+            INVENTORY
+          </button>
+          
 
           {selectedItem &&
             selectedItem.category !== "characters" &&
