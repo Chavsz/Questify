@@ -262,62 +262,68 @@ function Hub() {
             {/* Important Info Cards */}
             <div className="flex flex-col gap-4">
               <div
-                className={`p-4 font-bold text-lg text-center border-2 transition-transform duration-200 ${
+                className={`p-5 font-bold text-lg text-center border-2 rounded-lg transition-all duration-300 hover:scale-105 shadowd-md  ${
                   isDarkMode
                     ? "bg-gray-900 text-white border-amber-400"
-                    : "bg-gray-50 text-gray-600 border-amber-500"
+                    : "bg-gray-50 text-gray-600 border-amber-500 "
                 }`}
               >
-                Level:{" "}
-                <span
-                  className={isDarkMode ? "text-[#ffd700]" : "text-amber-600"}
-                >
-                  {level}
-                </span>
+                <div className="text-sm mb-1 opacity-80">Level</div>
+                <div className="text-3xl">
+                  <span
+                    className={isDarkMode ? "text-[#ffd700]" : "text-amber-600"}
+                  >
+                    {level}
+                  </span>
+                </div>
               </div>
               <div
-                className={`p-4 font-bold text-lg text-center border-2 transition-transform duration-200 ${
+                className={`p-5 font-bold text-lg text-center border-2 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg ${
                   isDarkMode
-                    ? "bg-gray-900 text-white border-amber-400"
-                    : "bg-gray-50 text-gray-600 border-amber-500"
+                    ? "bg-gray-900 text-white border-amber-400 shadow-amber-400/20"
+                    : "bg-gray-50 text-gray-600 border-amber-500 shadow-amber-500/20"
                 }`}
               >
-                EXP: {exp} / {expToNext}
+                <div className="text-sm mb-2 opacity-80">Experience</div>
+                <div className="text-sm mb-3">
+                  {exp} / {expToNext}
+                </div>
                 <div
-                  className={`relative w-full mt-2 h-5 border-2 rounded-sm overflow-hidden ${
+                  className={`relative w-full h-6 border-2 rounded-lg overflow-hidden shadow-inner ${
                     isDarkMode
                       ? "bg-gray-900 border-gray-600"
                       : "bg-gray-200 border-gray-400"
                   }`}
                 >
                   <div
-                    className="h-full bg-linear-to-r from-[#ffd700] to-[#ffed4e] transition-[width] duration-300"
+                    className="h-full bg-linear-to-r from-[#ffd700] to-[#ffed4e] transition-[width] duration-500 ease-out rounded-sm"
                     style={{ width: `${expProgress}%` }}
                   ></div>
                   <div
-                    className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xs font-bold text-white"
-                    style={{ textShadow: "1px 1px 0 black", zIndex: 1 }}
+                    className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xs font-bold text-white pointer-events-none"
+                    style={{ textShadow: "1px 1px 2px rgba(0,0,0,0.8)", zIndex: 1 }}
                   >
                     {expProgress}%
                   </div>
                 </div>
               </div>
               <div
-                className={`p-4 font-bold text-lg text-center border-2 transition-transform duration-200 ${
+                className={`p-5 font-bold text-lg text-center border-2 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg ${
                   isDarkMode
-                    ? "bg-gray-900 text-white border-amber-400"
-                    : "bg-gray-50 text-gray-600 border-amber-500"
+                    ? "bg-gray-900 text-white border-amber-400 shadow-amber-400/20"
+                    : "bg-gray-50 text-gray-600 border-amber-500 shadow-amber-500/20"
                 }`}
               >
-                Quests: {questsCompleted}
+                <div className="text-sm mb-1 opacity-80">Quests Completed</div>
+                <div className="text-3xl">{questsCompleted}</div>
               </div>
             </div>
             <div className="flex flex-col items-center gap-6">
               <Link
                 to="/avatar"
                 className="px-6 py-4 font-bold cursor-pointer text-center w-full text-xs
-                            font-['Press_Start_2P',cursive] tracking-[0.12em] border-2 rounded-sm
-                            transition-transform duration-100
+                            font-['Press_Start_2P',cursive] tracking-[0.12em] border-2 rounded-lg
+                            transition-all duration-300 hover:scale-105 hover:shadow-lg active:scale-95
                             bg-linear-to-b from-[#ffd700] to-[#ffb700] border-[#8b6914] text-[#1a1a2e]"
               >
                 EDIT AVATAR
@@ -327,21 +333,26 @@ function Hub() {
 
           <main className="flex flex-col gap-8">
             <div
-              className={`p-10 flex flex-col rounded-md justify-center items-center min-h-[400px] relative border-2 transition-transform duration-200 shadow-md ${
+              className={`p-10 flex flex-col rounded-md justify-center items-center min-h-[400px] relative border-2 transition-all duration-300 shadow-md  ${
                 isDarkMode
-                  ? "bg-gray-900 border-amber-400"
-                  : "bg-white border-amber-500"
+                  ? "bg-gray-900 border-amber-400 "
+                  : "bg-white border-amber-500 "
               }`}
             >
               {/* Jumper Game */}
-              <h3 className={`text-xl font-bold font-['Press_Start_2P',cursive] mb-4 ${
-                isDarkMode ? "text-[#ffd700]" : "text-amber-600"
-              }`}>
-                JUMPER GAME
-              </h3>
+              <div className="w-full mb-6">
+                <h3 className={`text-xl font-bold font-['Press_Start_2P',cursive] text-center mb-2 ${
+                  isDarkMode ? "text-[#ffd700]" : "text-amber-600"
+                }`}>
+                  JUMPER GAME
+                </h3>
+                <div className={`h-0.5 w-20 mx-auto rounded-full ${
+                  isDarkMode ? "bg-amber-400" : "bg-amber-500"
+                }`}></div>
+              </div>
               
               <div
-                className={`w-full relative overflow-hidden border-2 ${
+                className={`w-full relative overflow-hidden border-2 rounded-lg shadow-inner ${
                   isDarkMode
                     ? "bg-sky-900 border-blue-500"
                     : "bg-linear-to-b from-sky-400 to-sky-200 border-blue-400"
@@ -349,13 +360,13 @@ function Hub() {
                 style={{ height: "380px" }}
               >
                 {/* Clouds */}
-                <div className="absolute top-8 left-10 text-2xl opacity-50">☁️</div>
-                <div className="absolute top-16 left-40 text-xl opacity-40">☁️</div>
-                <div className="absolute top-12 right-16 text-3xl opacity-30">☁️</div>
+                <div className="absolute top-8 left-10 text-2xl opacity-50 animate-pulse">☁️</div>
+                <div className="absolute top-16 left-40 text-xl opacity-40 animate-pulse" style={{ animationDelay: "0.5s" }}>☁️</div>
+                <div className="absolute top-12 right-16 text-3xl opacity-30 animate-pulse" style={{ animationDelay: "1s" }}>☁️</div>
 
                 {/* Player */}
                 <div
-                  className="absolute transition-all duration-75"
+                  className="absolute transition-all duration-75 z-10"
                   style={{ 
                     left: "16px", 
                     top: `${playerY}px`,
@@ -374,7 +385,7 @@ function Hub() {
                 {obstacles.map((obs) => (
                   <div
                     key={obs.id}
-                    className={`absolute rounded-sm shadow-lg ${
+                    className={`absolute rounded-sm shadow-lg transition-all ${
                       isDarkMode ? "bg-linear-to-t from-gray-800 to-gray-700 border-2 border-gray-600" : "bg-linear-to-t from-gray-700 to-gray-600 border-2 border-gray-500"
                     }`}
                     style={{ 
@@ -397,8 +408,8 @@ function Hub() {
                 <div className={`absolute top-4 left-4 font-bold font-['Press_Start_2P',cursive] ${
                   isDarkMode ? "text-white" : "text-gray-900"
                 }`}>
-                  <div className="text-xs">SCORE</div>
-                  <div className="text-2xl">{Math.floor(score / 10)}</div>
+                  <div className="text-xs opacity-80">SCORE</div>
+                  <div className="text-2xl drop-shadow-lg">{Math.floor(score / 10)}</div>
                 </div>
 
                 {/* High Score */}
@@ -406,16 +417,16 @@ function Hub() {
                   <div className={`absolute top-4 right-4 font-bold font-['Press_Start_2P',cursive] text-right ${
                     isDarkMode ? "text-yellow-300" : "text-yellow-600"
                   }`}>
-                    <div className="text-xs">BEST</div>
-                    <div className="text-2xl">{highScore}</div>
+                    <div className="text-xs opacity-80">BEST</div>
+                    <div className="text-2xl drop-shadow-lg">{highScore}</div>
                   </div>
                 )}
 
                 {/* Game Over Overlay */}
                 {gameOver && (
-                  <div className="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center">
+                  <div className="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center z-20 rounded-lg">
                     <div className="text-center">
-                      <div className="text-4xl mb-2">💀</div>
+                      <div className="text-4xl mb-2 animate-bounce">💀</div>
                       <div className={`text-2xl font-bold font-['Press_Start_2P',cursive] mb-2 ${
                         isDarkMode ? "text-red-400" : "text-red-500"
                       }`}>
@@ -427,17 +438,17 @@ function Hub() {
                 )}
               </div>
 
-              <div className="flex flex-col items-center gap-4 mt-6">
+              <div className="flex flex-col items-center gap-4 mt-6 w-full">
                 <button
                   onClick={handleJump}
-                  className={`px-8 py-3 text-sm font-['Press_Start_2P',cursive] rounded-sm transition-all duration-200 hover:-translate-y-1 active:scale-95 border ${
+                  className={`px-8 py-3 text-sm font-['Press_Start_2P',cursive] rounded-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-lg active:scale-95 border ${
                     gameActive && !gameOver
                       ? isDarkMode
-                        ? "bg-green-700  text-white hover:bg-green-600"
-                        : "bg-green-600  text-white hover:bg-green-500"
+                        ? "bg-green-700  text-white hover:bg-green-600 shadow-green-700/50"
+                        : "bg-green-600  text-white hover:bg-green-500 shadow-green-600/50"
                       : isDarkMode
                       ? "bg-blue-700  text-white hover:bg-blue-600 border-0 shadow-[0_4px_8px_rgba(37,99,235,0.5),4px_0_8px_rgba(37,99,235,0.5),-4px_0_8px_rgba(37,99,235,0.5)]"
-                      : "bg-blue-600  text-white hover:bg-blue-500"
+                      : "bg-blue-600  text-white hover:bg-blue-500 shadow-blue-600/50"
                   }`}
                 >
                   {!gameActive ? "START GAME" : gameOver ? "PLAY AGAIN" : "JUMP (SPACE)"}
@@ -455,28 +466,33 @@ function Hub() {
 
             {/* Weekly quest completion activity */}
             <div
-              className={`p-8 min-h-[300px] border-2 rounded-md shadow-md ${
+              className={`p-8 min-h-[300px] border-2 rounded-md shadow-md transition-all duration-300 ${
                 isDarkMode
-                  ? "bg-gray-900 text-white border-amber-400"
-                  : "bg-white text-gray-600 border-amber-500"
+                  ? "bg-gray-900 text-white border-amber-400 "
+                  : "bg-white text-gray-600 border-amber-500 "
               }`}
             >
-              <h3
-                className={`mb-6 text-lg font-bold font-['Press_Start_2P',cursive] ${
-                  isDarkMode ? "text-[#ffd700]" : "text-amber-600"
-                }`}
-              >
-                Weekly quest completion activity
-              </h3>
+              <div className="mb-6">
+                <h3
+                  className={`text-lg font-bold font-['Press_Start_2P',cursive] text-center mb-2 ${
+                    isDarkMode ? "text-[#ffd700]" : "text-amber-600"
+                  }`}
+                >
+                  Weekly quest completion activity
+                </h3>
+                <div className={`h-0.5 w-32 mx-auto rounded-full ${
+                  isDarkMode ? "bg-amber-400" : "bg-amber-500"
+                }`}></div>
+              </div>
               <div
-                className={`h-64 flex flex-col items-center justify-center gap-4 shadow-inner ${
+                className={`h-64 flex flex-col items-center justify-center gap-4 shadow-inner rounded-lg ${
                   isDarkMode
                     ? "bg-gray-700 text-gray-300"
                     : "bg-gray-100 text-gray-600"
                 }`}
               >
                 {/* Dynamic Bar Graph */}
-                <div className="flex items-end gap-4 h-40">
+                <div className="flex items-end gap-4 h-40 px-4">
                   {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(
                     (day) => {
                       const val = questStats[day] || 0;
@@ -486,31 +502,41 @@ function Hub() {
                       return (
                         <div
                           key={day}
-                          className={`w-10 rounded-t relative flex flex-col items-center ${
-                            isDarkMode ? "bg-indigo-600" : "bg-indigo-500"
-                          }`}
-                          style={{ height: `${height}px` }}
+                          className="flex flex-col items-center flex-1 group"
                         >
+                          <div
+                            className={`w-full rounded-t-lg relative flex flex-col items-center transition-all duration-500 hover:scale-110 cursor-pointer ${
+                              isDarkMode ? "bg-indigo-600" : "bg-indigo-500"
+                            }`}
+                            style={{ height: `${height}px` }}
+                          >
+                            <span
+                              className="absolute top-2 left-1/2 transform -translate-x-1/2 text-xs font-bold text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                              style={{ textShadow: "1px 1px 2px rgba(0,0,0,0.8)" }}
+                            >
+                              {loadingStats ? "..." : val}
+                            </span>
+                            <span
+                              className="absolute -top-6 left-1/2 transform -translate-x-1/2 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                              style={{ textShadow: "1px 1px 2px rgba(0,0,0,0.3)" }}
+                            >
+                              {loadingStats ? "..." : val}
+                            </span>
+                          </div>
                           <span
-                            className={`absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs ${
+                            className={`mt-2 text-xs font-semibold ${
                               isDarkMode ? "text-gray-300" : "text-gray-600"
                             }`}
                           >
                             {day}
-                          </span>
-                          <span
-                            className="absolute top-2 left-1/2 transform -translate-x-1/2 text-xs font-bold text-white"
-                            style={{ textShadow: "1px 1px 0 black" }}
-                          >
-                            {loadingStats ? "..." : val}
                           </span>
                         </div>
                       );
                     }
                   )}
                 </div>
-                <p className="mt-10 text-sm">
-                  {loadingStats ? "Loading..." : ""}
+                <p className="mt-4 text-sm opacity-70">
+                  {loadingStats ? "Loading..." : "Hover over bars to see details"}
                 </p>
               </div>
             </div>
@@ -522,9 +548,9 @@ function Hub() {
           <Link
             to="/quest"
             className="px-7 py-4 font-bold text-xs cursor-pointer text-center
-            font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] rounded-md
-            transition-transform duration-300 hover:-translate-y-1
-            bg-linear-to-b from-[#ff6348] to-[#ff4757]  text-white"
+            font-['Press_Start_2P',cursive] uppercase tracking-[0.12em] rounded-lg
+            transition-all duration-300 hover:-translate-y-1 hover:shadow-lg active:scale-95
+            bg-linear-to-b from-[#ff6348] to-[#ff4757] text-white shadow-md"
           >
             GO ON A QUEST!
           </Link>
