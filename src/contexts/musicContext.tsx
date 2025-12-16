@@ -18,7 +18,7 @@ export const MusicProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const audio = new Audio(titleScreenBgm);
     audio.loop = true;
-    audio.volume = 0.3;
+    audio.volume = 0.5;
     musicRef.current = audio;
     audio.play().catch(() => {/* autoplay blocked */});
     

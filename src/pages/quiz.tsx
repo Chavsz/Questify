@@ -1274,7 +1274,7 @@ const Quiz = () => {
             filter: "drop-shadow(0 0 5px rgba(250, 204, 21, 0.5))",
           }}
         >
-          🎒 Inventory
+          Inventory
         </button>
 
         {shieldActive && (
@@ -1331,8 +1331,7 @@ const Quiz = () => {
       {isInventoryOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
           <div
-            className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-lg border-4 border-purple-400 flex flex-col items-center relative"
-            style={{ filter: "drop-shadow(0 0 20px rgba(168, 85, 247, 0.5))" }}
+            className="bg-gray-800 rounded-2xl shadow-2xl p-8 w-full max-w-lg border-4 border-[#ffd700] flex flex-col items-center relative"
           >
             <button
               onClick={closeInventory}
@@ -1342,8 +1341,7 @@ const Quiz = () => {
               ×
             </button>
             <div className="flex items-center gap-3 mb-6">
-              <span className="text-4xl">🎒</span>
-              <span className="text-2xl font-bold text-purple-700">
+              <span className="text-2xl font-bold text-white">
                 Inventory
               </span>
             </div>
@@ -1370,7 +1368,7 @@ const Quiz = () => {
                       key={item.id}
                       onClick={() => useItem(item)}
                       disabled={item.quantity <= 0}
-                      className={`flex flex-col items-center bg-white rounded-xl shadow p-4 border-2 border-purple-300 hover:bg-purple-100 transition-all duration-200 ${
+                      className={`flex flex-col items-center bg-gray-700 rounded-xl shadow p-4 border-2 border-gray-300  transition-all duration-200 ${
                         item.quantity <= 0
                           ? "opacity-50 cursor-not-allowed"
                           : ""
@@ -1389,13 +1387,13 @@ const Quiz = () => {
                           item.emoji
                         )}
                       </div>
-                      <div className="font-bold text-lg text-purple-800 mb-1">
+                      <div className="font-bold text-lg text-white mb-1">
                         {item.name}
                       </div>
-                      <div className="text-gray-600 text-xs mb-1">
+                      <div className="text-white text-xs mb-1">
                         x{item.quantity}
                       </div>
-                      <div className="text-gray-500 text-xs text-center">
+                      <div className="text-white text-xs text-center">
                         {item.name === "Healing Potion" &&
                           "Restore 1 heart (if not full)"}
                         {item.name === "Clue Token" &&
@@ -1584,7 +1582,7 @@ const Quiz = () => {
                   boxShadow: "0 0 15px rgba(168, 85, 247, 0.7)",
                 }}
               >
-                {isLastQuestion ? "⚔️ Finish Battle ⚔️" : "Next Wave ➡️"}
+                {isLastQuestion ? "⚔️ Finish Battle ⚔️" : "Next Wave"}
               </button>
             </>
           ) : (

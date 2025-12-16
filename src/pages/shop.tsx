@@ -512,7 +512,7 @@ const Shop = () => {
                 <div className={`font-bold text-lg text-center ${isDarkMode ? "text-white" : "text-gray-600"} mb-1`}>
                   {item.name}
                 </div>
-                <div className="text-gray-600 font-semibold">
+                <div className="text-white font-semibold">
                   x{item.quantity}
                 </div>
               </div>
